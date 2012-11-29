@@ -13,19 +13,19 @@
         <element name="name" label="JMS Topic or Queue destination to poll messages from">
           <view name="list"/>
           <view name="create"/>
-          <key name="exampleText">topic/yourtopic or queue/yourqueue</key>
+          <key name="exampleText">Enter the name precisely in this format : topic/${mytopic} or queue/${myqueue}</key>
         </element>
         <element name="jms_connection_factory_name" type="textfield" label="JMS Connection Factory JNDI Name">
           <view name="list"/>
           <view name="edit"/>
           <view name="create"/>
-          <key name="exampleText">Ensure any required jars are in the $SPLUNK_HOME/etc/apps/JMSModularInput/bin/lib directory</key>
+          <key name="exampleText">Ensure any required jars are in the $SPLUNK_HOME/etc/apps/jms_ta/bin/lib directory</key>
         </element>
         <element name="jndi_initialcontext_factory" type="textfield" label="JNDI Initial Context Factory Name">
           <view name="list"/>
           <view name="edit"/>
           <view name="create"/>
-          <key name="exampleText">Ensure any required jars are in the $SPLUNK_HOME/etc/apps/JMSModularInput/bin/lib directory</key>
+          <key name="exampleText">Ensure any required jars are in the $SPLUNK_HOME/etc/apps/jms_ta/bin/lib directory</key>
         </element>
         <element name="jndi_provider_url" type="textfield" label="JNDI Provider URL">
           <view name="list"/>
