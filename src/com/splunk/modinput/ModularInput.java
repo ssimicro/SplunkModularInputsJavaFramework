@@ -1,6 +1,7 @@
 package com.splunk.modinput;
 
 import java.io.StringReader;
+import java.io.StringWriter;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -19,7 +20,10 @@ public abstract class ModularInput {
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
 					Boolean.TRUE);
 			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-			marshaller.marshal(obj, System.out);
+			StringWriter sw = new StringWriter();
+			marshaller.marshal(obj, sw);
+			String xml = sw.toString();
+			System.out.println(xml.trim());
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}

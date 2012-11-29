@@ -99,6 +99,11 @@
 
             <fileset dir="${jms_dir}/default" />
         </copy>
+        
+        <copy todir="${temp_build}/README" >
+
+            <fileset dir="${jms_dir}/README" />
+        </copy>
 
         <copy todir="${temp_build}/bin/${lib}" >
 
