@@ -8,6 +8,14 @@ It implements the  <a href="http://docs.splunk.com/Documentation/Splunk/latest/A
 
 The <a href="https://github.com/damiendallimore/SplunkModularInputsJavaFramework">Splunk Modular Inputs Java Framework</a> is utilized.
 
+## Why JMS ?
+
+JMS is simply a messaging API and is a convenient means by which to write 1 modular input that can talk to several different underlying messaging
+providers :  MQSeries(Websphere MQ), ActiveMQ, HornetQ, RabbitMQ,Native JMS, Weblogic JMS, Sonic MQ etc..
+The modular input code is generic because it is programmed to the JMS interface.
+You can then supply messaging provider specific jar files at runtime.
+<a href="http://en.wikipedia.org/wiki/Java_Message_Service">More details on JMS at Wikipedia</a>
+
 ## Dependencies
 
 * Splunk 5.0+
@@ -27,7 +35,7 @@ As this is a modular input , you can then configure your JMS inputs via Manager-
 
 Any log entries will get written to $SPLUNK_HOME/var/log/splunk/splunkd.log
 
-# Third party jars
+## Third party jars
 
 If you require specific JMS provider or JNDI Context implementation jars, then you can simply copy these to $SPLUNK_HOME/etc/apps/JMSModularInput/bin/lib
 
