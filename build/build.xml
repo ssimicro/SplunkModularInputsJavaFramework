@@ -56,6 +56,14 @@
             <src path="${addon}/${src}" />
 
             <classpath refid="project.class.path" />
+
+            <classpath>
+
+                <fileset dir="${addon}/bin/${lib}" >
+                    <include name="**/*.jar" />
+                </fileset>
+            </classpath>
+            
         </javac>
     </target>
 
@@ -95,6 +103,8 @@
         <copy todir="${temp_build}/bin/${lib}" >
 
             <fileset dir="${lib}" />
+
+            <fileset dir="${jms_dir}/bin/${lib}" />
         </copy>
 
         <jar jarfile="${temp_build}/bin/${lib}/${jms_jar}" >
