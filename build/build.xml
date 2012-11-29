@@ -1,0 +1,167 @@
+<project
+    name="Splunk Modular Inputs"
+    basedir=".."
+    default="build_framework" >
+
+    <description>
+		Splunk Modular Inputs Java Framework
+    </description>
+
+    <property file="build/build.properties" />
+
+    <path id="project.class.path" >
+
+        <fileset dir="${lib}" >
+
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
+
+    <target name="init" >
+
+        <delete dir="${temp_build}" />
+
+        <mkdir dir="${temp_build}" />
+    </target>
+
+    <target
+        name="compile_framework"
+        depends="init"
+        description="compile the source " >
+
+        <mkdir dir="${temp_build}/${classes}" />
+
+        <javac
+            destdir="${temp_build}/${classes}"
+            srcdir="${src}"
+            target="${javaClassTarget}" >
+
+            <classpath refid="project.class.path" />
+        </javac>
+    </target>
+
+    <target
+        name="compile_addon"
+        depends="init"
+        description="compile an addon " >
+
+        <mkdir dir="${temp_build}/${classes}" />
+
+        <javac
+            destdir="${temp_build}/${classes}"
+            target="${javaClassTarget}" >
+
+            <src path="${src}" />
+
+            <src path="${addon}/${src}" />
+
+            <classpath refid="project.class.path" />
+        </javac>
+    </target>
+
+    <target
+        name="build_jms_input"
+        description="build JMS modular input add on" >
+
+        <antcall target="compile_addon" >
+
+            <param
+                name="addon"
+                value="${jms_dir}" />
+        </antcall>
+
+        <loadproperties srcFile="${jms_dir}/default/app.conf" />
+
+        <copy todir="${temp_build}/metadata" >
+
+            <fileset dir="${jms_dir}/metadata" />
+        </copy>
+
+        <copy todir="${temp_build}/bin" >
+
+            <fileset dir="${jms_dir}/bin" />
+        </copy>
+
+        <copy todir="${temp_build}/appserver" >
+
+            <fileset dir="${jms_dir}/appserver" />
+        </copy>
+
+        <copy todir="${temp_build}/default" >
+
+            <fileset dir="${jms_dir}/default" />
+        </copy>
+
+        <copy todir="${temp_build}/bin/${lib}" >
+
+            <fileset dir="${lib}" />
+        </copy>
+
+        <jar jarfile="${temp_build}/bin/${lib}/${jms_jar}" >
+
+            <fileset
+                dir="${temp_build}/${classes}"
+                includes="com/splunk/modinput/**" />
+
+            <fileset file="${src}/log4j.xml" />
+        </jar>
+
+        <delete dir="${temp_build}/${classes}" />
+
+        <tar
+            compression="${compressionType}"
+            destfile="${release}/${id}-${version}${suffix}" >
+
+            <zipfileset
+                dir="${temp_build}"
+                prefix="${id}" />
+        </tar>
+
+        <delete dir="${temp_build}" />
+    </target>
+
+    <target
+        name="build_framework"
+        depends="compile_framework"
+        description="build framework distribution" >
+
+        <!-- Create the distribution directory -->
+
+        <copy todir="${temp_build}/${lib}" >
+
+            <fileset dir="${lib}" />
+        </copy>
+
+        <copy todir="${temp_build}" >
+
+            <fileset file="LICENSE" />
+
+            <fileset file="README.md" />
+        </copy>
+
+        <jar jarfile="${temp_build}/${lib}/${main_jar}" >
+
+            <fileset
+                dir="${temp_build}/${classes}"
+                includes="com/splunk/modinput/**" />
+
+            <fileset
+                dir="${src}"
+                includes="log4j.xml" />
+        </jar>
+
+        <delete dir="${temp_build}/${classes}" />
+
+        <tar
+            compression="${compressionType}"
+            destfile="${release}/${frameworkid}-${frameworkversion}${suffix}" >
+
+            <zipfileset
+                dir="${temp_build}"
+                prefix="${frameworkid}" />
+        </tar>
+
+        <delete dir="${temp_build}" />
+    </target>
+
+</project>
