@@ -71,9 +71,9 @@ public class JMSModularInput extends ModularInput {
 		String jmsConnectionFactory = "";
 
 		for (Param param : params) {
-			if (param.getName().equals("jndi_initialcontext_factory")) {
+			if (param.getName().equals("jndi_provider_url")) {
 				jndiURL = param.getValue();
-			} else if (param.getName().equals("jndi_provider_url")) {
+			} else if (param.getName().equals("jndi_initialcontext_factory")) {
 				jndiContextFactory = param.getValue();
 			} else if (param.getName().equals("jndi_user")) {
 				jndiUser = param.getValue();
@@ -223,12 +223,14 @@ public class JMSModularInput extends ModularInput {
 		arg.setName("jndi_user");
 		arg.setTitle("JNDI username");
 		arg.setDescription("JNDI Username to authenticate with");
+		arg.setRequired_on_create(false);		
 		endpoint.addArg(arg);
 
 		arg = new Arg();
 		arg.setName("jndi_pass");
 		arg.setTitle("JNDI password");
 		arg.setDescription("JNDI Password  to authenticate with");
+		arg.setRequired_on_create(false);	
 		endpoint.addArg(arg);
 
 		arg = new Arg();

@@ -33,7 +33,7 @@
           <view name="create"/>
         </element>
         <element name="jndi_user" type="textfield" label="JNDI User">
-          <view name="list"/>
+            <view name="list"/>
           <view name="edit"/>
           <view name="create"/>
         </element>
