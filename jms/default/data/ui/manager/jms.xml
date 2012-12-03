@@ -1,8 +1,8 @@
 <endpoint name="data/inputs/jms">
-  <header>JMS</header>
+  <header>JMS Messaging</header>
   <breadcrumb>
     <parent hidecurrent="False">datainputstats</parent>
-    <name>JMS</name>
+    <name>JMS Messaging</name>
   </breadcrumb>
   <elements>
     <element name="sourceFields" type="fieldset">
@@ -31,15 +31,54 @@
           <view name="list"/>
           <view name="edit"/>
           <view name="create"/>
+          <key name="exampleText">URL to connect to the JNDI Server</key>
         </element>
-        <element name="jndi_user" type="textfield" label="JNDI User">
+        <element name="message_selector" type="textfield" label="Message Selector">
+          <view name="list"/>
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Only messages whose header and property values match the selector are delivered.For syntax details , refer to http://docs.oracle.com/javaee/5/api/javax/jms/Message.html</key>
+        </element>
+        <element name="durable" type="select" label="Durable Message Consumption ?">
+          <view name="list"/>
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">If this is a topic you can specify the message consumer to be durable</key>
+          <options>
+            <opt value="true" label="true"/>
+            <opt value="false" label="false"/>          
+          </options>
+        </element>
+        <element name="index_message_properties" type="select" label="Index message property values ?">
+          <view name="list"/>
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Message body is always indexed.Optionally you can index the message property values.False by default.</key>
+          <options>
+            <opt value="true" label="true"/>
+            <opt value="false" label="false"/>          
+          </options>
+        </element>
+        <element name="index_message_header" type="select" label="Index message header fields ?">
+          <view name="list"/>
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Message body is always indexed.Optionally you can index the message header fields.False by default.</key>
+          <options>
+            <opt value="true" label="true"/>
+            <opt value="false" label="false"/>          
+          </options>
+        </element>
+        <element name="jndi_user" type="textfield" label="JNDI Username">
             <view name="list"/>
           <view name="edit"/>
           <view name="create"/>
+          <key name="exampleText">Username for authenticated JNDI connections</key>
         </element>
         <element name="jndi_pass" type="password" label="JNDI Password">
           <view name="edit"/>
           <view name="create"/>
+          <key name="exampleText">Password for authenticated JNDI connections</key>
         </element>
       </elements>
     </element>

@@ -46,12 +46,12 @@ public abstract class ModularInput {
 
 	protected static void sendScheme(Scheme scheme) {
 		marshallObjectToXML(scheme);
-		
+
 	}
 
 	protected static void sendValidationError(ValidationError error) {
 		marshallObjectToXML(error);
-		
+
 	}
 
 	protected static Input getInput(String xml) {

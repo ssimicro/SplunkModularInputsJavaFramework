@@ -19,7 +19,7 @@ You can then supply messaging provider specific jar files at runtime.
 ## Dependencies
 
 * Splunk 5.0+
-* Java Runtime 1.5+
+* Java Runtime 1.6+
 
 ## Setup
 
