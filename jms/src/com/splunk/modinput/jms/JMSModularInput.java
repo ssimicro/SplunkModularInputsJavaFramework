@@ -27,7 +27,6 @@ import com.splunk.modinput.Arg;
 import com.splunk.modinput.Arg.DataType;
 import com.splunk.modinput.Endpoint;
 import com.splunk.modinput.Input;
-import com.splunk.modinput.LocalJMSResourceFactory;
 import com.splunk.modinput.ModularInput;
 import com.splunk.modinput.Param;
 import com.splunk.modinput.Scheme;
@@ -524,7 +523,7 @@ public class JMSModularInput extends ModularInput {
 		arg = new Arg();
 		arg.setName("local_init_mode_resource_factory_impl");
 		arg.setTitle("Implementation class for local JMS resource instantiation");
-		arg.setDescription("An implementation of the com.splunk.jms.LocalJMSResourceFactory interface");
+		arg.setDescription("An implementation of the com.splunk.modinput.jms.LocalJMSResourceFactory interface");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
 

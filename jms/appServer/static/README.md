@@ -37,7 +37,7 @@ Any log entries will get written to $SPLUNK_HOME/var/log/splunk/splunkd.log
 
 ## Third party jars
 
-If you require specific JMS provider or JNDI Context implementation jars, then you can simply copy these to $SPLUNK_HOME/etc/apps/JMSModularInput/bin/lib
+If you require specific JMS provider or JNDI Context implementation jars, then you can simply copy these to $SPLUNK_HOME/etc/apps/jms_ta/bin/lib
 
 They will be automatically picked up upon restart 
 

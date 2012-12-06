@@ -58,7 +58,7 @@
             
           <view name="edit"/>
           <view name="create"/>
-          <key name="exampleText">An implementation of the com.splunk.jms.LocalJMSResourceFactory interface</key>
+          <key name="exampleText">An implementation of the com.splunk.modinput.jms.LocalJMSResourceFactory interface</key>
         </element>
         <element name="local_init_mode_resource_factory_params" type="textfield" label="Implementation parameter string for local JMS resource instantiation">
            
