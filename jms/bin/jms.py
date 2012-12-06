@@ -7,10 +7,11 @@ All Rights Reserved
 Because Splunk can't directly invoke Java , we use this python wrapper script that
 simply proxys through to the Java program
 '''
-import os, sys
+import os, sys, signal
 from subprocess import Popen
 
 JAVA_MAIN_CLASS = 'com.splunk.modinput.jms.JMSModularInput'
+
 
 def usage():
     print "usage: %s [--scheme|--validate-arguments]"
@@ -30,7 +31,7 @@ def do_validate():
     run_java()
 
 def run_java():
-
+    global process
     if sys.platform.startswith('linux'):
       JAVA_EXECUTABLE = os.path.expandvars('$JAVA_HOME') + "/bin/java"
     elif sys.platform == 'win32':
@@ -42,11 +43,20 @@ def run_java():
     java_args = [ JAVA_EXECUTABLE, "-classpath",os.path.expandvars('$SPLUNK_HOME') + "/etc/apps/jms_ta/bin/lib/*","-Xms64m","-Xmx64m",JAVA_MAIN_CLASS]
     java_args.extend(sys.argv[1:])
 
-    # Now we can run our command
+    # Now we can run our command   
     process = Popen(java_args)
     # Wait for it to complete
     process.wait()
     sys.exit(process.returncode)
+
+def signal_handler(signal, frame):
+        #kill the java process
+        process.kill()
+        #exit this script
+        sys.exit(0)
+
+        
+signal.signal(signal.SIGINT, signal_handler)
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:

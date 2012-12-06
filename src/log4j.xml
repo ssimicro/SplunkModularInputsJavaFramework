@@ -6,6 +6,8 @@
     <appender
         name="STDOUT"
         class="org.apache.log4j.ConsoleAppender" >
+        
+        <param name="target" value="System.err"/>
 
         <layout class="org.apache.log4j.PatternLayout" >
 
