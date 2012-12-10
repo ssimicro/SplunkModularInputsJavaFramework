@@ -10,10 +10,10 @@
       <view name="edit"/>
       <view name="create"/>
       <elements>
-        <element name="name" label="JMS Topic or Queue destination to poll messages from">
+        <element name="name" label="JMS Topic or Queue to index messages from">
           <view name="list"/>
           <view name="create"/>
-          <key name="exampleText">Enter the name precisely in this format : topic/${mytopic} or queue/${myqueue}</key>
+          <key name="exampleText">Enter the name precisely in this format : topic/mytopic or queue/myqueue</key>
         </element>
         <element name="init_mode" type="select" label="Initialisation Mode">
           
@@ -58,13 +58,13 @@
             
           <view name="edit"/>
           <view name="create"/>
-          <key name="exampleText">An implementation of the com.splunk.modinput.jms.LocalJMSResourceFactory interface</key>
+          <key name="exampleText">An implementation of the com.splunk.modinput.jms.LocalJMSResourceFactory interface.Ensure that the necessary jars are in the $SPLUNK_HOME/etc/apps/jms_ta/bin/lib directory</key>
         </element>
         <element name="local_init_mode_resource_factory_params" type="textfield" label="Implementation parameter string for local JMS resource instantiation">
            
           <view name="edit"/>
           <view name="create"/>
-          <key name="exampleText">Parameter String in format 'key1=value1,key2=value2,key3=value3'. This gets passed to the implementation class to process</key>
+          <key name="exampleText">Parameter string in format 'key1=value1,key2=value2,key3=value3'. This gets passed to the implementation class to process</key>
         </element>
         
         <element name="message_selector" type="textfield" label="Message Selector">

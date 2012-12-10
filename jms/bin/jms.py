@@ -11,8 +11,32 @@ import os, sys, signal
 from subprocess import Popen
 
 JAVA_MAIN_CLASS = 'com.splunk.modinput.jms.JMSModularInput'
+MODINPUT_NAME = 'jms'
 
 
+def checkForRunningProcess():
+
+    canonPath = getPIDFilePath()
+    if os.path.isfile(canonPath):
+      pidfile = open(canonPath, "r")
+      pidfile.seek(0)
+      old_pid = pidfile.readline()
+      try:
+        os.kill(int(old_pid),signal.SIGKILL)
+      except :
+        pass
+      os.remove(canonPath)
+      
+def writePidFile():
+    canonPath = getPIDFilePath()
+    pid = str(process.pid)
+    f = open(canonPath, 'w')
+    f.write(pid)
+    f.close()
+    
+def getPIDFilePath():
+    return MODINPUT_HOME+MODINPUT_NAME+"_ta.pid"
+    
 def usage():
     print "usage: %s [--scheme|--validate-arguments]"
     sys.exit(2)
@@ -31,20 +55,29 @@ def do_validate():
     run_java()
 
 def run_java():
-    global process
+    global process,SPLUNK_HOME,MODINPUT_HOME
     if sys.platform.startswith('linux'):
       JAVA_EXECUTABLE = os.path.expandvars('$JAVA_HOME') + "/bin/java"
+      SPLUNK_HOME = os.path.expandvars('$SPLUNK_HOME')
+      MODINPUT_HOME = SPLUNK_HOME + "/etc/apps/"+MODINPUT_NAME+"_ta/"
+      CLASSPATH = MODINPUT_HOME + "bin/lib/*"
     elif sys.platform == 'win32':
-      JAVA_EXECUTABLE = os.path.expandvars('%JAVA_HOME%') + "\bin\java"
+      JAVA_EXECUTABLE = os.path.expandvars('%JAVA_HOME%') + "\\bin\\java"
+      SPLUNK_HOME = os.path.expandvars('%SPLUNK_HOME%')
+      MODINPUT_HOME = SPLUNK_HOME  + "\\etc\\apps\\"+MODINPUT_NAME+"_ta\\"
+      CLASSPATH = MODINPUT_HOME + "bin\\lib\\*"
     else:
       sys.stderr.writelines("ERROR Unsupported platform\n")
       sys.exit(0)
 
-    java_args = [ JAVA_EXECUTABLE, "-classpath",os.path.expandvars('$SPLUNK_HOME') + "/etc/apps/jms_ta/bin/lib/*","-Xms64m","-Xmx64m",JAVA_MAIN_CLASS]
+    checkForRunningProcess()
+
+    java_args = [ JAVA_EXECUTABLE, "-classpath",CLASSPATH,"-Xms64m","-Xmx64m",JAVA_MAIN_CLASS]
     java_args.extend(sys.argv[1:])
 
     # Now we can run our command   
     process = Popen(java_args)
+    writePidFile()
     # Wait for it to complete
     process.wait()
     sys.exit(process.returncode)
@@ -59,6 +92,7 @@ def signal_handler(signal, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 if __name__ == '__main__':
+    
     if len(sys.argv) > 1:
         if sys.argv[1] == "--scheme":
             do_scheme()

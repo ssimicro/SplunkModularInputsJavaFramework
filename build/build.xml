@@ -68,6 +68,74 @@
     </target>
 
     <target
+        name="build_binary_input"
+        description="build Binary modular input add on" >
+
+        <antcall target="compile_addon" >
+
+            <param
+                name="addon"
+                value="${binary_dir}" />
+        </antcall>
+
+        <loadproperties srcFile="${binary_dir}/default/app.conf" />
+
+        <copy todir="${temp_build}/metadata" >
+
+            <fileset dir="${binary_dir}/metadata" />
+        </copy>
+
+        <copy todir="${temp_build}/bin" >
+
+            <fileset dir="${binary_dir}/bin" />
+        </copy>
+
+        <copy todir="${temp_build}/appserver" >
+
+            <fileset dir="${binary_dir}/appserver" />
+        </copy>
+
+        <copy todir="${temp_build}/default" >
+
+            <fileset dir="${binary_dir}/default" />
+        </copy>
+        
+        <copy todir="${temp_build}/README" >
+
+            <fileset dir="${binary_dir}/README" />
+        </copy>
+
+        <copy todir="${temp_build}/bin/${lib}" >
+
+            <fileset dir="${lib}" />
+
+            <fileset dir="${binary_dir}/bin/${lib}" />
+        </copy>
+
+        <jar jarfile="${temp_build}/bin/${lib}/${binary_jar}" >
+
+            <fileset
+                dir="${temp_build}/${classes}"
+                includes="com/splunk/modinput/**" />
+
+            <fileset file="${src}/log4j.xml" />
+        </jar>
+
+        <delete dir="${temp_build}/${classes}" />
+
+        <tar
+            compression="${compressionType}"
+            destfile="${release}/${id}-${version}${suffix}" >
+
+            <zipfileset
+                dir="${temp_build}"
+                prefix="${id}" />
+        </tar>
+
+        <delete dir="${temp_build}" />
+    </target>
+    
+    <target
         name="build_jms_input"
         description="build JMS modular input add on" >
 

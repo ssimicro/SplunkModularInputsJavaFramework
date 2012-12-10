@@ -461,7 +461,7 @@ public class JMSModularInput extends ModularInput {
 		Arg arg = new Arg();
 		arg.setName("name");
 		arg.setTitle("JMS queue or topic");
-		arg.setDescription("Enter the name precisely in this format : topic/${mytopic} or queue/${myqueue}");
+		arg.setDescription("Enter the name precisely in this format : topic/mytopic or queue/myqueue");
 
 		endpoint.addArg(arg);
 
@@ -523,14 +523,14 @@ public class JMSModularInput extends ModularInput {
 		arg = new Arg();
 		arg.setName("local_init_mode_resource_factory_impl");
 		arg.setTitle("Implementation class for local JMS resource instantiation");
-		arg.setDescription("An implementation of the com.splunk.modinput.jms.LocalJMSResourceFactory interface");
+		arg.setDescription("An implementation of the com.splunk.modinput.jms.LocalJMSResourceFactory interface.Ensure that the necessary jars are in the $SPLUNK_HOME/etc/apps/jms_ta/bin/lib directory");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
 
 		arg = new Arg();
 		arg.setName("local_init_mode_resource_factory_params");
 		arg.setTitle("Implementation parameter string for local JMS resource instantiation");
-		arg.setDescription("Parameter String in format 'key1=value1,key2=value2,key3=value3'. This gets passed to the implementation class to process.");
+		arg.setDescription("Parameter string in format 'key1=value1,key2=value2,key3=value3'. This gets passed to the implementation class to process.");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
 
