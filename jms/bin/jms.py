@@ -25,6 +25,7 @@ def checkForRunningProcess():
         os.kill(int(old_pid),signal.SIGKILL)
       except :
         pass
+      pidfile.close()  
       os.remove(canonPath)
       
 def writePidFile():
@@ -65,19 +66,21 @@ def run_java():
       JAVA_EXECUTABLE = os.path.expandvars('%JAVA_HOME%') + "\\bin\\java"
       SPLUNK_HOME = os.path.expandvars('%SPLUNK_HOME%')
       MODINPUT_HOME = SPLUNK_HOME  + "\\etc\\apps\\"+MODINPUT_NAME+"_ta\\"
-      CLASSPATH = MODINPUT_HOME + "bin\\lib\\*"
+      CLASSPATH = MODINPUT_HOME + "bin\\lib\\jmsmodinput.jar;"+MODINPUT_HOME + "bin\\lib\\jms.jar;"+MODINPUT_HOME + "bin\\lib\\log4j-1.2.16.jar"
     else:
       sys.stderr.writelines("ERROR Unsupported platform\n")
       sys.exit(0)
 
-    checkForRunningProcess()
+    if RUNMODE == 3:
+      checkForRunningProcess()
 
     java_args = [ JAVA_EXECUTABLE, "-classpath",CLASSPATH,"-Xms64m","-Xmx64m",JAVA_MAIN_CLASS]
     java_args.extend(sys.argv[1:])
 
     # Now we can run our command   
     process = Popen(java_args)
-    writePidFile()
+    if RUNMODE == 3:
+      writePidFile()
     # Wait for it to complete
     process.wait()
     sys.exit(process.returncode)
@@ -92,13 +95,17 @@ def signal_handler(signal, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 if __name__ == '__main__':
+    global RUNMODE
     
     if len(sys.argv) > 1:
         if sys.argv[1] == "--scheme":
+            RUNMODE = 1
             do_scheme()
         elif sys.argv[1] == "--validate-arguments":
+            RUNMODE = 2
             do_validate()
         else:
             usage()
     else:
+        RUNMODE = 3
         do_run()
