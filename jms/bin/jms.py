@@ -55,6 +55,14 @@ def do_validate():
     sys.argv.append(xml_str)
     run_java()
 
+def build_windows_classpath():
+    
+    rootdir = MODINPUT_HOME + "bin\\lib\\"
+    classpath = ""
+    for filename in os.listdir(rootdir):
+      classpath = classpath + rootdir+filename+";"
+    return classpath
+    
 def run_java():
     global process,SPLUNK_HOME,MODINPUT_HOME
     if sys.platform.startswith('linux'):
@@ -66,7 +74,7 @@ def run_java():
       JAVA_EXECUTABLE = os.path.expandvars('%JAVA_HOME%') + "\\bin\\java"
       SPLUNK_HOME = os.path.expandvars('%SPLUNK_HOME%')
       MODINPUT_HOME = SPLUNK_HOME  + "\\etc\\apps\\"+MODINPUT_NAME+"_ta\\"
-      CLASSPATH = MODINPUT_HOME + "bin\\lib\\jmsmodinput.jar;"+MODINPUT_HOME + "bin\\lib\\jms.jar;"+MODINPUT_HOME + "bin\\lib\\log4j-1.2.16.jar"
+      CLASSPATH = build_windows_classpath()
     else:
       sys.stderr.writelines("ERROR Unsupported platform\n")
       sys.exit(0)
