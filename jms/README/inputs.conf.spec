@@ -12,3 +12,4 @@ init_mode = <value>
 local_init_mode_resource_factory_impl = <value>
 local_init_mode_resource_factory_params = <value>
 client_id = <value>
+user_jndi_properties = <value>

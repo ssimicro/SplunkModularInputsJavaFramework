@@ -11,7 +11,7 @@ The <a href="https://github.com/damiendallimore/SplunkModularInputsJavaFramework
 ## Why JMS ?
 
 JMS is simply a messaging API and is a convenient means by which to write 1 modular input that can talk to several different underlying messaging
-providers :  MQSeries(Websphere MQ), ActiveMQ, HornetQ, RabbitMQ,Native JMS, Weblogic JMS, Sonic MQ etc..
+providers :  MQSeries(Websphere MQ), ActiveMQ, TibcoEMS, HornetQ, RabbitMQ,Native JMS, Weblogic JMS, Sonic MQ etc..
 The modular input code is generic because it is programmed to the JMS interface.
 You can then supply messaging provider specific jar files at runtime.
 <a href="http://en.wikipedia.org/wiki/Java_Message_Service">More details on JMS at Wikipedia</a>
@@ -20,10 +20,11 @@ You can then supply messaging provider specific jar files at runtime.
 
 * Splunk 5.0+
 * Java Runtime 1.6+
+* Supported on Windows, Linux, MacOS
 
 ## Setup
 
-* Set your JAVA_HOME environment variable
+* Set your JAVA_HOME environment variable to the root directory of you JRE installation
 * Untar the release to your $SPLUNK_HOME/etc/apps directory
 * Restart Splunk
 
@@ -31,9 +32,18 @@ You can then supply messaging provider specific jar files at runtime.
 
 As this is a modular input , you can then configure your JMS inputs via Manager->DataInputs
 
+##JNDI vs Local mode
+
+For the most part you will setup your JMS connectivity using JNDI to obtain the remote JMS objects.
+However, you can bypass JNDI if you wish and use local instantiation.
+To this you must code an implementation of the com.splunk.modinput.jms.LocalJMSResourceFactory interface.
+You can then bundle the classes in a jar file and place them in $SPLUNK_HOME/etc/apps/jms_ta/bin/lib
+The configuration screen in Splunk Manager for creating a new JMS input allows you to choose local or jndi as the instantiation mode.
+So choose local , and then you can specify the name of implementation class, as well as any declarative paramaters you want to pass in.
+
 ## Logging
 
-Any log entries will get written to $SPLUNK_HOME/var/log/splunk/splunkd.log
+Any log entries/errors will get written to $SPLUNK_HOME/var/log/splunk/splunkd.log
 
 ## Third party jars
 

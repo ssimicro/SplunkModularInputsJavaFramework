@@ -65,19 +65,29 @@ def build_windows_classpath():
     
 def run_java():
     global process,SPLUNK_HOME,MODINPUT_HOME
-    if sys.platform.startswith('linux'):
-      JAVA_EXECUTABLE = os.path.expandvars('$JAVA_HOME') + "/bin/java"
+    if sys.platform.startswith('linux') or sys.platform == 'darwin':
+        
+      if (not os.environ.has_key('JAVA_HOME')):
+         JAVA_EXECUTABLE = 'java'
+      else:
+         JAVA_EXECUTABLE = os.path.expandvars('$JAVA_HOME') + "/bin/java"
+      
       SPLUNK_HOME = os.path.expandvars('$SPLUNK_HOME')
       MODINPUT_HOME = SPLUNK_HOME + "/etc/apps/"+MODINPUT_NAME+"_ta/"
       CLASSPATH = MODINPUT_HOME + "bin/lib/*"
     elif sys.platform == 'win32':
-      JAVA_EXECUTABLE = os.path.expandvars('%JAVA_HOME%') + "\\bin\\java"
+        
+      if (not os.environ.has_key('JAVA_HOME')):
+         JAVA_EXECUTABLE = 'java'
+      else:
+         JAVA_EXECUTABLE = os.path.expandvars('%JAVA_HOME%') + "\\bin\\java"
+        
       SPLUNK_HOME = os.path.expandvars('%SPLUNK_HOME%')
       MODINPUT_HOME = SPLUNK_HOME  + "\\etc\\apps\\"+MODINPUT_NAME+"_ta\\"
       CLASSPATH = build_windows_classpath()
     else:
       sys.stderr.writelines("ERROR Unsupported platform\n")
-      sys.exit(0)
+      sys.exit(2)
 
     if RUNMODE == 3:
       checkForRunningProcess()

@@ -1,6 +1,5 @@
 package com.splunk.modinput;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.Socket;
@@ -87,8 +86,9 @@ public abstract class ModularInput {
 					doScheme();
 				} else {
 					Input input = getInput(args[0]);
+					
 					new SplunkConnectionPoller(input).start();
-					doRun(input);
+					doRun(input,false);
 				}
 			} else if (args.length == 2) {
 				if (args[0].equals("--validate-arguments")) {
@@ -162,7 +162,7 @@ public abstract class ModularInput {
 	}
 
 	// extending classes must implement these
-	protected abstract void doRun(Input input);
+	protected abstract void doRun(Input input,boolean validationConnectionMode) throws Exception;
 
 	protected abstract void doValidate(Validation val);
 

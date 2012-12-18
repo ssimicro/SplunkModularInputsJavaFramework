@@ -13,7 +13,7 @@
         <element name="name" label="JMS Topic or Queue to index messages from">
           <view name="list"/>
           <view name="create"/>
-          <key name="exampleText">Enter the name precisely in this format : topic/mytopic or queue/myqueue</key>
+          <key name="exampleText">Enter the name precisely in this format : topic/mytopic or queue/myqueue.</key>
         </element>
         <element name="init_mode" type="select" label="Initialisation Mode">
           
@@ -42,6 +42,12 @@
           <view name="edit"/>
           <view name="create"/>
           <key name="exampleText">URL to connect to the JNDI Server</key>
+        </element>
+        <element name="user_jndi_properties" type="textfield" label="User defined JNDI properties">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">User specific JNDI properties string in format 'key1=value1,key2=value2,key3=value3'</key>
         </element>
         <element name="jndi_user" type="textfield" label="JNDI Username">
            
