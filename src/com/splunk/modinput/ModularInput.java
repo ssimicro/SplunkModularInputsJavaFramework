@@ -62,6 +62,7 @@ public abstract class ModularInput {
 	}
 
 	protected static Validation getValidation(String xml) {
+		
 		return (Validation) unmarshallXMLToObject(Validation.class, xml);
 	}
 
@@ -78,6 +79,7 @@ public abstract class ModularInput {
 
 	}
 
+	
 	protected void init(String[] args) {
 
 		try {
@@ -92,6 +94,7 @@ public abstract class ModularInput {
 				}
 			} else if (args.length == 2) {
 				if (args[0].equals("--validate-arguments")) {
+					
 					Validation val = getValidation(args[1]);
 					doValidate(val);
 				}

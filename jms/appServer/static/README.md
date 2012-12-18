@@ -24,7 +24,7 @@ You can then supply messaging provider specific jar files at runtime.
 
 ## Setup
 
-* Set your JAVA_HOME environment variable to the root directory of you JRE installation
+* Optionally set your JAVA_HOME environment variable to the root directory of you JRE installation.If you don't set this , the input will look for a default installed java executable on the path.
 * Untar the release to your $SPLUNK_HOME/etc/apps directory
 * Restart Splunk
 
