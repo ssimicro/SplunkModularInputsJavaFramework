@@ -525,7 +525,7 @@ public class JMSModularInput extends ModularInput {
 
 		} catch (Throwable t) {
 			throw new Exception(
-					"A JMS connection can not be establised with the supplied propertys");
+					"A JMS connection can not be establised with the supplied propertys.Reason : "+t.getMessage());
 		}
 
 	}
