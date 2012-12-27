@@ -101,6 +101,8 @@ public class JMSModularInput extends ModularInput {
 		String jndiContextFactory = "";
 		String jndiUser = "";
 		String jndiPass = "";
+		String destinationUser = "";
+		String destinationPass = "";
 		String jmsConnectionFactory = "";
 		boolean durable = true;
 		boolean indexHeader = false;
@@ -112,21 +114,24 @@ public class JMSModularInput extends ModularInput {
 		String clientID = "splunkjms";
 		String userJNDIProperties = "";
 
-		
 		for (Param param : params) {
 			String value = param.getValue();
-			if(value == null){
+			if (value == null) {
 				continue;
 			}
-			
+
 			if (param.getName().equals("jndi_provider_url")) {
-				jndiURL = param.getValue() ;
+				jndiURL = param.getValue();
 			} else if (param.getName().equals("jndi_initialcontext_factory")) {
 				jndiContextFactory = param.getValue();
 			} else if (param.getName().equals("jndi_user")) {
 				jndiUser = param.getValue();
 			} else if (param.getName().equals("jndi_pass")) {
 				jndiPass = param.getValue();
+			} else if (param.getName().equals("destination_user")) {
+				destinationUser = param.getValue();
+			} else if (param.getName().equals("destination_pass")) {
+				destinationPass = param.getValue();
 			} else if (param.getName().equals("user_jndi_properties")) {
 				userJNDIProperties = param.getValue();
 			} else if (param.getName().equals("jms_connection_factory_name")) {
@@ -172,12 +177,13 @@ public class JMSModularInput extends ModularInput {
 				}
 			}
 		}
-		
+
 		MessageReceiver mr = new MessageReceiver(stanzaName, destination,
 				jndiURL, jndiContextFactory, jndiUser, jndiPass,
 				jmsConnectionFactory, durable, type, indexProperties,
 				indexHeader, selector, initMode, localResourceFactoryImpl,
-				localResourceFactoryParams, userJNDIProperties, clientID);
+				localResourceFactoryParams, userJNDIProperties, clientID,
+				destinationUser, destinationPass);
 		if (validationConnectionMode)
 			mr.testConnectOnly();
 		else
@@ -191,6 +197,8 @@ public class JMSModularInput extends ModularInput {
 		String jndiContextFactory;
 		String jndiUser;
 		String jndiPass;
+		String destinationUser;
+		String destinationPass;
 		String jmsConnectionFactory;
 		String destination;
 		boolean durable;;
@@ -213,7 +221,6 @@ public class JMSModularInput extends ModularInput {
 		Map<String, String> userJNDIProperties = null;
 
 		boolean connected = false;
-		
 
 		public MessageReceiver(String stanzaName, String destination,
 				String jndiURL, String jndiContextFactory, String jndiUser,
@@ -222,13 +229,16 @@ public class JMSModularInput extends ModularInput {
 				boolean indexHeader, String selector, InitMode initMode,
 				String localResourceFactoryImpl,
 				String localResourceFactoryParams,
-				String userJNDIPropertiesString, String clientID) {
+				String userJNDIPropertiesString, String clientID,
+				String destinationUser, String destinationPass) {
 
 			this.destination = destination;
 			this.jndiURL = jndiURL;
 			this.jndiContextFactory = jndiContextFactory;
 			this.jndiUser = jndiUser;
 			this.jndiPass = jndiPass;
+			this.destinationUser = destinationUser;
+			this.destinationPass = destinationPass;
 			this.jmsConnectionFactory = jmsConnectionFactory;
 			this.durable = durable;
 			this.clientID = clientID;
@@ -238,7 +248,6 @@ public class JMSModularInput extends ModularInput {
 			this.selector = selector;
 			this.initMode = initMode;
 			this.stanzaName = stanzaName;
-			
 
 			if (userJNDIPropertiesString != null
 					&& userJNDIPropertiesString.length() > 0) {
@@ -265,13 +274,14 @@ public class JMSModularInput extends ModularInput {
 				StringTokenizer st = new StringTokenizer(
 						localResourceFactoryParams, ",");
 				while (st.hasMoreTokens()) {
-					StringTokenizer st2 = new StringTokenizer(st.nextToken(), "=");
+					StringTokenizer st2 = new StringTokenizer(st.nextToken(),
+							"=");
 					while (st2.hasMoreTokens()) {
 						map.put(st2.nextToken(), st2.nextToken());
 					}
 				}
 			} catch (Exception e) {
-				
+
 			}
 
 			return map;
@@ -314,29 +324,32 @@ public class JMSModularInput extends ModularInput {
 					dest = localFactory.createTopic();
 			}
 
-			connection = connFactory.createConnection();
+			if (destinationUser != null && destinationUser.length() > 0
+					&& destinationPass != null && destinationPass.length() > 0)
+				connection = connFactory.createConnection(destinationUser,
+						destinationPass);
+			else
+				connection = connFactory.createConnection();
 			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
-			
-				if (durable && type.equals(DestinationType.TOPIC)) {
+			if (durable && type.equals(DestinationType.TOPIC)) {
 
-					try {
-						messageConsumer = session.createDurableSubscriber(
-								(Topic) dest, clientID, selector, true);
-					} catch (Exception e) {
-						messageConsumer = session
-								.createConsumer(dest, selector);
-					}
-
-				} else {
-
+				try {
+					messageConsumer = session.createDurableSubscriber(
+							(Topic) dest, clientID, selector, true);
+				} catch (Exception e) {
 					messageConsumer = session.createConsumer(dest, selector);
-
 				}
 
-				connection.start();
-				connected = true;
-			
+			} else {
+
+				messageConsumer = session.createConsumer(dest, selector);
+
+			}
+
+			connection.start();
+			connected = true;
+
 		}
 
 		private void disconnect() {
@@ -354,10 +367,9 @@ public class JMSModularInput extends ModularInput {
 
 		public void testConnectOnly() throws Exception {
 			try {
-				
+
 				connect();
-			} 
-			finally {
+			} finally {
 				disconnect();
 			}
 		}
@@ -375,11 +387,13 @@ public class JMSModularInput extends ModularInput {
 							// sleep 10 secs then try to reconnect
 							Thread.sleep(10000);
 						} catch (Exception exception) {
+
 						}
 					}
 				}
 
 				try {
+
 					// block and wait for message
 					Message message = messageConsumer.receive();
 					String text = getSplunkFormattedMessage(message);
@@ -524,7 +538,7 @@ public class JMSModularInput extends ModularInput {
 			for (Item item : items) {
 				validateName(item.getName());
 				Stanza stanza = new Stanza();
-				stanza.setName("jms://"+item.getName());
+				stanza.setName("jms://" + item.getName());
 				stanza.setParams(item.getParams());
 				stanzas.add(stanza);
 			}
@@ -534,7 +548,8 @@ public class JMSModularInput extends ModularInput {
 
 		} catch (Throwable t) {
 			throw new Exception(
-					"A JMS connection can not be establised with the supplied propertys.Reason : "+t.getMessage());
+					"A JMS connection can not be establised with the supplied propertys.Reason : "
+							+ t.getMessage());
 		}
 
 	}
@@ -599,6 +614,20 @@ public class JMSModularInput extends ModularInput {
 		arg.setName("jndi_pass");
 		arg.setTitle("JNDI password");
 		arg.setDescription("JNDI Password  to authenticate with");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("destination_user");
+		arg.setTitle("Topic/Queue username");
+		arg.setDescription("Topic/Queue Username if required");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("destination_pass");
+		arg.setTitle("Topic/Queue password");
+		arg.setDescription("Topic/Queue Password if required");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
 

@@ -60,6 +60,17 @@
           <view name="create"/>
           <key name="exampleText">Password for authenticated JNDI connections</key>
         </element>
+        <element name="destination_user" type="textfield" label="Topic/Queue Username">
+           
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Username for the topic/queue if required</key>
+        </element>
+        <element name="destination_pass" type="password" label="Topic/Queue Password">
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Password for the topic/queue if required</key>
+        </element>
         <element name="local_init_mode_resource_factory_impl" type="textfield" label="Implementation class for local JMS resource instantiation">
             
           <view name="edit"/>
