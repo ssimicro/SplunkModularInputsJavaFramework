@@ -80,6 +80,7 @@ public abstract class ModularInput {
 	}
 
 	
+	
 	protected void init(String[] args) {
 
 		try {

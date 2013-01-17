@@ -461,9 +461,38 @@ public class JMSModularInput extends ModularInput {
 					body = ((TextMessage) message).getText();
 				} else if (message instanceof BytesMessage) {
 					try {
-						body = ((BytesMessage) message).readUTF();
+
+						int bufSize = 1024;
+						byte[] buffer = null;
+						int readBytes = 0;
+						byte[] messageBodyBytes = null;
+
+						while (true) {
+
+							buffer = new byte[bufSize];
+							readBytes = ((BytesMessage) message).readBytes(
+									buffer, bufSize);
+							if (readBytes == -1)
+								break;
+							if (messageBodyBytes == null) {
+								messageBodyBytes = new byte[readBytes];
+								System.arraycopy(buffer, 0, messageBodyBytes,
+										0, readBytes);
+							} else {
+								byte[] extended = new byte[messageBodyBytes.length
+										+ readBytes];
+								System.arraycopy(messageBodyBytes, 0, extended,
+										0, messageBodyBytes.length);
+								System.arraycopy(buffer, 0, extended,
+										messageBodyBytes.length, readBytes);
+								messageBodyBytes = extended;
+							}
+
+						}
+
+						body = new String(messageBodyBytes);
 					} catch (Exception e) {
-						body = "binary message";
+						body = "binary message body can't be read";
 					}
 
 				} else if (message instanceof StreamMessage) {
@@ -487,11 +516,26 @@ public class JMSModularInput extends ModularInput {
 
 			}
 
-			event.addPair("msg_body", body);
+			event.addPair("msg_body", stripNewlines(body));
 
 			return event.toString();
 
 		}
+	}
+
+	public static String stripNewlines(String input) {
+
+		if (input == null) {
+			return "";
+		}
+		char[] chars = input.toCharArray();
+		for (int i = 0; i < chars.length; i++) {
+			if (Character.isWhitespace(chars[i])) {
+				chars[i] = ' ';
+			}
+		}
+
+		return new String(chars);
 	}
 
 	@Override
