@@ -1,4 +1,4 @@
-## Splunk JMS Modular Input v1.0.3
+## Splunk JMS Modular Input v1.1
 
 ## Overview
 
@@ -50,6 +50,18 @@ Any log entries/errors will get written to $SPLUNK_HOME/var/log/splunk/splunkd.l
 If you require specific JMS provider or JNDI Context implementation jars, then you can simply copy these to $SPLUNK_HOME/etc/apps/jms_ta/bin/lib
 
 They will be automatically picked up upon restart 
+
+
+## Troubleshooting
+* JAVA_HOME environment variable is set or "java" is on the PATH for the user's environment you are running Splunk as
+* You are using Splunk 5+
+* You are using a 1.6+ Java Runtime
+* You are running on a supported operating system
+* Any 3rd party jar dependencies are present in $SPLUNK_HOME/etc/apps/jms_ta/bin/lib
+* Look for any errors in $SPLUNK_HOME/var/log/splunk/splunkd.log
+* Run this command as the same user that you are running Splunk as and observe console output : "$SPLUNK_HOME/bin/splunk cmd python ../etc/apps/jms_ta/bin/jms.py --scheme" 
+* Your configuration parameters are correct for your JMX connection (check for typos, correct credentials, correct JNDI names etc...)
+* You DNS resolution for hostnames is correctly configured
 
 ## Contact
 

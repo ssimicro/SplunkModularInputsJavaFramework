@@ -85,6 +85,7 @@ public class JMSModularInput extends ModularInput {
 					logger.error("Invalid stanza name : " + name);
 					System.exit(2);
 				}
+
 			}
 		} else {
 			logger.error("Input is null");
@@ -178,17 +179,18 @@ public class JMSModularInput extends ModularInput {
 			}
 		}
 
-		MessageReceiver mr = new MessageReceiver(stanzaName, destination,
-				jndiURL, jndiContextFactory, jndiUser, jndiPass,
-				jmsConnectionFactory, durable, type, indexProperties,
-				indexHeader, selector, initMode, localResourceFactoryImpl,
-				localResourceFactoryParams, userJNDIProperties, clientID,
-				destinationUser, destinationPass);
-		if (validationConnectionMode)
-			mr.testConnectOnly();
-		else
-			mr.start();
-
+		if (!isDisabled(stanzaName)) {
+			MessageReceiver mr = new MessageReceiver(stanzaName, destination,
+					jndiURL, jndiContextFactory, jndiUser, jndiPass,
+					jmsConnectionFactory, durable, type, indexProperties,
+					indexHeader, selector, initMode, localResourceFactoryImpl,
+					localResourceFactoryParams, userJNDIProperties, clientID,
+					destinationUser, destinationPass);
+			if (validationConnectionMode)
+				mr.testConnectOnly();
+			else
+				mr.start();
+		}
 	}
 
 	class MessageReceiver extends Thread {
@@ -376,7 +378,7 @@ public class JMSModularInput extends ModularInput {
 
 		public void run() {
 
-			while (true) {
+			while (!isDisabled(stanzaName)) {
 				while (!connected) {
 					try {
 						connect();

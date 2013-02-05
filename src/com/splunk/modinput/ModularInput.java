@@ -3,6 +3,10 @@ package com.splunk.modinput;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -10,9 +14,13 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.log4j.Logger;
 
+import com.splunk.Service;
+
 public abstract class ModularInput {
 
 	protected static Logger logger = Logger.getLogger(ModularInput.class);
+
+	protected static Map<String, Boolean> inputStates = new HashMap<String, Boolean>();
 
 	protected boolean connectedToSplunk = false;
 
@@ -62,7 +70,7 @@ public abstract class ModularInput {
 	}
 
 	protected static Validation getValidation(String xml) {
-		
+
 		return (Validation) unmarshallXMLToObject(Validation.class, xml);
 	}
 
@@ -79,8 +87,6 @@ public abstract class ModularInput {
 
 	}
 
-	
-	
 	protected void init(String[] args) {
 
 		try {
@@ -89,13 +95,15 @@ public abstract class ModularInput {
 					doScheme();
 				} else {
 					Input input = getInput(args[0]);
-					
+
 					new SplunkConnectionPoller(input).start();
-					doRun(input,false);
+					runStateCheckerThread(input);
+					doRun(input, false);
+
 				}
 			} else if (args.length == 2) {
 				if (args[0].equals("--validate-arguments")) {
-					
+
 					Validation val = getValidation(args[1]);
 					doValidate(val);
 				}
@@ -110,6 +118,96 @@ public abstract class ModularInput {
 
 	}
 
+	// polls splunkd via REST API to check whether input is enabled/disabled
+	private void runStateCheckerThread(Input input) {
+
+		//init the state map based on the passed in values from Splunk
+		List<Stanza> stanzas = input.getStanzas();
+		for (Stanza stanza : stanzas) {
+			List<Param> params = stanza.getParams();
+			for (Param param : params) {
+				if (param.getName().equals("disabled")) {
+					String val = param.getValue();
+					setDisabled(
+							stanza.getName(),
+							val.equals("0") || val.equalsIgnoreCase("false") ? false
+									: true);
+				}
+			}
+		}
+		//get params required for REST call to splunkd
+		String host = input.getServer_host();
+		String uri = input.getServer_uri();
+		int port = 8089;
+		String token = input.getSession_key();
+		try {
+			int portOffset = uri.indexOf(":", 8);
+			port = Integer.parseInt(uri.substring(portOffset + 1));
+		} catch (Exception e) {
+
+		}
+		Service service = new Service(host, port);
+		service.setToken("Splunk " +token);
+
+		StateCheckerThread checker = new StateCheckerThread(service);
+		checker.start();
+
+	}
+
+	class StateCheckerThread extends Thread {
+
+		Service service;
+
+		StateCheckerThread(Service service) {
+			this.service = service;
+		}
+
+		public void run() {
+
+			int enabledCount = 1;
+			while (enabledCount > 0) {
+				enabledCount = 0;
+				Set<String> stanzas = inputStates.keySet();
+				for (String stanza : stanzas) {
+					try {
+						//REST call to get state of input
+						com.splunk.Input input = service.getInputs().get(
+								stanza.substring(6));
+						boolean isDisabled = input.isDisabled();
+						//update state map
+						setDisabled(stanza, isDisabled);
+						enabledCount += isDisabled ? 0 : 1;
+					} catch (Exception e) {
+						logger.error(e.getMessage());
+					}
+				}
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+
+				}
+			}
+			logger.error("It has been determined via the REST API that all JMS inputs have been disabled");
+			System.exit(2);
+		}
+
+	}
+
+	protected synchronized static boolean isDisabled(String stanza) {
+
+		if (!inputStates.containsKey(stanza))
+			return true;
+		return inputStates.get(stanza);
+
+	}
+
+	protected synchronized static void setDisabled(String stanza,
+			boolean isDisabled) {
+
+		inputStates.put(stanza, isDisabled);
+
+	}
+
 	class SplunkConnectionPoller extends Thread {
 
 		String splunkHost;
@@ -121,7 +219,7 @@ public abstract class ModularInput {
 			String uri = input.getServer_uri();
 			try {
 				int portOffset = uri.indexOf(":", 8);
-				port = Integer.parseInt(uri.substring(portOffset + 1));
+				this.port = Integer.parseInt(uri.substring(portOffset + 1));
 			} catch (Exception e) {
 
 			}
@@ -166,7 +264,8 @@ public abstract class ModularInput {
 	}
 
 	// extending classes must implement these
-	protected abstract void doRun(Input input,boolean validationConnectionMode) throws Exception;
+	protected abstract void doRun(Input input, boolean validationConnectionMode)
+			throws Exception;
 
 	protected abstract void doValidate(Validation val);
 
