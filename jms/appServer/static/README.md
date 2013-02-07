@@ -1,4 +1,4 @@
-## Splunk JMS Modular Input v1.1
+## Splunk JMS Modular Input v1.1.1
 
 ## Overview
 
@@ -20,7 +20,7 @@ You can then supply messaging provider specific jar files at runtime.
 
 * Splunk 5.0+
 * Java Runtime 1.6+
-* Supported on Windows, Linux, MacOS
+* Supported on Windows, Linux, MacOS, Solaris, FreeBSD, HP-UX, AIX
 
 ## Setup
 
@@ -53,6 +53,7 @@ They will be automatically picked up upon restart
 
 
 ## Troubleshooting
+
 * JAVA_HOME environment variable is set or "java" is on the PATH for the user's environment you are running Splunk as
 * You are using Splunk 5+
 * You are using a 1.6+ Java Runtime

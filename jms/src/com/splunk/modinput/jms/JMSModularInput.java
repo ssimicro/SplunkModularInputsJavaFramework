@@ -234,7 +234,16 @@ public class JMSModularInput extends ModularInput {
 				String userJNDIPropertiesString, String clientID,
 				String destinationUser, String destinationPass) {
 
-			this.destination = destination;
+			
+			int instanceTokenIndex = destination.indexOf(':');
+			if(instanceTokenIndex > -1) {
+			  this.destination = destination.substring(instanceTokenIndex+1);
+			  
+		    }
+			else{
+				this.destination = destination;
+			}
+			
 			this.jndiURL = jndiURL;
 			this.jndiContextFactory = jndiContextFactory;
 			this.jndiUser = jndiUser;
@@ -633,7 +642,7 @@ public class JMSModularInput extends ModularInput {
 		Arg arg = new Arg();
 		arg.setName("name");
 		arg.setTitle("JMS queue or topic");
-		arg.setDescription("Enter the name precisely in this format : topic/mytopic or queue/myqueue");
+		arg.setDescription("Enter the name precisely in this format : topic/mytopic or queue/myqueue. If you have the same destination name on multiple servers, you can also prefix the destination name with the messaging server name using a ':' seperator ie: queue/server1:somequeue , queue/server2:somequeue");
 
 		endpoint.addArg(arg);
 

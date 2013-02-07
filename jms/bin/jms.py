@@ -65,7 +65,7 @@ def build_windows_classpath():
     
 def run_java():
     global process,SPLUNK_HOME,MODINPUT_HOME
-    if sys.platform.startswith('linux') or sys.platform == 'darwin':
+    if sys.platform.startswith('linux') or sys.platform.startswith('sunos') or sys.platform.startswith('aix') or sys.platform.startswith('hp-ux') or sys.platform.startswith('freebsd')  or sys.platform == 'darwin':
         
       if (not os.environ.has_key('JAVA_HOME')):
          JAVA_EXECUTABLE = 'java'
