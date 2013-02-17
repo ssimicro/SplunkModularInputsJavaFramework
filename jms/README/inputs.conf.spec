@@ -10,6 +10,7 @@ durable = <value>
 index_message_properties = <value>
 index_message_header = <value>
 message_selector = <value>
+strip_newlines = <value>
 init_mode = <value>
 local_init_mode_resource_factory_impl = <value>
 local_init_mode_resource_factory_params = <value>

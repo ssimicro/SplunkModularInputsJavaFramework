@@ -98,7 +98,7 @@ public abstract class ModularInput {
 
 					new SplunkConnectionPoller(input).start();
 					runStateCheckerThread(input);
-					doRun(input, false);
+					doRun(input);
 
 				}
 			} else if (args.length == 2) {
@@ -170,9 +170,10 @@ public abstract class ModularInput {
 				Set<String> stanzas = inputStates.keySet();
 				for (String stanza : stanzas) {
 					try {
+						int index = stanza.indexOf("://");
 						//REST call to get state of input
 						com.splunk.Input input = service.getInputs().get(
-								stanza.substring(6));
+								stanza.substring(index+3));
 						boolean isDisabled = input.isDisabled();
 						//update state map
 						setDisabled(stanza, isDisabled);
@@ -187,7 +188,7 @@ public abstract class ModularInput {
 
 				}
 			}
-			logger.error("It has been determined via the REST API that all JMS inputs have been disabled");
+			logger.error("It has been determined via the REST API that all inputs have been disabled");
 			System.exit(2);
 		}
 
@@ -264,7 +265,7 @@ public abstract class ModularInput {
 	}
 
 	// extending classes must implement these
-	protected abstract void doRun(Input input, boolean validationConnectionMode)
+	protected abstract void doRun(Input input)
 			throws Exception;
 
 	protected abstract void doValidate(Validation val);

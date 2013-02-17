@@ -68,6 +68,74 @@
     </target>
 
     <target
+        name="build_helloworld_input"
+        description="build Hello World input add on" >
+
+        <antcall target="compile_addon" >
+
+            <param
+                name="addon"
+                value="${helloworld_dir}" />
+        </antcall>
+
+        <loadproperties srcFile="${helloworld_dir}/default/app.conf" />
+
+        <copy todir="${temp_build}/metadata" >
+
+            <fileset dir="${helloworld_dir}/metadata" />
+        </copy>
+
+        <copy todir="${temp_build}/bin" >
+
+            <fileset dir="${helloworld_dir}/bin" />
+        </copy>
+
+        <copy todir="${temp_build}/appserver" >
+
+            <fileset dir="${helloworld_dir}/appserver" />
+        </copy>
+
+        <copy todir="${temp_build}/default" >
+
+            <fileset dir="${helloworld_dir}/default" />
+        </copy>
+        
+        <copy todir="${temp_build}/README" >
+
+            <fileset dir="${helloworld_dir}/README" />
+        </copy>
+
+        <copy todir="${temp_build}/bin/${lib}" >
+
+            <fileset dir="${lib}" />
+
+            <fileset dir="${helloworld_dir}/bin/${lib}" />
+        </copy>
+
+        <jar jarfile="${temp_build}/bin/${lib}/${helloworld_jar}" >
+
+            <fileset
+                dir="${temp_build}/${classes}"
+                includes="com/splunk/modinput/**" />
+
+            <fileset file="${src}/log4j.xml" />
+        </jar>
+
+        <delete dir="${temp_build}/${classes}" />
+
+        <tar
+            compression="${compressionType}"
+            destfile="${release}/${id}-${version}${suffix}" >
+
+            <zipfileset
+                dir="${temp_build}"
+                prefix="${id}" />
+        </tar>
+
+        <delete dir="${temp_build}" />
+    </target>
+    
+    <target
         name="build_binary_input"
         description="build Binary modular input add on" >
 

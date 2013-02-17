@@ -57,9 +57,11 @@ public class JMSModularInput extends ModularInput {
 		instance.init(args);
 
 	}
+	
+	boolean validateConnectionMode = false;
 
 	@Override
-	protected void doRun(Input input, boolean validationConnectionMode)
+	protected void doRun(Input input)
 			throws Exception {
 
 		if (input != null) {
@@ -72,7 +74,7 @@ public class JMSModularInput extends ModularInput {
 
 					startMessageReceiverThread(name, name.substring(12),
 							stanza.getParams(), DestinationType.QUEUE,
-							validationConnectionMode);
+							validateConnectionMode);
 
 				}
 
@@ -80,7 +82,7 @@ public class JMSModularInput extends ModularInput {
 
 					startMessageReceiverThread(name, name.substring(12),
 							stanza.getParams(), DestinationType.TOPIC,
-							validationConnectionMode);
+							validateConnectionMode);
 				} else {
 					logger.error("Invalid stanza name : " + name);
 					System.exit(2);
@@ -106,6 +108,7 @@ public class JMSModularInput extends ModularInput {
 		String destinationPass = "";
 		String jmsConnectionFactory = "";
 		boolean durable = true;
+		boolean stripNewlines = false;
 		boolean indexHeader = false;
 		boolean indexProperties = false;
 		String selector = "";
@@ -162,7 +165,17 @@ public class JMSModularInput extends ModularInput {
 				} catch (Exception e) {
 					logger.error("Can't determine durability mode");
 				}
-			} else if (param.getName().equals("index_message_properties")) {
+			} 
+			else if (param.getName().equals("strip_newlines")) {
+				try {
+					stripNewlines = Boolean
+							.parseBoolean(param.getValue().equals("1") ? "true"
+									: "false");
+				} catch (Exception e) {
+					logger.error("Can't determine strip newlines mode");
+				}
+			} 
+			else if (param.getName().equals("index_message_properties")) {
 				try {
 					indexProperties = Boolean.parseBoolean(param.getValue()
 							.equals("1") ? "true" : "false");
@@ -185,7 +198,7 @@ public class JMSModularInput extends ModularInput {
 					jmsConnectionFactory, durable, type, indexProperties,
 					indexHeader, selector, initMode, localResourceFactoryImpl,
 					localResourceFactoryParams, userJNDIProperties, clientID,
-					destinationUser, destinationPass);
+					destinationUser, destinationPass,stripNewlines);
 			if (validationConnectionMode)
 				mr.testConnectOnly();
 			else
@@ -208,6 +221,7 @@ public class JMSModularInput extends ModularInput {
 		InitMode initMode;
 		boolean indexHeader;
 		boolean indexProperties;
+		boolean stripNewlines;
 		String selector;
 		String clientID;
 		String stanzaName;
@@ -232,7 +246,7 @@ public class JMSModularInput extends ModularInput {
 				String localResourceFactoryImpl,
 				String localResourceFactoryParams,
 				String userJNDIPropertiesString, String clientID,
-				String destinationUser, String destinationPass) {
+				String destinationUser, String destinationPass,boolean stripNewlines) {
 
 			
 			int instanceTokenIndex = destination.indexOf(':');
@@ -256,6 +270,7 @@ public class JMSModularInput extends ModularInput {
 			this.type = type;
 			this.indexHeader = indexHeader;
 			this.indexProperties = indexProperties;
+			this.stripNewlines = stripNewlines;
 			this.selector = selector;
 			this.initMode = initMode;
 			this.stanzaName = stanzaName;
@@ -527,7 +542,7 @@ public class JMSModularInput extends ModularInput {
 
 			}
 
-			event.addPair("msg_body", stripNewlines(body));
+			event.addPair("msg_body", stripNewlines ? stripNewlines(body):body);
 
 			return event.toString();
 
@@ -599,7 +614,8 @@ public class JMSModularInput extends ModularInput {
 			}
 
 			input.setStanzas(stanzas);
-			doRun(input, true);
+			this.validateConnectionMode = true;
+			doRun(input);
 
 		} catch (Throwable t) {
 			throw new Exception(
@@ -733,6 +749,14 @@ public class JMSModularInput extends ModularInput {
 		arg.setName("index_message_header");
 		arg.setTitle("Index Message Header Fields");
 		arg.setDescription("Whether or not to index the message header fields");
+		arg.setRequired_on_create(false);
+		arg.setData_type(DataType.BOOLEAN);
+		endpoint.addArg(arg);
+		
+		arg = new Arg();
+		arg.setName("strip_newlines");
+		arg.setTitle("Strip Newlines");
+		arg.setDescription("Whether or not to strip newline characters from the message body");
 		arg.setRequired_on_create(false);
 		arg.setData_type(DataType.BOOLEAN);
 		endpoint.addArg(arg);

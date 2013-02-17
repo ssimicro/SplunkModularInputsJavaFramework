@@ -117,7 +117,13 @@
           <key name="exampleText">Message body is always indexed.Optionally you can index the message header fields.False by default.</key>
           
         </element>
-        
+        <element name="strip_newlines" type="checkbox" label="Strip newline characters from message body ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Message body is always indexed.Optionally you can index the message header fields.False by default.</key>
+          <key name="processValueAdd">1</key>
+        </element>
         
         
       </elements>
