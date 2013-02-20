@@ -164,6 +164,14 @@ public abstract class ModularInput {
 
 		public void run() {
 
+			//an initial standoff period of 1 minute to prevent potential race conditions
+			//with the SplunkD state
+			try {
+				Thread.sleep(60000);
+			} catch (InterruptedException e1) {
+				
+			}
+			
 			int enabledCount = 1;
 			while (enabledCount > 0) {
 				enabledCount = 0;

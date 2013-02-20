@@ -16,3 +16,6 @@ local_init_mode_resource_factory_impl = <value>
 local_init_mode_resource_factory_params = <value>
 client_id = <value>
 user_jndi_properties = <value>
+browse_queue_only = <value>
+browse_frequency = <value>
+browse_mode = <value>

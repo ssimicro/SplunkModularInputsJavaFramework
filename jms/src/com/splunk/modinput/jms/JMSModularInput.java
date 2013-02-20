@@ -12,10 +12,13 @@ import javax.jms.BytesMessage;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.ObjectMessage;
+import javax.jms.Queue;
+import javax.jms.QueueBrowser;
 import javax.jms.Session;
 import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
@@ -51,18 +54,22 @@ public class JMSModularInput extends ModularInput {
 		JNDI, LOCAL;
 	}
 
+	public enum BrowseMode {
+
+		STATS, ALL;
+	}
+
 	public static void main(String[] args) {
 
 		JMSModularInput instance = new JMSModularInput();
 		instance.init(args);
 
 	}
-	
+
 	boolean validateConnectionMode = false;
 
 	@Override
-	protected void doRun(Input input)
-			throws Exception {
+	protected void doRun(Input input) throws Exception {
 
 		if (input != null) {
 
@@ -111,8 +118,11 @@ public class JMSModularInput extends ModularInput {
 		boolean stripNewlines = false;
 		boolean indexHeader = false;
 		boolean indexProperties = false;
+		boolean browseQueueOnly = false;
+		int browseFrequency = -1;
 		String selector = "";
 		InitMode initMode = InitMode.JNDI;
+		BrowseMode browseMode = BrowseMode.STATS;
 		String localResourceFactoryImpl = "";
 		String localResourceFactoryParams = "";
 		String clientID = "splunkjms";
@@ -157,6 +167,13 @@ public class JMSModularInput extends ModularInput {
 				} else if (val.equalsIgnoreCase("local")) {
 					initMode = InitMode.LOCAL;
 				}
+			} else if (param.getName().equals("browse_mode")) {
+				String val = param.getValue();
+				if (val.equalsIgnoreCase("stats")) {
+					browseMode = BrowseMode.STATS;
+				} else if (val.equalsIgnoreCase("all")) {
+					browseMode = BrowseMode.ALL;
+				}
 			} else if (param.getName().equals("durable")) {
 				try {
 					durable = Boolean
@@ -165,17 +182,14 @@ public class JMSModularInput extends ModularInput {
 				} catch (Exception e) {
 					logger.error("Can't determine durability mode");
 				}
-			} 
-			else if (param.getName().equals("strip_newlines")) {
+			} else if (param.getName().equals("strip_newlines")) {
 				try {
-					stripNewlines = Boolean
-							.parseBoolean(param.getValue().equals("1") ? "true"
-									: "false");
+					stripNewlines = Boolean.parseBoolean(param.getValue()
+							.equals("1") ? "true" : "false");
 				} catch (Exception e) {
 					logger.error("Can't determine strip newlines mode");
 				}
-			} 
-			else if (param.getName().equals("index_message_properties")) {
+			} else if (param.getName().equals("index_message_properties")) {
 				try {
 					indexProperties = Boolean.parseBoolean(param.getValue()
 							.equals("1") ? "true" : "false");
@@ -189,7 +203,21 @@ public class JMSModularInput extends ModularInput {
 				} catch (Exception e) {
 					logger.error("Can't determine index message header mode");
 				}
+			} else if (param.getName().equals("browse_queue_only")) {
+				try {
+					browseQueueOnly = Boolean.parseBoolean(param.getValue()
+							.equals("1") ? "true" : "false");
+				} catch (Exception e) {
+					logger.error("Can't determine browse queue only mode");
+				}
+			} else if (param.getName().equals("browse_frequency")) {
+				try {
+					browseFrequency = Integer.parseInt(param.getValue());
+				} catch (Exception e) {
+					logger.error("Can't determine browse frequency");
+				}
 			}
+
 		}
 
 		if (!isDisabled(stanzaName)) {
@@ -198,7 +226,8 @@ public class JMSModularInput extends ModularInput {
 					jmsConnectionFactory, durable, type, indexProperties,
 					indexHeader, selector, initMode, localResourceFactoryImpl,
 					localResourceFactoryParams, userJNDIProperties, clientID,
-					destinationUser, destinationPass,stripNewlines);
+					destinationUser, destinationPass, stripNewlines,
+					browseQueueOnly, browseFrequency, browseMode);
 			if (validationConnectionMode)
 				mr.testConnectOnly();
 			else
@@ -219,9 +248,12 @@ public class JMSModularInput extends ModularInput {
 		boolean durable;;
 		DestinationType type;
 		InitMode initMode;
+		BrowseMode browseMode;
 		boolean indexHeader;
 		boolean indexProperties;
 		boolean stripNewlines;
+		boolean browseQueueOnly;
+		int browseFrequency;
 		String selector;
 		String clientID;
 		String stanzaName;
@@ -232,6 +264,7 @@ public class JMSModularInput extends ModularInput {
 		Context ctx;
 		Destination dest;
 		MessageConsumer messageConsumer;
+		QueueBrowser queueBrowser;
 		LocalJMSResourceFactory localFactory;
 
 		Map<String, String> userJNDIProperties = null;
@@ -246,18 +279,19 @@ public class JMSModularInput extends ModularInput {
 				String localResourceFactoryImpl,
 				String localResourceFactoryParams,
 				String userJNDIPropertiesString, String clientID,
-				String destinationUser, String destinationPass,boolean stripNewlines) {
+				String destinationUser, String destinationPass,
+				boolean stripNewlines, boolean browseQueueOnly,
+				int browseFrequency, BrowseMode browseMode) {
 
-			
 			int instanceTokenIndex = destination.indexOf(':');
-			if(instanceTokenIndex > -1) {
-			  this.destination = destination.substring(instanceTokenIndex+1);
-			  
-		    }
-			else{
+			if (instanceTokenIndex > -1) {
+				this.destination = destination
+						.substring(instanceTokenIndex + 1);
+
+			} else {
 				this.destination = destination;
 			}
-			
+
 			this.jndiURL = jndiURL;
 			this.jndiContextFactory = jndiContextFactory;
 			this.jndiUser = jndiUser;
@@ -274,6 +308,9 @@ public class JMSModularInput extends ModularInput {
 			this.selector = selector;
 			this.initMode = initMode;
 			this.stanzaName = stanzaName;
+			this.browseQueueOnly = browseQueueOnly;
+			this.browseFrequency = browseFrequency;
+			this.browseMode = browseMode;
 
 			if (userJNDIPropertiesString != null
 					&& userJNDIPropertiesString.length() > 0) {
@@ -356,6 +393,7 @@ public class JMSModularInput extends ModularInput {
 						destinationPass);
 			else
 				connection = connFactory.createConnection();
+
 			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
 			if (durable && type.equals(DestinationType.TOPIC)) {
@@ -369,7 +407,11 @@ public class JMSModularInput extends ModularInput {
 
 			} else {
 
-				messageConsumer = session.createConsumer(dest, selector);
+				if (browseQueueOnly)
+					queueBrowser = session
+							.createBrowser((Queue) dest, selector);
+				else
+					messageConsumer = session.createConsumer(dest, selector);
 
 			}
 
@@ -420,20 +462,22 @@ public class JMSModularInput extends ModularInput {
 
 				try {
 
-					// block and wait for message
-					Message message = messageConsumer.receive();
-					String text = getSplunkFormattedMessage(message);
-					if (text != null && text.length() > 0) {
-						Stream stream = new Stream();
+					if (browseQueueOnly) {
 
-						StreamEvent event = new StreamEvent();
-						event.setData(text);
-						event.setStanza(stanzaName);
-						ArrayList<StreamEvent> list = new ArrayList<StreamEvent>();
-						list.add(event);
-						stream.setEvents(list);
-						marshallObjectToXML(stream);
+						if (browseMode.equals(BrowseMode.STATS))
+							browseQueueStats(queueBrowser);
+						else if (browseMode.equals(BrowseMode.ALL))
+							browseQueue(queueBrowser);
+
+						if (browseFrequency > -1)
+							Thread.sleep(browseFrequency * 1000);
+					} else {
+						// block and wait for message
+						Message message = messageConsumer.receive();
+						String text = getSplunkFormattedMessage(message);
+						streamEvent(text);
 					}
+
 				} catch (Exception e) {
 					logger.error("Error running message receiver : "
 							+ e.getMessage());
@@ -443,6 +487,92 @@ public class JMSModularInput extends ModularInput {
 
 				}
 			}
+		}
+
+		private void streamMultipleEvents(List<String> events) {
+
+			Stream stream = new Stream();
+			ArrayList<StreamEvent> list = new ArrayList<StreamEvent>();
+
+			for (String textEvent : events) {
+				StreamEvent event = new StreamEvent();
+				event.setData(textEvent);
+				event.setStanza(stanzaName);
+				list.add(event);
+			}
+			stream.setEvents(list);
+			marshallObjectToXML(stream);
+		}
+
+		private void streamEvent(String textEvent) {
+			Stream stream = new Stream();
+
+			StreamEvent event = new StreamEvent();
+			event.setData(textEvent);
+			event.setStanza(stanzaName);
+			ArrayList<StreamEvent> list = new ArrayList<StreamEvent>();
+			list.add(event);
+			stream.setEvents(list);
+			marshallObjectToXML(stream);
+		}
+
+		private void browseQueueStats(QueueBrowser queueBrowser) {
+
+			SplunkLogEvent event = new SplunkLogEvent("queue_browse", "", true,
+					true);
+
+			try {
+				Enumeration messages = queueBrowser.getEnumeration();
+				event.addPair("queue_name", queueBrowser.getQueue()
+						.getQueueName());
+
+				long length = 0;
+				long earliest = Long.MAX_VALUE;
+				long latest = Long.MIN_VALUE;
+				StringBuffer messagesField = new StringBuffer();
+				while (messages.hasMoreElements()) {
+					length++;
+					Message msg = (Message) messages.nextElement();
+					long timeStamp = msg.getJMSTimestamp();
+					messagesField.append(msg.getJMSMessageID() + ",");
+					if (timeStamp <= earliest)
+						earliest = timeStamp;
+					if (timeStamp >= latest)
+						latest = timeStamp;
+
+				}
+				if(length == 0)
+					return;
+				event.addPair("messages", messagesField.toString());
+				event.addPair("queue_length", length);
+				event.addPair("earliest_msg", earliest);
+				event.addPair("latest_msg", latest);
+
+			} catch (Exception e) {
+			}
+
+			streamEvent(event.toString());
+
+		}
+
+		private void browseQueue(QueueBrowser queueBrowser) {
+
+			List<String> messageEvents = new ArrayList<String>();
+			try {
+				Enumeration messages = queueBrowser.getEnumeration();
+
+				while (messages.hasMoreElements()) {
+					Message message = (Message) messages.nextElement();
+					String text = getSplunkFormattedMessage(message);
+					messageEvents.add(text);
+				}
+				if(messageEvents.isEmpty())
+					return;
+
+			} catch (Exception e) {
+			}
+			streamMultipleEvents(messageEvents);
+
 		}
 
 		private String getSplunkFormattedMessage(Message message)
@@ -542,7 +672,8 @@ public class JMSModularInput extends ModularInput {
 
 			}
 
-			event.addPair("msg_body", stripNewlines ? stripNewlines(body):body);
+			event.addPair("msg_body", stripNewlines ? stripNewlines(body)
+					: body);
 
 			return event.toString();
 
@@ -752,7 +883,7 @@ public class JMSModularInput extends ModularInput {
 		arg.setRequired_on_create(false);
 		arg.setData_type(DataType.BOOLEAN);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("strip_newlines");
 		arg.setTitle("Strip Newlines");
@@ -780,6 +911,27 @@ public class JMSModularInput extends ModularInput {
 		arg.setTitle("User defined JNDI properties");
 		arg.setRequired_on_create(false);
 		arg.setDescription("User specific JNDI properties string in format 'key1=value1,key2=value2,key3=value3'");
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("browse_queue_only");
+		arg.setTitle("Only browse queues");
+		arg.setRequired_on_create(false);
+		arg.setDescription("If connecting to a queue , only browse the queue and don't consume messages.");
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("browse_mode");
+		arg.setTitle("Browse Mode");
+		arg.setRequired_on_create(false);
+		arg.setDescription("Choose how you want to browse the queue, just output stats or dump all the messages.");
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("browse_frequency");
+		arg.setTitle("Browse frequency(secs)");
+		arg.setRequired_on_create(false);
+		arg.setDescription("If in queue browsing mode, specify the frequency at which to poll.Enter '-1' for constant browsing.");
 		endpoint.addArg(arg);
 
 		scheme.setEndpoint(endpoint);

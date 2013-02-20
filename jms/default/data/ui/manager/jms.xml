@@ -124,7 +124,29 @@
           <key name="exampleText">Message body is always indexed.Optionally you can index the message header fields.False by default.</key>
           <key name="processValueAdd">1</key>
         </element>
-        
+        <element name="browse_queue_only" type="checkbox" label="Only browse queues ? ">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">If connecting to a queue , only browse the queue and don't consume messages.</key>
+          
+        </element>
+        <element name="browse_mode" type="select" label="Browse Mode">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Choose how you want to browse the queue, just output stats or dump all the messages.</key>
+          <options>
+            <opt value="stats" label="Stats only"/>
+            <opt value="all" label="Dump all messages"/>          
+          </options>
+        </element>
+        <element name="browse_frequency" type="textfield" label="Browse frequency(secs)">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">If in queue browsing mode, specify the frequency at which to poll.Enter '-1' for constant browsing.</key>
+        </element>
         
       </elements>
     </element>
