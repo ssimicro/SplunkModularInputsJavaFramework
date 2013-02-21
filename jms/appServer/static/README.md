@@ -1,4 +1,4 @@
-## Splunk JMS Modular Input v1.1.1
+## Splunk JMS Modular Input v1.1.4
 
 ## Overview
 
