@@ -125,6 +125,7 @@ public abstract class ModularInput {
 		List<Stanza> stanzas = input.getStanzas();
 		for (Stanza stanza : stanzas) {
 			List<Param> params = stanza.getParams();
+			setDisabled(stanza.getName(),false);//default setting
 			for (Param param : params) {
 				if (param.getName().equals("disabled")) {
 					String val = param.getValue();
@@ -132,6 +133,7 @@ public abstract class ModularInput {
 							stanza.getName(),
 							val.equals("0") || val.equalsIgnoreCase("false") ? false
 									: true);
+					
 				}
 			}
 		}
