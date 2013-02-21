@@ -36,7 +36,7 @@ public abstract class ModularInput {
 			String xml = sw.toString();
 			System.out.println(xml.trim());
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error("Error writing XML : " + e.getMessage());
 		}
 	}
 
@@ -50,7 +50,7 @@ public abstract class ModularInput {
 			return obj;
 
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error("Error parsing XML : " + e.getMessage());
 		}
 		return null;
 	}
@@ -81,7 +81,7 @@ public abstract class ModularInput {
 			sendScheme(scheme);
 			System.exit(0);
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error("Error getting scheme : " + e.getMessage());
 			System.exit(2);
 		}
 
@@ -112,7 +112,7 @@ public abstract class ModularInput {
 				System.exit(2);
 			}
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error("Error executing modular input : " + e.getMessage());
 			System.exit(2);
 		}
 
@@ -121,7 +121,7 @@ public abstract class ModularInput {
 	// polls splunkd via REST API to check whether input is enabled/disabled
 	private void runStateCheckerThread(Input input) {
 
-		//init the state map based on the passed in values from Splunk
+		// init the state map based on the passed in values from Splunk
 		List<Stanza> stanzas = input.getStanzas();
 		for (Stanza stanza : stanzas) {
 			List<Param> params = stanza.getParams();
@@ -135,7 +135,7 @@ public abstract class ModularInput {
 				}
 			}
 		}
-		//get params required for REST call to splunkd
+		// get params required for REST call to splunkd
 		String host = input.getServer_host();
 		String uri = input.getServer_uri();
 		int port = 8089;
@@ -147,7 +147,7 @@ public abstract class ModularInput {
 
 		}
 		Service service = new Service(host, port);
-		service.setToken("Splunk " +token);
+		service.setToken("Splunk " + token);
 
 		StateCheckerThread checker = new StateCheckerThread(service);
 		checker.start();
@@ -164,14 +164,14 @@ public abstract class ModularInput {
 
 		public void run() {
 
-			//an initial standoff period of 1 minute to prevent potential race conditions
-			//with the SplunkD state
+			// an initial standoff period of 30 seconds to prevent potential
+			// race conditions
+			// with the SplunkD state
 			try {
-				Thread.sleep(60000);
+				Thread.sleep(30000);
 			} catch (InterruptedException e1) {
-				
 			}
-			
+
 			int enabledCount = 1;
 			while (enabledCount > 0) {
 				enabledCount = 0;
@@ -179,22 +179,25 @@ public abstract class ModularInput {
 				for (String stanza : stanzas) {
 					try {
 						int index = stanza.indexOf("://");
-						//REST call to get state of input
+						// REST call to get state of input
 						com.splunk.Input input = service.getInputs().get(
-								stanza.substring(index+3));
+								stanza.substring(index + 3));
 						boolean isDisabled = input.isDisabled();
-						//update state map
+						// update state map
 						setDisabled(stanza, isDisabled);
 						enabledCount += isDisabled ? 0 : 1;
 					} catch (Exception e) {
-						logger.error(e.getMessage());
+						logger.error("Can't connect to Splunk REST API, either SplunkD has exited ,or if not,check that your DNS configuration is resolving your system's hostname ("
+								+ service.getHost()
+								+ ") correctly : "
+								+ e.getMessage());
 					}
 				}
 				try {
 					Thread.sleep(10000);
 				} catch (InterruptedException e) {
-
 				}
+
 			}
 			logger.error("It has been determined via the REST API that all inputs have been disabled");
 			System.exit(2);
@@ -230,7 +233,6 @@ public abstract class ModularInput {
 				int portOffset = uri.indexOf(":", 8);
 				this.port = Integer.parseInt(uri.substring(portOffset + 1));
 			} catch (Exception e) {
-
 			}
 
 		}
@@ -247,6 +249,10 @@ public abstract class ModularInput {
 						connectedToSplunk = true;
 						failCount = 0;
 					} catch (Exception e) {
+						logger.error("Probing socket connection to SplunkD failed.Either SplunkD has exited ,or if not,  check that your DNS configuration is resolving your system's hostname ("
+								+ this.splunkHost
+								+ ") correctly : "
+								+ e.getMessage());
 						failCount++;
 						connectedToSplunk = false;
 					} finally {
@@ -273,8 +279,7 @@ public abstract class ModularInput {
 	}
 
 	// extending classes must implement these
-	protected abstract void doRun(Input input)
-			throws Exception;
+	protected abstract void doRun(Input input) throws Exception;
 
 	protected abstract void doValidate(Validation val);
 

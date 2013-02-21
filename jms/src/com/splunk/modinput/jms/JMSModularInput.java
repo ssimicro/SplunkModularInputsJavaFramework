@@ -12,7 +12,6 @@ import javax.jms.BytesMessage;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
-import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
@@ -541,13 +540,12 @@ public class JMSModularInput extends ModularInput {
 						latest = timeStamp;
 
 				}
-				if(length == 0)
-					return;
-				event.addPair("messages", messagesField.toString());
 				event.addPair("queue_length", length);
-				event.addPair("earliest_msg", earliest);
-				event.addPair("latest_msg", latest);
-
+				if (length != 0) {
+					event.addPair("messages", messagesField.toString());
+					event.addPair("earliest_msg", earliest);
+					event.addPair("latest_msg", latest);
+				}
 			} catch (Exception e) {
 			}
 
@@ -566,7 +564,7 @@ public class JMSModularInput extends ModularInput {
 					String text = getSplunkFormattedMessage(message);
 					messageEvents.add(text);
 				}
-				if(messageEvents.isEmpty())
+				if (messageEvents.isEmpty())
 					return;
 
 			} catch (Exception e) {
