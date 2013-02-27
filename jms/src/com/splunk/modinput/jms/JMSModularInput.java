@@ -8,19 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import javax.jms.BytesMessage;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
-import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
-import javax.jms.ObjectMessage;
 import javax.jms.Queue;
 import javax.jms.QueueBrowser;
 import javax.jms.Session;
-import javax.jms.StreamMessage;
-import javax.jms.TextMessage;
 import javax.jms.Topic;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -58,6 +53,9 @@ public class JMSModularInput extends ModularInput {
 		STATS, ALL;
 	}
 
+	
+	private static final String DEFAULT_MESSAGE_HANDLER = "com.splunk.modinput.jms.DefaultMessageHandler";
+	
 	public static void main(String[] args) {
 
 		JMSModularInput instance = new JMSModularInput();
@@ -126,7 +124,9 @@ public class JMSModularInput extends ModularInput {
 		String localResourceFactoryParams = "";
 		String clientID = "splunkjms";
 		String userJNDIProperties = "";
-
+		String messageHandlerImpl = DEFAULT_MESSAGE_HANDLER;
+		String messageHandlerParams = "";
+		
 		for (Param param : params) {
 			String value = param.getValue();
 			if (value == null) {
@@ -157,7 +157,14 @@ public class JMSModularInput extends ModularInput {
 			} else if (param.getName().equals(
 					"local_init_mode_resource_factory_params")) {
 				localResourceFactoryParams = param.getValue();
-			} else if (param.getName().equals("client_id")) {
+			}else if (param.getName().equals(
+					"message_handler_impl")) {
+				messageHandlerImpl = param.getValue();
+			} else if (param.getName().equals(
+					"message_handler_params")) {
+				messageHandlerParams = param.getValue();
+			}  
+			else if (param.getName().equals("client_id")) {
 				clientID = param.getValue();
 			} else if (param.getName().equals("init_mode")) {
 				String val = param.getValue();
@@ -218,13 +225,16 @@ public class JMSModularInput extends ModularInput {
 			}
 
 		}
-
+		
+		
+		
 		if (!isDisabled(stanzaName)) {
 			MessageReceiver mr = new MessageReceiver(stanzaName, destination,
 					jndiURL, jndiContextFactory, jndiUser, jndiPass,
 					jmsConnectionFactory, durable, type, indexProperties,
 					indexHeader, selector, initMode, localResourceFactoryImpl,
-					localResourceFactoryParams, userJNDIProperties, clientID,
+					localResourceFactoryParams,messageHandlerImpl,
+					messageHandlerParams, userJNDIProperties, clientID,
 					destinationUser, destinationPass, stripNewlines,
 					browseQueueOnly, browseFrequency, browseMode);
 			if (validationConnectionMode)
@@ -234,28 +244,28 @@ public class JMSModularInput extends ModularInput {
 		}
 	}
 
-	class MessageReceiver extends Thread {
+	public class MessageReceiver extends Thread {
 
-		String jndiURL;
-		String jndiContextFactory;
-		String jndiUser;
-		String jndiPass;
-		String destinationUser;
-		String destinationPass;
-		String jmsConnectionFactory;
-		String destination;
-		boolean durable;;
-		DestinationType type;
-		InitMode initMode;
-		BrowseMode browseMode;
-		boolean indexHeader;
-		boolean indexProperties;
-		boolean stripNewlines;
-		boolean browseQueueOnly;
-		int browseFrequency;
-		String selector;
-		String clientID;
-		String stanzaName;
+		public String jndiURL;
+		public String jndiContextFactory;
+		public String jndiUser;
+		public String jndiPass;
+		public String destinationUser;
+		public String destinationPass;
+		public String jmsConnectionFactory;
+		public String destination;
+		public boolean durable;;
+		public DestinationType type;
+		public InitMode initMode;
+		public BrowseMode browseMode;
+		public boolean indexHeader;
+		public boolean indexProperties;
+		public boolean stripNewlines;
+		public boolean browseQueueOnly;
+		public int browseFrequency;
+		public String selector;
+		public String clientID;
+		public String stanzaName;
 
 		Connection connection = null;
 		Session session = null;
@@ -265,6 +275,8 @@ public class JMSModularInput extends ModularInput {
 		MessageConsumer messageConsumer;
 		QueueBrowser queueBrowser;
 		LocalJMSResourceFactory localFactory;
+		
+		AbstractMessageHandler messageHandler;
 
 		Map<String, String> userJNDIProperties = null;
 
@@ -277,10 +289,12 @@ public class JMSModularInput extends ModularInput {
 				boolean indexHeader, String selector, InitMode initMode,
 				String localResourceFactoryImpl,
 				String localResourceFactoryParams,
+				String messageHandlerImpl,
+				String messageHandlerParams,
 				String userJNDIPropertiesString, String clientID,
 				String destinationUser, String destinationPass,
 				boolean stripNewlines, boolean browseQueueOnly,
-				int browseFrequency, BrowseMode browseMode) {
+				int browseFrequency, BrowseMode browseMode) { 
 
 			int instanceTokenIndex = destination.indexOf(':');
 			if (instanceTokenIndex > -1) {
@@ -325,6 +339,15 @@ public class JMSModularInput extends ModularInput {
 
 				}
 			}
+			
+			try {
+				messageHandler = (AbstractMessageHandler)Class.forName(messageHandlerImpl).newInstance();
+				messageHandler.setParams(getParamMap(messageHandlerParams));
+			} catch (Exception e) {
+				logger.error("Can't instantiate message handler : "+messageHandlerImpl +" , "+e.getMessage());
+				System.exit(2);
+			} 
+			
 		}
 
 		private Map<String, String> getParamMap(
@@ -404,15 +427,10 @@ public class JMSModularInput extends ModularInput {
 					messageConsumer = session.createConsumer(dest, selector);
 				}
 
-			} else {
-
-				if (browseQueueOnly)
-					queueBrowser = session
-							.createBrowser((Queue) dest, selector);
-				else
-					messageConsumer = session.createConsumer(dest, selector);
-
-			}
+			} else if (browseQueueOnly && type.equals(DestinationType.QUEUE))
+				queueBrowser = session.createBrowser((Queue) dest, selector);
+			else
+				messageConsumer = session.createConsumer(dest, selector);
 
 			connection.start();
 			connected = true;
@@ -473,8 +491,7 @@ public class JMSModularInput extends ModularInput {
 					} else {
 						// block and wait for message
 						Message message = messageConsumer.receive();
-						String text = getSplunkFormattedMessage(message);
-						streamEvent(text);
+						streamMessageEvent(message);
 					}
 
 				} catch (Exception e) {
@@ -488,31 +505,13 @@ public class JMSModularInput extends ModularInput {
 			}
 		}
 
-		private void streamMultipleEvents(List<String> events) {
-
-			Stream stream = new Stream();
-			ArrayList<StreamEvent> list = new ArrayList<StreamEvent>();
-
-			for (String textEvent : events) {
-				StreamEvent event = new StreamEvent();
-				event.setData(textEvent);
-				event.setStanza(stanzaName);
-				list.add(event);
+		private void streamMessageEvent(Message message) {
+			try {
+				Stream stream = messageHandler.handleMessage(message,this);
+				marshallObjectToXML(stream);
+			} catch (Exception e) {
+				logger.error("Error handling message : "+e.getMessage());
 			}
-			stream.setEvents(list);
-			marshallObjectToXML(stream);
-		}
-
-		private void streamEvent(String textEvent) {
-			Stream stream = new Stream();
-
-			StreamEvent event = new StreamEvent();
-			event.setData(textEvent);
-			event.setStanza(stanzaName);
-			ArrayList<StreamEvent> list = new ArrayList<StreamEvent>();
-			list.add(event);
-			stream.setEvents(list);
-			marshallObjectToXML(stream);
 		}
 
 		private void browseQueueStats(QueueBrowser queueBrowser) {
@@ -549,148 +548,42 @@ public class JMSModularInput extends ModularInput {
 			} catch (Exception e) {
 			}
 
-			streamEvent(event.toString());
+			streamNonMessageEvent(event.toString());
 
+		}
+
+		private void streamNonMessageEvent(String text) {
+			
+			Stream stream = new Stream();
+			StreamEvent event = new StreamEvent();
+			event.setData(text);
+			event.setStanza(stanzaName);
+			ArrayList<StreamEvent> list = new ArrayList<StreamEvent>();
+			list.add(event);
+			stream.setEvents(list);
+			marshallObjectToXML(stream);
+			
 		}
 
 		private void browseQueue(QueueBrowser queueBrowser) {
 
-			List<String> messageEvents = new ArrayList<String>();
 			try {
 				Enumeration messages = queueBrowser.getEnumeration();
 
 				while (messages.hasMoreElements()) {
 					Message message = (Message) messages.nextElement();
-					String text = getSplunkFormattedMessage(message);
-					messageEvents.add(text);
+					streamMessageEvent(message);
+					
 				}
-				if (messageEvents.isEmpty())
-					return;
+				
 
 			} catch (Exception e) {
 			}
-			streamMultipleEvents(messageEvents);
+			
 
 		}
 
-		private String getSplunkFormattedMessage(Message message)
-				throws Exception {
-
-			SplunkLogEvent event = new SplunkLogEvent(type + "_msg_received",
-					message.getJMSMessageID(), true, true);
-
-			event.addPair("msg_dest", destination);
-
-			if (indexHeader) {
-				// JMS Message Header fields
-				event.addPair("msg_header_timestamp", message.getJMSTimestamp());
-				event.addPair("msg_header_correlation_id",
-						message.getJMSCorrelationID());
-				event.addPair("msg_header_delivery_mode",
-						message.getJMSDeliveryMode());
-				event.addPair("msg_header_expiration",
-						message.getJMSExpiration());
-				event.addPair("msg_header_priority", message.getJMSPriority());
-				event.addPair("msg_header_redelivered",
-						message.getJMSRedelivered());
-				event.addPair("msg_header_type", message.getJMSType());
-			}
-
-			if (indexProperties) {
-				// JMS Message Properties
-				Enumeration propertyNames = message.getPropertyNames();
-				while (propertyNames.hasMoreElements()) {
-					String name = (String) propertyNames.nextElement();
-					Object property = message.getObjectProperty(name);
-					event.addPair("msg_property_" + name, property);
-				}
-			}
-
-			// JMS Message Body
-
-			String body = "";
-
-			try {
-				if (message instanceof TextMessage) {
-					body = ((TextMessage) message).getText();
-				} else if (message instanceof BytesMessage) {
-					try {
-
-						int bufSize = 1024;
-						byte[] buffer = null;
-						int readBytes = 0;
-						byte[] messageBodyBytes = null;
-
-						while (true) {
-
-							buffer = new byte[bufSize];
-							readBytes = ((BytesMessage) message).readBytes(
-									buffer, bufSize);
-							if (readBytes == -1)
-								break;
-							if (messageBodyBytes == null) {
-								messageBodyBytes = new byte[readBytes];
-								System.arraycopy(buffer, 0, messageBodyBytes,
-										0, readBytes);
-							} else {
-								byte[] extended = new byte[messageBodyBytes.length
-										+ readBytes];
-								System.arraycopy(messageBodyBytes, 0, extended,
-										0, messageBodyBytes.length);
-								System.arraycopy(buffer, 0, extended,
-										messageBodyBytes.length, readBytes);
-								messageBodyBytes = extended;
-							}
-
-						}
-
-						body = new String(messageBodyBytes);
-					} catch (Exception e) {
-						body = "binary message body can't be read";
-					}
-
-				} else if (message instanceof StreamMessage) {
-					body = "binary stream message";
-				} else if (message instanceof ObjectMessage) {
-					body = ((ObjectMessage) message).getObject().toString();
-				} else if (message instanceof MapMessage) {
-					Enumeration names = ((MapMessage) message).getMapNames();
-					while (names.hasMoreElements()) {
-						String name = (String) names.nextElement();
-						Object value = ((MapMessage) message).getObject(name);
-						body += name + "=" + value;
-						if (names.hasMoreElements())
-							body += ",";
-					}
-					body = ((MapMessage) message).toString();
-				} else {
-					body = message.toString();
-				}
-			} catch (Exception e) {
-
-			}
-
-			event.addPair("msg_body", stripNewlines ? stripNewlines(body)
-					: body);
-
-			return event.toString();
-
-		}
-	}
-
-	public static String stripNewlines(String input) {
-
-		if (input == null) {
-			return "";
-		}
-		char[] chars = input.toCharArray();
-		for (int i = 0; i < chars.length; i++) {
-			if (Character.isWhitespace(chars[i])) {
-				chars[i] = ' ';
-			}
-		}
-
-		return new String(chars);
+		
 	}
 
 	@Override
@@ -873,6 +766,21 @@ public class JMSModularInput extends ModularInput {
 		arg.setDescription("Parameter string in format 'key1=value1,key2=value2,key3=value3'. This gets passed to the implementation class to process.");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
+		
+		arg = new Arg();
+		arg.setName("message_handler_impl");
+		arg.setTitle("Implementation class for a custom message handler");
+		arg.setDescription("An implementation of the com.splunk.modinput.jms.AbstractMessageHandler class.You would provide this if you required some custom handling/formatting of the messages you consume.Ensure that the necessary jars are in the $SPLUNK_HOME/etc/apps/jms_ta/bin/lib directory");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("message_handler_params");
+		arg.setTitle("Implementation parameter string for the custom message handler");
+		arg.setDescription("Parameter string in format 'key1=value1,key2=value2,key3=value3'. This gets passed to the implementation class to process.");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+		
 
 		arg = new Arg();
 		arg.setName("index_message_header");
