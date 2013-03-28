@@ -51,6 +51,10 @@ If you require specific JMS provider or JNDI Context implementation jars, then y
 
 They will be automatically picked up upon restart 
 
+##JVM Heap Size
+
+The default heap maximum is 64MB.
+If you require a larger heap, then you can alter this in $SPLUNK_HOME/etc/apps/jms_ta/bin/jms.py on line 95
 
 ## Troubleshooting
 
