@@ -34,8 +34,8 @@ public class DefaultMessageHandler extends AbstractMessageHandler {
 			event.setUnbroken("1");
 			event.setData(chunks.get(i));
 			event.setStanza(context.stanzaName);
-			//if multiple chunks and we are seeing the last chunk, set the "done" element
-			if (i > 0 && i == chunks.size() - 1)
+			//if we are seeing the last chunk, set the "done" element
+			if (i == chunks.size() - 1)
 				event.setDone(" ");
 			list.add(event);
 		}
