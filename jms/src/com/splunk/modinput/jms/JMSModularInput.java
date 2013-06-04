@@ -53,9 +53,8 @@ public class JMSModularInput extends ModularInput {
 		STATS, ALL;
 	}
 
-	
 	private static final String DEFAULT_MESSAGE_HANDLER = "com.splunk.modinput.jms.DefaultMessageHandler";
-	
+
 	public static void main(String[] args) {
 
 		JMSModularInput instance = new JMSModularInput();
@@ -126,7 +125,7 @@ public class JMSModularInput extends ModularInput {
 		String userJNDIProperties = "";
 		String messageHandlerImpl = DEFAULT_MESSAGE_HANDLER;
 		String messageHandlerParams = "";
-		
+
 		for (Param param : params) {
 			String value = param.getValue();
 			if (value == null) {
@@ -157,14 +156,11 @@ public class JMSModularInput extends ModularInput {
 			} else if (param.getName().equals(
 					"local_init_mode_resource_factory_params")) {
 				localResourceFactoryParams = param.getValue();
-			}else if (param.getName().equals(
-					"message_handler_impl")) {
+			} else if (param.getName().equals("message_handler_impl")) {
 				messageHandlerImpl = param.getValue();
-			} else if (param.getName().equals(
-					"message_handler_params")) {
+			} else if (param.getName().equals("message_handler_params")) {
 				messageHandlerParams = param.getValue();
-			}  
-			else if (param.getName().equals("client_id")) {
+			} else if (param.getName().equals("client_id")) {
 				clientID = param.getValue();
 			} else if (param.getName().equals("init_mode")) {
 				String val = param.getValue();
@@ -225,15 +221,13 @@ public class JMSModularInput extends ModularInput {
 			}
 
 		}
-		
-		
-		
+
 		if (!isDisabled(stanzaName)) {
 			MessageReceiver mr = new MessageReceiver(stanzaName, destination,
 					jndiURL, jndiContextFactory, jndiUser, jndiPass,
 					jmsConnectionFactory, durable, type, indexProperties,
 					indexHeader, selector, initMode, localResourceFactoryImpl,
-					localResourceFactoryParams,messageHandlerImpl,
+					localResourceFactoryParams, messageHandlerImpl,
 					messageHandlerParams, userJNDIProperties, clientID,
 					destinationUser, destinationPass, stripNewlines,
 					browseQueueOnly, browseFrequency, browseMode);
@@ -275,7 +269,7 @@ public class JMSModularInput extends ModularInput {
 		MessageConsumer messageConsumer;
 		QueueBrowser queueBrowser;
 		LocalJMSResourceFactory localFactory;
-		
+
 		AbstractMessageHandler messageHandler;
 
 		Map<String, String> userJNDIProperties = null;
@@ -288,13 +282,12 @@ public class JMSModularInput extends ModularInput {
 				DestinationType type, boolean indexProperties,
 				boolean indexHeader, String selector, InitMode initMode,
 				String localResourceFactoryImpl,
-				String localResourceFactoryParams,
-				String messageHandlerImpl,
-				String messageHandlerParams,
-				String userJNDIPropertiesString, String clientID,
-				String destinationUser, String destinationPass,
-				boolean stripNewlines, boolean browseQueueOnly,
-				int browseFrequency, BrowseMode browseMode) { 
+				String localResourceFactoryParams, String messageHandlerImpl,
+				String messageHandlerParams, String userJNDIPropertiesString,
+				String clientID, String destinationUser,
+				String destinationPass, boolean stripNewlines,
+				boolean browseQueueOnly, int browseFrequency,
+				BrowseMode browseMode) {
 
 			int instanceTokenIndex = destination.indexOf(':');
 			if (instanceTokenIndex > -1) {
@@ -336,18 +329,22 @@ public class JMSModularInput extends ModularInput {
 					localFactory
 							.setParams(getParamMap(localResourceFactoryParams));
 				} catch (Exception e) {
-
+					logger.error("Can't instantiate local resource factory : "
+							+ localResourceFactoryImpl + " , " + e.getMessage());
+					System.exit(2);
 				}
 			}
-			
+
 			try {
-				messageHandler = (AbstractMessageHandler)Class.forName(messageHandlerImpl).newInstance();
+				messageHandler = (AbstractMessageHandler) Class.forName(
+						messageHandlerImpl).newInstance();
 				messageHandler.setParams(getParamMap(messageHandlerParams));
 			} catch (Exception e) {
-				logger.error("Can't instantiate message handler : "+messageHandlerImpl +" , "+e.getMessage());
+				logger.error("Can't instantiate message handler : "
+						+ messageHandlerImpl + " , " + e.getMessage());
 				System.exit(2);
-			} 
-			
+			}
+
 		}
 
 		private Map<String, String> getParamMap(
@@ -424,6 +421,8 @@ public class JMSModularInput extends ModularInput {
 					messageConsumer = session.createDurableSubscriber(
 							(Topic) dest, clientID, selector, true);
 				} catch (Exception e) {
+					logger.error("Error creating durable subscriber for client id: "
+							+ clientID + " , " + e.getMessage());
 					messageConsumer = session.createConsumer(dest, selector);
 				}
 
@@ -444,7 +443,7 @@ public class JMSModularInput extends ModularInput {
 				if (connection != null)
 					connection.close();
 			} catch (Exception e) {
-
+				logger.error("Error disconnecting : " + e.getMessage());
 			}
 			connected = false;
 
@@ -454,6 +453,8 @@ public class JMSModularInput extends ModularInput {
 			try {
 
 				connect();
+			} catch (Throwable t) {
+				logger.error("Error connecting : " + t.getMessage());
 			} finally {
 				disconnect();
 			}
@@ -466,8 +467,8 @@ public class JMSModularInput extends ModularInput {
 					try {
 						connect();
 
-					} catch (Exception e) {
-
+					} catch (Throwable t) {
+						logger.error("Error connecting : " + t.getMessage());
 						try {
 							// sleep 10 secs then try to reconnect
 							Thread.sleep(10000);
@@ -507,10 +508,10 @@ public class JMSModularInput extends ModularInput {
 
 		private void streamMessageEvent(Message message) {
 			try {
-				Stream stream = messageHandler.handleMessage(message,this);
+				Stream stream = messageHandler.handleMessage(message, this);
 				marshallObjectToXML(stream);
 			} catch (Exception e) {
-				logger.error("Error handling message : "+e.getMessage());
+				logger.error("Error handling message : " + e.getMessage());
 			}
 		}
 
@@ -546,6 +547,7 @@ public class JMSModularInput extends ModularInput {
 					event.addPair("latest_msg", latest);
 				}
 			} catch (Exception e) {
+				logger.error("Error browsing queue stats : " + e.getMessage());
 			}
 
 			streamNonMessageEvent(event.toString());
@@ -553,7 +555,7 @@ public class JMSModularInput extends ModularInput {
 		}
 
 		private void streamNonMessageEvent(String text) {
-			
+
 			Stream stream = new Stream();
 			StreamEvent event = new StreamEvent();
 			event.setData(text);
@@ -562,7 +564,7 @@ public class JMSModularInput extends ModularInput {
 			list.add(event);
 			stream.setEvents(list);
 			marshallObjectToXML(stream);
-			
+
 		}
 
 		private void browseQueue(QueueBrowser queueBrowser) {
@@ -573,17 +575,15 @@ public class JMSModularInput extends ModularInput {
 				while (messages.hasMoreElements()) {
 					Message message = (Message) messages.nextElement();
 					streamMessageEvent(message);
-					
+
 				}
-				
 
 			} catch (Exception e) {
+				logger.error("Error browsing queue : " + e.getMessage());
 			}
-			
 
 		}
 
-		
 	}
 
 	@Override
@@ -766,7 +766,7 @@ public class JMSModularInput extends ModularInput {
 		arg.setDescription("Parameter string in format 'key1=value1,key2=value2,key3=value3'. This gets passed to the implementation class to process.");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("message_handler_impl");
 		arg.setTitle("Implementation class for a custom message handler");
@@ -780,7 +780,6 @@ public class JMSModularInput extends ModularInput {
 		arg.setDescription("Parameter string in format 'key1=value1,key2=value2,key3=value3'. This gets passed to the implementation class to process.");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
 
 		arg = new Arg();
 		arg.setName("index_message_header");

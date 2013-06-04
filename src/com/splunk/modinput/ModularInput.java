@@ -35,6 +35,7 @@ public abstract class ModularInput {
 			marshaller.marshal(obj, sw);
 			String xml = sw.toString();
 			System.out.println(xml.trim());
+
 		} catch (Exception e) {
 			logger.error("Error writing XML : " + e.getMessage());
 		}
@@ -125,7 +126,7 @@ public abstract class ModularInput {
 		List<Stanza> stanzas = input.getStanzas();
 		for (Stanza stanza : stanzas) {
 			List<Param> params = stanza.getParams();
-			setDisabled(stanza.getName(),false);//default setting
+			setDisabled(stanza.getName(), false);// default setting
 			for (Param param : params) {
 				if (param.getName().equals("disabled")) {
 					String val = param.getValue();
@@ -133,7 +134,7 @@ public abstract class ModularInput {
 							stanza.getName(),
 							val.equals("0") || val.equalsIgnoreCase("false") ? false
 									: true);
-					
+
 				}
 			}
 		}
@@ -148,7 +149,7 @@ public abstract class ModularInput {
 		} catch (Exception e) {
 
 		}
-		Service service = new Service(host, port);
+		Service service = new Service("localhost", port);
 		service.setToken("Splunk " + token);
 
 		StateCheckerThread checker = new StateCheckerThread(service);
@@ -166,7 +167,6 @@ public abstract class ModularInput {
 
 		public void run() {
 
-			
 			int enabledCount = 1;
 			while (enabledCount > 0) {
 				enabledCount = 0;
@@ -182,9 +182,7 @@ public abstract class ModularInput {
 						setDisabled(stanza, isDisabled);
 						enabledCount += isDisabled ? 0 : 1;
 					} catch (Exception e) {
-						logger.error("Can't connect to Splunk REST API, either SplunkD has exited ,or if not,check that your DNS configuration is resolving your system's hostname ("
-								+ service.getHost()
-								+ ") correctly : "
+						logger.error("Can't connect to Splunk REST API with the token ["+service.getToken()+"], either the token is invalid or SplunkD has exited : "
 								+ e.getMessage());
 					}
 				}
