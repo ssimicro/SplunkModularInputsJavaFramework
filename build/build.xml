@@ -272,6 +272,75 @@
     </target>
 
     <target
+        name="build_jmx_input"
+        description="build JMX modular input add on" >
+
+        <antcall target="compile_addon" >
+
+            <param
+                name="addon"
+                value="${jmx_dir}" />
+        </antcall>
+
+        <loadproperties srcFile="${jmx_dir}/default/app.conf" />
+
+        <copy todir="${temp_build}/metadata" >
+
+            <fileset dir="${jmx_dir}/metadata" />
+        </copy>
+
+        <copy todir="${temp_build}/bin" >
+
+            <fileset dir="${jmx_dir}/bin" />
+        </copy>
+
+        <copy todir="${temp_build}/appserver" >
+
+            <fileset dir="${jmx_dir}/appserver" />
+        </copy>
+
+        <copy todir="${temp_build}/default" >
+
+            <fileset dir="${jmx_dir}/default" />
+        </copy>
+        
+        <copy todir="${temp_build}/README" >
+
+            <fileset dir="${jmx_dir}/README" />
+        </copy>
+
+        <copy todir="${temp_build}/bin/${lib}" >
+
+            <fileset dir="${lib}" />
+
+            <fileset dir="${jmx_dir}/bin/${lib}" />
+        </copy>
+
+        <jar jarfile="${temp_build}/bin/${lib}/${jmx_jar}" >
+
+            <fileset
+                dir="${temp_build}/${classes}"
+                includes="com/splunk/modinput/**" />
+
+            <fileset file="${src}/log4j.xml" />
+        </jar>
+
+        <delete dir="${temp_build}/${classes}" />
+
+        <tar
+            compression="${compressionType}"
+            destfile="${release}/${id}-${version}${suffix}" >
+
+            <zipfileset
+                dir="${temp_build}"
+                prefix="${id}" />
+        </tar>
+
+        <delete dir="${temp_build}" />
+    </target>
+
+
+    <target
         name="build_framework"
         depends="compile_framework"
         description="build framework distribution" >

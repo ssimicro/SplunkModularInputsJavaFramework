@@ -689,6 +689,8 @@ public class JMSModularInput extends ModularInput {
 		arg.setTitle("JNDI Initial Context Factory Name");
 		arg.setDescription("Name of the initial context factory.If you are using a specific context factory implmentation, ensure that the necessary jars are in the $SPLUNK_HOME/etc/apps/jms_ta/bin/lib directory");
 		endpoint.addArg(arg);
+		
+		
 
 		arg = new Arg();
 		arg.setName("jndi_provider_url");
