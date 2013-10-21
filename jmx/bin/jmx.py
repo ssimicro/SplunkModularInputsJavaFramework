@@ -85,9 +85,9 @@ def run_java():
       CONFIG_HOME = MODINPUT_HOME + "bin/config/"
       CLASSPATH = MODINPUT_HOME + "bin/lib/*"
      
-      BOOTHPATH = build_classpath(MODINPUT_HOME + "bin/lib/boot/",":")
+      BOOTPATH = build_classpath(MODINPUT_HOME + "bin/lib/boot/",":")
       if USE_MX4J:
-          BOOTHPATH = BOOTPATH + build_classpath(MODINPUT_HOME + "bin/lib/mx4j_boot/",":") 
+          BOOTPATH = BOOTPATH + build_classpath(MODINPUT_HOME + "bin/lib/mx4j_boot/",":") 
           
     elif sys.platform == 'win32':
         
@@ -101,9 +101,9 @@ def run_java():
       CONFIG_HOME = MODINPUT_HOME + "bin\\config\\"
       CLASSPATH = build_classpath(MODINPUT_HOME + "bin\\lib\\",";")
       
-      BOOTHPATH = build_classpath(MODINPUT_HOME + "bin\\lib\\boot\\",";")
+      BOOTPATH = build_classpath(MODINPUT_HOME + "bin\\lib\\boot\\",";")
       if USE_MX4J:
-          BOOTHPATH = BOOTPATH + build_classpath(MODINPUT_HOME + "bin\\lib\\mx4j_boot\\",";") 
+          BOOTPATH = BOOTPATH + build_classpath(MODINPUT_HOME + "bin\\lib\\mx4j_boot\\",";") 
           
     else:
       sys.stderr.writelines("ERROR Unsupported platform\n")

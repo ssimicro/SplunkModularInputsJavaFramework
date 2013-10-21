@@ -100,11 +100,12 @@ public class JMXModularInput extends ModularInput  {
 					List<Param> params = stanza.getParams();
 					for (Param param : params) {
 						String value = param.getValue();
-						if (value == null) {
+						if (value == null || value.length() == 0) {
 							continue;
 						}
 						if (param.getName().equals("config_file")) {
 
+							
 							configFile = value;
 
 						}
@@ -179,8 +180,13 @@ public class JMXModularInput extends ModularInput  {
 					List<Param> params = item.getParams();
 
 					for (Param param : params) {
+						String value = param.getValue();
+						if (value == null || value.length() == 0) {
+							continue;
+						}
+						
 						if (param.getName().equals("config_file")) {
-							String value = param.getValue();
+							
 							File configFile = getConfigFile(value);
 							if (!configFile.exists()) {
 								throw new Exception(
@@ -195,8 +201,8 @@ public class JMXModularInput extends ModularInput  {
 							
 						}
 						if (param.getName().equals("polling_frequency")) {
-							int value = Integer.parseInt(param.getValue());
-							if(value < 1){
+							int freq = Integer.parseInt(value);
+							if(freq < 1){
 								throw new Exception(value +" is invalid.Must be a positive integer");
 							}
 							
@@ -224,8 +230,8 @@ public class JMXModularInput extends ModularInput  {
 	protected Scheme getScheme() {
 
 		Scheme scheme = new Scheme();
-		scheme.setTitle("JMX");
-		scheme.setDescription("JMX Modular Input");
+		scheme.setTitle("JMX (Java Management Extensions)");
+		scheme.setDescription("Monitor Java Virtual Machines via their exposed JMX MBean attributes, operations and notifications");
 		scheme.setUse_external_validation(true);
 		scheme.setUse_single_instance(true);
 		scheme.setStreaming_mode(StreamingMode.XML);
@@ -241,14 +247,14 @@ public class JMXModularInput extends ModularInput  {
 		arg = new Arg();
 		arg.setName("config_file");
 		arg.setTitle("JMX Config File");
-		arg.setDescription("Name of the config file, defaults to config.xml");
+		arg.setDescription("Name of the config file.Defaults to config.xml");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
 
 		arg = new Arg();
 		arg.setName("polling_frequency");
 		arg.setTitle("Polling Frequency");
-		arg.setDescription("How frequently to execute the polling in seconds");
+		arg.setDescription("How frequently to execute the polling in seconds.Defaults to 60");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
 		

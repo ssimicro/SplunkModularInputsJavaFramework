@@ -309,13 +309,18 @@
             <fileset dir="${jmx_dir}/README" />
         </copy>
 
-        
+        <copy todir="${temp_build}/bin/${lib}" >
+
+            <fileset dir="${lib}" />
+
+
+        </copy>
 
         <jar jarfile="${temp_build}/bin/${lib}/${jmx_jar}" >
 
             <fileset
                 dir="${temp_build}/${classes}"
-                includes="com/splunk/modinput/**" />
+                includes="com/splunk/modinput/**, com/dtdsoftware/splunk/**" />
 
             <fileset file="${src}/log4j.xml" />
 

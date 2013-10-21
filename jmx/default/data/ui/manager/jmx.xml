@@ -16,16 +16,18 @@
           <key name="exampleText">Enter a name for the JMX input</key>
         </element>
         <element name="config_file" label="Config File Name">
-          <view name="list"/>
-          <view name="create"/>
+         
           <view name="edit"/>
-          <key name="exampleText">Name of the config file in jmx_ta/bin/config,defaults to config.xml</key>
+          <view name="create"/>
+          
+          <key name="exampleText">Name of the config file in jmx_ta/bin/config. Defaults to config.xml</key>
         </element>
         <element name="polling_frequency" label="Polling Frequency(seconds)">
-          <view name="list"/>
-          <view name="create"/>
+          
           <view name="edit"/>
-          <key name="exampleText">Frequency in seconds to poll target JVM, defaults to 60</key>
+          <view name="create"/>
+         
+          <key name="exampleText">Frequency in seconds to poll target JVM. Defaults to 60</key>
         </element>
         
         

@@ -4,21 +4,21 @@
 
 <mapping>
 
-	<class name="com.splunk.javaagent.jmx.config.JMXPoller">
+	<class name="com.dtdsoftware.splunk.config.JMXPoller">
 		<map-to xml="jmxpoller" />
 
 		
-		<field name="servers" type="com.splunk.javaagent.jmx.config.JMXServer"
+		<field name="servers" type="com.dtdsoftware.splunk.config.JMXServer"
 			collection="arraylist">
 			<bind-xml name="jmxserver" />
 		</field>
 		
-		<field name="clusters" type="com.splunk.javaagent.jmx.config.Cluster"
+		<field name="clusters" type="com.dtdsoftware.splunk.config.Cluster"
 			collection="arraylist">
 			<bind-xml name="cluster" />
 		</field>
 		
-		<field name="formatter" type="com.splunk.javaagent.jmx.config.Formatter">
+		<field name="formatter" type="com.dtdsoftware.splunk.config.Formatter">
 			<bind-xml name="formatter" />
 		</field>
 		
@@ -26,7 +26,7 @@
 
 	</class>
 	
-	<class name="com.splunk.javaagent.jmx.config.Cluster">
+	<class name="com.dtdsoftware.splunk.config.Cluster">
 		<map-to xml="cluster" />
 		
 		<field name="name" type="java.lang.String">
@@ -37,19 +37,19 @@
 			<bind-xml name="description" node="attribute" />
 		</field>
 		
-		<field name="mbeans" type="com.splunk.javaagent.jmx.config.MBean"
+		<field name="mbeans" type="com.dtdsoftware.splunk.config.MBean"
 			collection="arraylist">
 			<bind-xml name="mbean" />
 		</field>
 		
-		<field name="servers" type="com.splunk.javaagent.jmx.config.JMXServer"
+		<field name="servers" type="com.dtdsoftware.splunk.config.JMXServer"
 			collection="arraylist">
 			<bind-xml name="jmxserver" />
 		</field>
 		
 	</class>
 
-	<class name="com.splunk.javaagent.jmx.config.JMXServer">
+	<class name="com.dtdsoftware.splunk.config.JMXServer">
 		<map-to xml="jmxserver" />
 
 
@@ -105,7 +105,7 @@
 			<bind-xml name="jmxport" node="attribute" />
 		</field>
 
-		<field name="mbeans" type="com.splunk.javaagent.jmx.config.MBean"
+		<field name="mbeans" type="com.dtdsoftware.splunk.config.MBean"
 			collection="arraylist">
 			<bind-xml name="mbean" />
 		</field>
@@ -113,7 +113,7 @@
 	</class>
 
 
-    <class name="com.splunk.javaagent.jmx.config.MBean">
+    <class name="com.dtdsoftware.splunk.config.MBean">
 		<map-to xml="mbean" />
 
         <field name="domain" type="java.lang.String">
@@ -129,24 +129,24 @@
 		</field>
 		
 
-		<field name="attributes" type="com.splunk.javaagent.jmx.config.Attribute"
+		<field name="attributes" type="com.dtdsoftware.splunk.config.Attribute"
 			collection="arraylist">
 			<bind-xml name="attribute" />
 		</field>
 		
-		<field name="operations" type="com.splunk.javaagent.jmx.config.Operation"
+		<field name="operations" type="com.dtdsoftware.splunk.config.Operation"
 			collection="arraylist">
 			<bind-xml name="operation" />
 		</field>
 		
 		
-		<field name="notification" type="com.splunk.javaagent.jmx.config.Notification">
+		<field name="notification" type="com.dtdsoftware.splunk.config.Notification">
 			<bind-xml name="notificationListener" />
 		</field>
 
 	</class>
 
-    <class name="com.splunk.javaagent.jmx.config.Notification">
+    <class name="com.dtdsoftware.splunk.config.Notification">
 		<map-to xml="notificationListener" />
 
         <field name="filterImplementationClass" type="java.lang.String">
@@ -157,7 +157,7 @@
 
 	</class>
     
-	<class name="com.splunk.javaagent.jmx.config.Attribute">
+	<class name="com.dtdsoftware.splunk.config.Attribute">
 		<map-to xml="attribute" />
 
         <field name="name" type="java.lang.String">
@@ -170,7 +170,7 @@
 
 	</class>
 	
-	<class name="com.splunk.javaagent.jmx.config.Operation">
+	<class name="com.dtdsoftware.splunk.config.Operation">
 		<map-to xml="operation" />
 
         <field name="name" type="java.lang.String">
@@ -181,14 +181,14 @@
 			<bind-xml name="outputname" node="attribute" />
 		</field>
 		
-		<field name="parameters" type="com.splunk.javaagent.jmx.config.Parameter"
+		<field name="parameters" type="com.dtdsoftware.splunk.config.Parameter"
 			collection="arraylist">
 			<bind-xml name="parameter" />
 		</field>
 
 	</class>
 
-    <class name="com.splunk.javaagent.jmx.config.Formatter">
+    <class name="com.dtdsoftware.splunk.config.Formatter">
 		<map-to xml="formatter" />
 
         <field name="className" type="java.lang.String">
