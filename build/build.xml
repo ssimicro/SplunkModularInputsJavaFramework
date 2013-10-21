@@ -309,12 +309,7 @@
             <fileset dir="${jmx_dir}/README" />
         </copy>
 
-        <copy todir="${temp_build}/bin/${lib}" >
-
-            <fileset dir="${lib}" />
-
-            <fileset dir="${jmx_dir}/bin/${lib}" />
-        </copy>
+        
 
         <jar jarfile="${temp_build}/bin/${lib}/${jmx_jar}" >
 
@@ -323,6 +318,10 @@
                 includes="com/splunk/modinput/**" />
 
             <fileset file="${src}/log4j.xml" />
+
+            <fileset file="${jmx_dir}/schema/mapping.xml" />
+
+            <fileset file="${jmx_dir}/schema/config.xsd" />
         </jar>
 
         <delete dir="${temp_build}/${classes}" />
