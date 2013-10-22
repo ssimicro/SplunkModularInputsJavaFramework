@@ -10,7 +10,7 @@
 
 <h2>Search the incoming data</h2>
 
-  <p> Once you have a basic setup configured and enabled, you can then <a href="../../app/search/search?q=search%20index%3Djmx%20sourcetype%3Djmx">search</a>your JMX data.With data now coming in , the example dashboards should start populating with data.Just browse to them via the Navigation bar above.</p> 
+  <p> Once you have a basic setup configured and enabled, you can then <a href="../../app/search/search?q=search%20index%3Djmx%20sourcetype%3Djmx">search</a> your JMX data.With data now coming in , the example dashboards should start populating with data.Just browse to them via the Navigation bar above.</p> 
 
 <h2>Look for errors</h2>
 
