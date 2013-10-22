@@ -420,6 +420,7 @@ public class JMXModularInput extends ModularInput  {
 		
 		@Override
 		public void run() {
+			boolean notificationsRegistered = false;
 			try {
 
 				// establish connection to JMX Server
@@ -466,6 +467,7 @@ public class JMXModularInput extends ModularInput  {
 											mBeanName,stanzaName);
 									serverConnection.addNotificationListener(on,
 											listener, filter, null);
+									notificationsRegistered = true;
 
 								}
 							} catch (Exception e1) {
@@ -585,7 +587,8 @@ public class JMXModularInput extends ModularInput  {
 				logger.error(serverConfig +",stanza="+stanzaName + ",systemErrorMessage=\""
 						+ e.getMessage() + "\"");
 			} finally {
-				if (jmxc != null) {
+				//need to keep this server connection open if we registered notification listeners
+				if (jmxc != null && !notificationsRegistered) {
 					try {
 						jmxc.close();
 					} catch (Exception e) {
