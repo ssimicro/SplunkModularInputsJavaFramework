@@ -1,4 +1,8 @@
-## Monitoring of Java Virtual Machines with JMX v2.0
+## Monitoring of Java Virtual Machines with JMX
+
+* Version : 2.0.2
+* Date : October 2013
+* Author : Damien Dallimore, ddallimore@splunk.com
 
 ## Overview
 
@@ -247,22 +251,3 @@ Any runtime errors will get written to $SPLUNK_HOME/var/log/splunk/splunkd.log
 * look for errors in the log files or via Splunk search in the _internal index
 * check for JMX connection timeouts
 * check that the MBean server is not adding/removing domains and mbeans whilst you are concurrently polling them
-
-
-## Contact
-
-This project was initiated by Damien Dallimore
-<table>
-
-<tr>
-<td><em>Email</em></td>
-<td>ddallimore@splunk.com</td>
-</tr>
-
-<tr>
-<td><em>Twitter</em>
-<td>@damiendallimore</td>
-</tr>
-
-
-</table>

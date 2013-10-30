@@ -85,6 +85,8 @@ def run_java():
       CONFIG_HOME = MODINPUT_HOME + "bin/config/"
       CLASSPATH = MODINPUT_HOME + "bin/lib/*"
      
+      CLASSPATH = CLASSPATH + ":" + build_classpath(MODINPUT_HOME + "bin/lib/lin/",":")
+      
       BOOTPATH = build_classpath(MODINPUT_HOME + "bin/lib/boot/",":")
       if USE_MX4J:
           BOOTPATH = BOOTPATH + build_classpath(MODINPUT_HOME + "bin/lib/mx4j_boot/",":") 
@@ -100,6 +102,8 @@ def run_java():
       MODINPUT_HOME = SPLUNK_HOME  + "\\etc\\apps\\"+MODINPUT_NAME+"_ta\\"
       CONFIG_HOME = MODINPUT_HOME + "bin\\config\\"
       CLASSPATH = build_classpath(MODINPUT_HOME + "bin\\lib\\",";")
+      
+      CLASSPATH = CLASSPATH + build_classpath(MODINPUT_HOME + "bin\\lib\\win\\",";")
       
       BOOTPATH = build_classpath(MODINPUT_HOME + "bin\\lib\\boot\\",";")
       if USE_MX4J:

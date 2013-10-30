@@ -304,6 +304,12 @@
             <fileset dir="${jmx_dir}/default" />
         </copy>
         
+        <copy todir="${temp_build}/static" >
+
+            <fileset dir="${jmx_dir}/static" />
+        </copy>
+        
+        
         <copy todir="${temp_build}/README" >
 
             <fileset dir="${jmx_dir}/README" />
