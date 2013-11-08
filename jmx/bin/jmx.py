@@ -22,7 +22,6 @@ MIN_HEAP = "64m"
 MAX_HEAP = "128m"
 
 
-
 def checkForRunningProcess():
 
     canonPath = getPIDFilePath()
@@ -116,7 +115,7 @@ def run_java():
     if RUNMODE == 3:
       checkForRunningProcess()
 
-    java_args = [ JAVA_EXECUTABLE,"-Xbootclasspath/a:"+BOOTPATH, "-classpath",CLASSPATH,"-Xms"+MIN_HEAP,"-Xmx"+MAX_HEAP,"-Dconfighome="+CONFIG_HOME,JAVA_MAIN_CLASS]
+    java_args = [ JAVA_EXECUTABLE,"-Xbootclasspath/a:"+BOOTPATH, "-classpath",CLASSPATH,"-Xms"+MIN_HEAP,"-Xmx"+MAX_HEAP,"-Dconfighome="+CONFIG_HOME,"-Dsplunkhome="+SPLUNK_HOME,JAVA_MAIN_CLASS]
     java_args.extend(sys.argv[1:])
 
     # Now we can run our command   

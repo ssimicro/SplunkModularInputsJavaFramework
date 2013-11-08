@@ -95,6 +95,7 @@ public class JMXModularInput extends ModularInput  {
                 String configFile = "config.xml";//default
                 int frequency = 60; //default seconds
                 
+                
 				if (name != null) {
 
 					List<Param> params = stanza.getParams();
@@ -107,6 +108,12 @@ public class JMXModularInput extends ModularInput  {
 
 							
 							configFile = value;
+
+						}
+						else if (param.getName().equals("config_file_dir")) {
+
+							//override default config file directory
+							System.setProperty("confighome", System.getProperty("splunkhome")+File.separator+value+File.separator);
 
 						}
 						else if (param.getName().equals("polling_frequency")) {
@@ -251,6 +258,13 @@ public class JMXModularInput extends ModularInput  {
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
 
+		arg = new Arg();
+		arg.setName("config_file_dir");
+		arg.setTitle("JMX Config File Directory");
+		arg.setDescription("Alternative location for the config files relative to SPLUNK_HOME ie: etc/apps/foobar");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+		
 		arg = new Arg();
 		arg.setName("polling_frequency");
 		arg.setTitle("Polling Frequency");

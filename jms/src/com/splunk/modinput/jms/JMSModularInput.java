@@ -688,6 +688,7 @@ public class JMSModularInput extends ModularInput {
 		arg.setName("jndi_initialcontext_factory");
 		arg.setTitle("JNDI Initial Context Factory Name");
 		arg.setDescription("Name of the initial context factory.If you are using a specific context factory implmentation, ensure that the necessary jars are in the $SPLUNK_HOME/etc/apps/jms_ta/bin/lib directory");
+		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
 		
 		
@@ -696,6 +697,7 @@ public class JMSModularInput extends ModularInput {
 		arg.setName("jndi_provider_url");
 		arg.setTitle("JNDI Provider URL");
 		arg.setDescription("URL to the JNDI Server");
+		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
 
 		arg = new Arg();
@@ -811,6 +813,7 @@ public class JMSModularInput extends ModularInput {
 		arg.setName("jms_connection_factory_name");
 		arg.setTitle("JMS Connection Factory JNDI Name");
 		arg.setDescription("JNDI name of the JMS Connection Factory.If you are using a specific message provider implmentation, ensure that the necessary jars are in the $SPLUNK_HOME/etc/apps/jms_ta/bin/lib directory");
+		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
 
 		arg = new Arg();

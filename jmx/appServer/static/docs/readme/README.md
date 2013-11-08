@@ -1,7 +1,7 @@
 ## Monitoring of Java Virtual Machines with JMX
 
-* Version : 2.0.2
-* Date : October 2013
+* Version : 2.0.3
+* Date : November 2013
 * Author : Damien Dallimore, ddallimore@splunk.com
 
 ## Overview
@@ -50,6 +50,9 @@ You can configure your JMX inputs via Manager->DataInputs->JMX
 
 You will need to configure your JMX config file, this is the config file where you specify JMX server(s), MBeans and MBean attributes/operations/notifications.
 You can create as many config files,with any name, as you want and place them in the jmx_ta/bin/config directory
+
+In your setup stanzas, you can optionally specify an alternate config file directory location relative to SPLUNK_HOME ie: etc/apps/someotherapp
+This might come in handy if you want to create another Splunk App that depends on this JMX App , and ship your own config files.
 
 The app sets up a default input stanza for you. To get started you should edit the default config.xml file and then enable the stanza. 
 
