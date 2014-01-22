@@ -62,7 +62,7 @@ import com.splunk.modinput.Scheme.StreamingMode;
 
 import com.sun.tools.attach.VirtualMachine;
 
-public class JMXModularInput extends ModularInput  {
+public class JMXModularInput extends ModularInput {
 
 	public static void main(String[] args) {
 
@@ -70,8 +70,8 @@ public class JMXModularInput extends ModularInput  {
 		instance.init(args);
 
 	}
-	
-	private void streamEvent(String text,String stanzaName) {
+
+	private void streamEvent(String text, String stanzaName) {
 
 		Stream stream = new Stream();
 		StreamEvent event = new StreamEvent();
@@ -92,10 +92,9 @@ public class JMXModularInput extends ModularInput  {
 			for (Stanza stanza : input.getStanzas()) {
 
 				String name = stanza.getName();
-                String configFile = "config.xml";//default
-                int frequency = 60; //default seconds
-                
-                
+				String configFile = "config.xml";// default
+				int frequency = 60; // default seconds
+
 				if (name != null) {
 
 					List<Param> params = stanza.getParams();
@@ -106,29 +105,29 @@ public class JMXModularInput extends ModularInput  {
 						}
 						if (param.getName().equals("config_file")) {
 
-							
 							configFile = value;
 
-						}
-						else if (param.getName().equals("config_file_dir")) {
+						} else if (param.getName().equals("config_file_dir")) {
 
-							//override default config file directory
-							System.setProperty("confighome", System.getProperty("splunkhome")+File.separator+value+File.separator);
+							// override default config file directory
+							System.setProperty("confighome",
+									System.getProperty("splunkhome")
+											+ File.separator + value
+											+ File.separator);
 
-						}
-						else if (param.getName().equals("polling_frequency")) {
+						} else if (param.getName().equals("polling_frequency")) {
 
 							try {
 								frequency = Integer.parseInt(value);
 							} catch (Exception e) {
-								//if this fails, the default value will get used
+								// if this fails, the default value will get
+								// used
 							}
 
 						}
-						
+
 					}
-					new JMXExecutionThread(configFile,frequency,name).start();
-					
+					new JMXExecutionThread(configFile, frequency, name).start();
 
 				}
 
@@ -147,11 +146,11 @@ public class JMXModularInput extends ModularInput  {
 
 	class JMXExecutionThread extends Thread {
 
-		String configFile;//default
-        int frequency; //default seconds
+		String configFile;// default
+		int frequency; // default seconds
 		String stanzaName;
 
-		JMXExecutionThread(String configFile,int frequency, String stanzaName) {
+		JMXExecutionThread(String configFile, int frequency, String stanzaName) {
 
 			this.configFile = configFile;
 			this.frequency = frequency;
@@ -160,11 +159,11 @@ public class JMXModularInput extends ModularInput  {
 
 		public void run() {
 
-			JMXMBeanPoller poller = new JMXMBeanPoller(stanzaName,configFile);
+			JMXMBeanPoller poller = new JMXMBeanPoller(stanzaName, configFile);
 			while (!isDisabled(stanzaName)) {
 
 				poller.execute();
-								
+
 				try {
 					Thread.sleep(frequency * 1000);
 				} catch (InterruptedException e) {
@@ -191,28 +190,33 @@ public class JMXModularInput extends ModularInput  {
 						if (value == null || value.length() == 0) {
 							continue;
 						}
-						
+
 						if (param.getName().equals("config_file")) {
-							
+
 							File configFile = getConfigFile(value);
 							if (!configFile.exists()) {
 								throw new Exception(
-										"Config file "+value+" does not exist.Ensure that this file is placed in the jmx_ta/bin/config directory.");
+										"Config file "
+												+ value
+												+ " does not exist.Ensure that this file is placed in the jmx_ta/bin/config directory.");
 							}
 							if (configFile.isDirectory()) {
 								throw new Exception(
-										value + " is a directory, you must pass the config file NAME.");
-							} 
-							
+										value
+												+ " is a directory, you must pass the config file NAME.");
+							}
+
 							xsdValidation(configFile);
-							
+
 						}
 						if (param.getName().equals("polling_frequency")) {
 							int freq = Integer.parseInt(value);
-							if(freq < 1){
-								throw new Exception(value +" is invalid.Must be a positive integer");
+							if (freq < 1) {
+								throw new Exception(
+										value
+												+ " is invalid.Must be a positive integer");
 							}
-							
+
 						}
 					}
 				}
@@ -229,8 +233,8 @@ public class JMXModularInput extends ModularInput  {
 	}
 
 	private File getConfigFile(String value) {
-		
-		return new File(System.getProperty("confighome")+value);
+
+		return new File(System.getProperty("confighome") + value);
 	}
 
 	@Override
@@ -264,14 +268,14 @@ public class JMXModularInput extends ModularInput  {
 		arg.setDescription("Alternative location for the config files relative to SPLUNK_HOME ie: etc/apps/foobar");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("polling_frequency");
 		arg.setTitle("Polling Frequency");
 		arg.setDescription("How frequently to execute the polling in seconds.Defaults to 60");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		scheme.setEndpoint(endpoint);
 
 		return scheme;
@@ -279,17 +283,16 @@ public class JMXModularInput extends ModularInput  {
 
 	class JMXMBeanPoller {
 
-		
 		private JMXPoller config;
 		private Formatter formatter;
-		boolean registerNotifications = true;		
+		boolean registerNotifications = true;
 		String stanzaName;
-		
-		public JMXMBeanPoller(String stanzaName,String configFile) {
+
+		public JMXMBeanPoller(String stanzaName, String configFile) {
 
 			try {
 				// parse XML config into POJOs
-				
+
 				File file = getConfigFile(configFile);
 				this.config = loadConfig(file);
 				config.normalizeClusters();
@@ -297,42 +300,47 @@ public class JMXModularInput extends ModularInput  {
 				if (formatter == null) {
 					formatter = new Formatter();// default
 				}
-				
+
 				this.stanzaName = stanzaName;
-							
+
 			} catch (Exception e) {
 
-				logger.error("Error executing JMX stanza "+stanzaName+" : " + e.getMessage());
+				logger.error("Error executing JMX stanza " + stanzaName + " : "
+						+ e.getMessage());
 			}
 		}
-		
-		
-		public void execute(){
-			
+
+		public void execute() {
+
 			try {
-							
+
 				if (this.config != null) {
 					// get list of JMX Servers and process in their own thread.
 					List<JMXServer> servers = this.config.normalizeMultiPIDs();
 					if (servers != null) {
-					
+
 						for (JMXServer server : servers) {
 							new ProcessServerThread(server,
 									this.formatter.getFormatterInstance(),
-									this.registerNotifications,stanzaName).start();
+									this.registerNotifications, stanzaName)
+									.start();
 						}
-						// we only want to register a notification listener on the
+						// we only want to register a notification listener on
+						// the
 						// first iteration
 						this.registerNotifications = false;
 					} else {
-						logger.error("No JMX servers have been specified, stanza : "+stanzaName);
+						logger.error("No JMX servers have been specified, stanza : "
+								+ stanzaName);
 					}
-				} else{
-					logger.error("The root config object(JMXPoller) failed to initialize, stanza : "+stanzaName);
+				} else {
+					logger.error("The root config object(JMXPoller) failed to initialize, stanza : "
+							+ stanzaName);
 				}
 			} catch (Exception e) {
 
-				logger.error("Error executing JMX stanza "+stanzaName+" : " + e.getMessage());
+				logger.error("Error executing JMX stanza " + stanzaName + " : "
+						+ e.getMessage());
 
 			}
 		}
@@ -345,7 +353,7 @@ public class JMXModularInput extends ModularInput  {
 		 * @throws Exception
 		 */
 		private JMXPoller loadConfig(File file) throws Exception {
-		
+
 			if (file.isDirectory()) {
 				throw new Exception(
 						file.getName()
@@ -354,9 +362,9 @@ public class JMXModularInput extends ModularInput  {
 				throw new Exception("The config file " + file.getName()
 						+ " does not exist");
 			}
-			
+
 			xsdValidation(file);
-			
+
 			// use CASTOR to parse XML into Java POJOs
 			Mapping mapping = new Mapping();
 			URL mappingURL = JMXPoller.class.getResource("/mapping.xml");
@@ -367,19 +375,15 @@ public class JMXModularInput extends ModularInput  {
 			InputSource inputSource = new InputSource(fr);
 
 			JMXPoller poller = (JMXPoller) unmar.unmarshal(inputSource);
-			
+
 			return poller;
 
 		}
 
-
-		
-
 	}
-	
+
 	class ProcessServerThread extends Thread {
 
-		
 		private MBeanServerConnection serverConnection;
 		private JMXConnector jmxc;
 
@@ -395,6 +399,7 @@ public class JMXModularInput extends ModularInput  {
 		private boolean registerNotificationListeners;
 
 		private String stanzaName;
+
 		/**
 		 * Thread to run each JMX Server connection in
 		 * 
@@ -405,33 +410,34 @@ public class JMXModularInput extends ModularInput  {
 		 * @param transport
 		 *            transport impl
 		 */
-		public ProcessServerThread(JMXServer serverConfig, com.dtdsoftware.splunk.formatter.Formatter formatter,
-				boolean registerNotificationListeners,String stanzaName) {
+		public ProcessServerThread(JMXServer serverConfig,
+				com.dtdsoftware.splunk.formatter.Formatter formatter,
+				boolean registerNotificationListeners, String stanzaName) {
 
-	
 			this.serverConfig = serverConfig;
 			this.formatter = formatter;
 			this.registerNotificationListeners = registerNotificationListeners;
-            this.stanzaName = stanzaName;
+			this.stanzaName = stanzaName;
 			// set up the formatter
 			Map<String, String> meta = new HashMap<String, String>();
 
 			if (serverConfig.getProcessID() > 0) {
 				this.directJVMAttach = true;
-				meta.put(com.dtdsoftware.splunk.formatter.Formatter.META_PROCESS_ID, String.valueOf(serverConfig
-						.getProcessID()));
+				meta.put(
+						com.dtdsoftware.splunk.formatter.Formatter.META_PROCESS_ID,
+						String.valueOf(serverConfig.getProcessID()));
 			}
 
-			meta.put(com.dtdsoftware.splunk.formatter.Formatter.META_HOST, this.serverConfig.getHost());
-			meta.put(com.dtdsoftware.splunk.formatter.Formatter.META_JVM_DESCRIPTION, this.serverConfig
-					.getJvmDescription());
+			meta.put(com.dtdsoftware.splunk.formatter.Formatter.META_HOST,
+					this.serverConfig.getHost());
+			meta.put(
+					com.dtdsoftware.splunk.formatter.Formatter.META_JVM_DESCRIPTION,
+					this.serverConfig.getJvmDescription());
 
 			formatter.setMetaData(meta);
 
 		}
-		
-		
-		
+
 		@Override
 		public void run() {
 			boolean notificationsRegistered = false;
@@ -449,23 +455,25 @@ public class JMXModularInput extends ModularInput  {
 						// if no values are specified for domain and properties
 						// attributes , the value will default to the * wildcard
 						Set<ObjectInstance> foundBeans = serverConnection
-								.queryMBeans(new ObjectName(
-										(bean.getDomain().length() == 0 ? "*"
-												: bean.getDomain())
-												+ ":"
-												+ (bean.getPropertiesList()
-														.length() == 0 ? "*" : bean
-														.getPropertiesList())),
+								.queryMBeans(
+										new ObjectName(
+												(bean.getDomain().length() == 0 ? "*"
+														: bean.getDomain())
+														+ ":"
+														+ (bean.getPropertiesList()
+																.length() == 0 ? "*"
+																: bean.getPropertiesList())),
 										null);
 
 						for (ObjectInstance oi : foundBeans) {
 							ObjectName on = oi.getObjectName();
-							// the mbean specific part of the SPLUNK output String
+							// the mbean specific part of the SPLUNK output
+							// String
 							String mBeanName = on.getCanonicalName();
-							
-							
+
 							try {
-								com.dtdsoftware.splunk.config.Notification notification = bean.getNotification();
+								com.dtdsoftware.splunk.config.Notification notification = bean
+										.getNotification();
 								if (registerNotificationListeners
 										&& notification != null) {
 
@@ -475,17 +483,19 @@ public class JMXModularInput extends ModularInput  {
 									if (filterClass != null
 											&& filterClass.length() > 0) {
 										filter = (NotificationFilter) Class
-												.forName(filterClass).newInstance();
+												.forName(filterClass)
+												.newInstance();
 									}
 									SplunkNotificationListener listener = new SplunkNotificationListener(
-											mBeanName,stanzaName);
-									serverConnection.addNotificationListener(on,
-											listener, filter, null);
+											mBeanName, stanzaName);
+									serverConnection.addNotificationListener(
+											on, listener, filter, null);
 									notificationsRegistered = true;
 
 								}
 							} catch (Exception e1) {
-								logger.error("Error registering notification listener for JMX stanza "+stanzaName+" : " + e1.getMessage());
+								logger.error("Error registering notification listener for JMX stanza "
+										+ stanzaName + " : " + e1.getMessage());
 							}
 							Map<String, String> mBeanAttributes = new HashMap<String, String>();
 
@@ -494,21 +504,29 @@ public class JMXModularInput extends ModularInput  {
 
 								for (Operation operation : bean.getOperations()) {
 									try {
-										Object result = serverConnection.invoke(on,
-												operation.getName(), operation
-														.getParametersArray(),
-												operation.getSignatureArray());
+										Object result = serverConnection
+												.invoke(on,
+														operation.getName(),
+														operation
+																.getParametersArray(),
+														operation
+																.getSignatureArray());
 										String outputname = operation
 												.getOutputname();
 										if (outputname != null
 												&& !outputname.isEmpty())
-											//mBeanAttributes.put(operation
-													//.getOutputname(),
-													//resolveObjectToString(result));
-											extractAttributeValue(result,mBeanAttributes,operation.getOutputname());
+											// mBeanAttributes.put(operation
+											// .getOutputname(),
+											// resolveObjectToString(result));
+											extractAttributeValue(result,
+													mBeanAttributes,
+													operation.getOutputname());
 									} catch (Exception e) {
 
-										logger.error("Error executing JMX stanza "+stanzaName+" : " + e.getMessage());
+										logger.error("Error executing JMX stanza "
+												+ stanzaName
+												+ " : "
+												+ e.getMessage());
 									}
 								}
 							}
@@ -518,15 +536,21 @@ public class JMXModularInput extends ModularInput  {
 										.getMBeanInfo(on).getAttributes();
 								for (MBeanAttributeInfo attribute : attributes) {
 									try {
-										Object attributeValue = serverConnection
-												.getAttribute(on, attribute
-														.getName());
-										extractAttributeValue(attributeValue,
-												mBeanAttributes, attribute
-														.getName());
+										if (attribute.isReadable()) {
+											Object attributeValue = serverConnection
+													.getAttribute(on,
+															attribute.getName());
+											extractAttributeValue(
+													attributeValue,
+													mBeanAttributes,
+													attribute.getName());
+										}
 									} catch (Exception e) {
 
-										logger.error("Error executing JMX stanza "+stanzaName+" : " + e.getMessage());
+										logger.error("Error executing JMX stanza "
+												+ stanzaName
+												+ " : "
+												+ e.getMessage());
 									}
 
 								}
@@ -540,11 +564,14 @@ public class JMXModularInput extends ModularInput  {
 									List<String> tokens = singular.getTokens();
 									Object attributeValue = null;
 
-									// if the attribute pattern is multi level, loop
-									// through the levels until the value is found
+									// if the attribute pattern is multi level,
+									// loop
+									// through the levels until the value is
+									// found
 									for (String token : tokens) {
 
-										// get root attribute object the first time
+										// get root attribute object the first
+										// time
 										if (attributeValue == null)
 											try {
 
@@ -552,7 +579,10 @@ public class JMXModularInput extends ModularInput  {
 														.getAttribute(on, token);
 											} catch (Exception e) {
 
-												logger.error("Error executing JMX stanza "+stanzaName+" : " + e.getMessage());
+												logger.error("Error executing JMX stanza "
+														+ stanzaName
+														+ " : "
+														+ e.getMessage());
 											}
 										else if (attributeValue instanceof CompositeData) {
 											try {
@@ -561,7 +591,10 @@ public class JMXModularInput extends ModularInput  {
 														.get(token);
 											} catch (Exception e) {
 
-												logger.error("Error executing JMX stanza "+stanzaName+" : " + e.getMessage());
+												logger.error("Error executing JMX stanza "
+														+ stanzaName
+														+ " : "
+														+ e.getMessage());
 											}
 										} else if (attributeValue instanceof TabularData) {
 											try {
@@ -573,23 +606,28 @@ public class JMXModularInput extends ModularInput  {
 
 											} catch (Exception e) {
 
-												logger.error("Error executing JMX stanza "+stanzaName+" : " + e.getMessage());
+												logger.error("Error executing JMX stanza "
+														+ stanzaName
+														+ " : "
+														+ e.getMessage());
 											}
 										} else {
 										}
 									}
 
-									mBeanAttributes.put(singular.getOutputname(),
-											resolveObjectToString(attributeValue));
+									mBeanAttributes
+											.put(singular.getOutputname(),
+													resolveObjectToString(attributeValue));
 
 								}
 
 							}
 
-							String payload = formatter.format(mBeanName,
-									mBeanAttributes, System.currentTimeMillis());
+							String payload = formatter
+									.format(mBeanName, mBeanAttributes,
+											System.currentTimeMillis());
 
-							streamEvent(payload,stanzaName);
+							streamEvent(payload, stanzaName);
 						}
 
 					}
@@ -598,18 +636,19 @@ public class JMXModularInput extends ModularInput  {
 
 			} catch (Exception e) {
 
-				logger.error(serverConfig +",stanza="+stanzaName + ",systemErrorMessage=\""
-						+ e.getMessage() + "\"");
+				logger.error(serverConfig + ",stanza=" + stanzaName
+						+ ",systemErrorMessage=\"" + e.getMessage() + "\"");
 			} finally {
-				//need to keep this server connection open if we registered notification listeners
+				// need to keep this server connection open if we registered
+				// notification listeners
 				if (jmxc != null && !notificationsRegistered) {
 					try {
 						jmxc.close();
 					} catch (Exception e) {
-						logger.error("Error executing JMX stanza "+stanzaName+" : " + e.getMessage());
+						logger.error("Error executing JMX stanza " + stanzaName
+								+ " : " + e.getMessage());
 					}
 				}
-				
 
 			}
 
@@ -622,8 +661,8 @@ public class JMXModularInput extends ModularInput  {
 		 * @param attributeValue
 		 *            the attribute object
 		 * @param mBeanAttributes
-		 *            the map used to hold attribute values before being handed off
-		 *            to the formatter
+		 *            the map used to hold attribute values before being handed
+		 *            off to the formatter
 		 * @param attributeName
 		 *            the attribute name
 		 */
@@ -636,31 +675,34 @@ public class JMXModularInput extends ModularInput  {
 							resolveObjectToString(attributeValue));
 				} catch (Exception e) {
 
-					logger.error("Error executing JMX stanza "+stanzaName+" : " + e.getMessage());
+					logger.error("Error executing JMX stanza " + stanzaName
+							+ " : " + e.getMessage());
 				}
 			} else if (attributeValue instanceof Object[]) {
 				try {
 					int index = 0;
 					for (Object obj : (Object[]) attributeValue) {
 						index++;
-						extractAttributeValue(obj, mBeanAttributes, attributeName
-								+ "_" + index);
+						extractAttributeValue(obj, mBeanAttributes,
+								attributeName + "_" + index);
 					}
 				} catch (Exception e) {
 
-					logger.error("Error executing JMX stanza "+stanzaName+" : " + e.getMessage());
+					logger.error("Error executing JMX stanza " + stanzaName
+							+ " : " + e.getMessage());
 				}
 			} else if (attributeValue instanceof Collection) {
 				try {
 					int index = 0;
 					for (Object obj : (Collection) attributeValue) {
 						index++;
-						extractAttributeValue(obj, mBeanAttributes, attributeName
-								+ "_" + index);
+						extractAttributeValue(obj, mBeanAttributes,
+								attributeName + "_" + index);
 					}
 				} catch (Exception e) {
 
-					logger.error("Error executing JMX stanza "+stanzaName+" : " + e.getMessage());
+					logger.error("Error executing JMX stanza " + stanzaName
+							+ " : " + e.getMessage());
 				}
 			} else if (attributeValue instanceof CompositeData) {
 				try {
@@ -676,22 +718,24 @@ public class JMXModularInput extends ModularInput  {
 
 				} catch (Exception e) {
 
-					logger.error("Error executing JMX stanza "+stanzaName+" : " + e.getMessage());
+					logger.error("Error executing JMX stanza " + stanzaName
+							+ " : " + e.getMessage());
 				}
 			} else if (attributeValue instanceof TabularData) {
 				try {
 					TabularData tds = ((TabularData) attributeValue);
-					Set keys = tds.keySet(); 
+					Set keys = tds.keySet();
 					for (Object key : keys) {
 
 						Object keyName = ((List) key).get(0);
 						Object[] keyArray = { keyName };
-						extractAttributeValue(tds.get(keyArray), mBeanAttributes,
-								attributeName + "_" + keyName);
+						extractAttributeValue(tds.get(keyArray),
+								mBeanAttributes, attributeName + "_" + keyName);
 					}
 
 				} catch (Exception e) {
-					logger.error("Error executing JMX stanza "+stanzaName+" : " + e.getMessage());
+					logger.error("Error executing JMX stanza " + stanzaName
+							+ " : " + e.getMessage());
 				}
 			} else {
 
@@ -700,7 +744,8 @@ public class JMXModularInput extends ModularInput  {
 							resolveObjectToString(attributeValue));
 				} catch (Exception e) {
 
-					logger.error("Error executing JMX stanza "+stanzaName+" : " + e.getMessage());
+					logger.error("Error executing JMX stanza " + stanzaName
+							+ " : " + e.getMessage());
 				}
 			}
 
@@ -859,7 +904,8 @@ public class JMXModularInput extends ModularInput  {
 				}
 				// use remote encoded stub for JSR160 iiop and rmi
 				else if (serverConfig.getStubSource().equalsIgnoreCase("ior")
-						|| serverConfig.getStubSource().equalsIgnoreCase("stub")) {
+						|| serverConfig.getStubSource()
+								.equalsIgnoreCase("stub")) {
 					url = new JMXServiceURL(protocol, "", 0, "/"
 							+ serverConfig.getStubSource() + "/"
 							+ serverConfig.getEncodedStub());
@@ -895,7 +941,8 @@ public class JMXModularInput extends ModularInput  {
 		private JMXServiceURL getURLForPid(int pid) throws Exception {
 
 			// attach to the target application
-			final VirtualMachine vm = VirtualMachine.attach(String.valueOf(pid));
+			final VirtualMachine vm = VirtualMachine
+					.attach(String.valueOf(pid));
 
 			// get the connector address
 			String connectorAddress = vm.getAgentProperties().getProperty(
@@ -903,9 +950,11 @@ public class JMXModularInput extends ModularInput  {
 
 			// no connector address, so we start the JMX agent
 			if (connectorAddress == null) {
-				String agent = vm.getSystemProperties().getProperty("java.home")
-						+ File.separator + "lib" + File.separator
-						+ "management-agent.jar";
+				String agent = vm.getSystemProperties()
+						.getProperty("java.home")
+						+ File.separator
+						+ "lib"
+						+ File.separator + "management-agent.jar";
 				vm.loadAgent(agent);
 
 				// agent is started, get the connector address
@@ -917,24 +966,24 @@ public class JMXModularInput extends ModularInput  {
 		}
 	}
 
-
 	class SplunkNotificationListener implements NotificationListener {
 
 		private String mBeanName;
 		private String stanzaName;
-		
-		public SplunkNotificationListener(String mBeanName,String stanzaName) {
+
+		public SplunkNotificationListener(String mBeanName, String stanzaName) {
 			this.mBeanName = mBeanName;
 			this.stanzaName = stanzaName;
 		}
 
 		@Override
-		public void handleNotification(Notification notification, Object handback) {
+		public void handleNotification(Notification notification,
+				Object handback) {
 
 			try {
 				if (notification != null) {
-					SplunkLogEvent event = new SplunkLogEvent("jmx-notification",
-							"", true, false);
+					SplunkLogEvent event = new SplunkLogEvent(
+							"jmx-notification", "", true, false);
 
 					SortedMap<String, String> mbeanNameParts = FormatterUtils
 							.tokenizeMBeanCanonicalName(mBeanName);
@@ -950,29 +999,31 @@ public class JMXModularInput extends ModularInput  {
 					event.addPair("message", notification.getMessage());
 					event.addPair("seqNum", notification.getSequenceNumber());
 					event.addPair("timestamp", notification.getTimeStamp());
-					event.addPair("userData", notification.getUserData().toString());
+					event.addPair("userData", notification.getUserData()
+							.toString());
 					event.addPair("source", notification.getSource().toString());
-					event.addPair("class", notification.getClass().getCanonicalName());
-					streamEvent(event.toString(),stanzaName);
+					event.addPair("class", notification.getClass()
+							.getCanonicalName());
+					streamEvent(event.toString(), stanzaName);
 				}
 			} catch (Exception e) {
-				logger.error("Error executing JMX stanza "+stanzaName+" : " + e.getMessage());
+				logger.error("Error executing JMX stanza " + stanzaName + " : "
+						+ e.getMessage());
 			}
 
 		}
 
 	}
-	
-	private void xsdValidation(File file) throws Exception{
-		
+
+	private void xsdValidation(File file) throws Exception {
+
 		FileReader fr = new FileReader(file);
 		InputSource inputSource = new InputSource(fr);
 		SchemaValidator validator = new SchemaValidator();
 		validator.validateSchema(inputSource);
 
-		
 	}
-	
+
 	class SchemaValidator {
 
 		/**
@@ -987,21 +1038,22 @@ public class JMXModularInput extends ModularInput  {
 			SAXParser parser = new SAXParser();
 			try {
 
-				parser.setFeature("http://xml.org/sax/features/validation", true);
+				parser.setFeature("http://xml.org/sax/features/validation",
+						true);
 				parser.setFeature(
-						"http://apache.org/xml/features/validation/schema", true);
-				parser
-						.setFeature(
-								"http://apache.org/xml/features/validation/schema-full-checking",
-								true);
+						"http://apache.org/xml/features/validation/schema",
+						true);
+				parser.setFeature(
+						"http://apache.org/xml/features/validation/schema-full-checking",
+						true);
 
 				// config.xsd is on the classpath in jmxpoller.jar
-				URL schemaUrl = SchemaValidator.class.getResource("/config.xsd");
+				URL schemaUrl = SchemaValidator.class
+						.getResource("/config.xsd");
 
-				parser
-						.setProperty(
-								"http://apache.org/xml/properties/schema/external-noNamespaceSchemaLocation",
-								schemaUrl.toString());
+				parser.setProperty(
+						"http://apache.org/xml/properties/schema/external-noNamespaceSchemaLocation",
+						schemaUrl.toString());
 				Validator handler = new Validator();
 				parser.setErrorHandler(handler);
 
@@ -1033,16 +1085,17 @@ public class JMXModularInput extends ModularInput  {
 				saxParseException = exception;
 			}
 
-			public void fatalError(SAXParseException exception) throws SAXException {
+			public void fatalError(SAXParseException exception)
+					throws SAXException {
 				validationError = true;
 				saxParseException = exception;
 			}
 
-			public void warning(SAXParseException exception) throws SAXException {
+			public void warning(SAXParseException exception)
+					throws SAXException {
 			}
 		}
 
 	}
-
 
 }
