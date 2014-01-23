@@ -34,6 +34,11 @@ public class LocalMQConnectionFactory implements LocalJMSResourceFactory {
 	private String hostName;
 	private String clientID;
 
+	
+	public LocalMQConnectionFactory() {
+		
+	}
+
 	@Override
 	public void setParams(Map<String, String> params) throws Exception {
 
