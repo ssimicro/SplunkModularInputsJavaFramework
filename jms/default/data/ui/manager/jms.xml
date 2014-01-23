@@ -117,17 +117,7 @@
           <view name="create"/>
           <key name="exampleText">Password for authenticated JNDI connections</key>
         </element>
-        <element name="destination_user" type="textfield" label="Topic/Queue Username">
-           
-          <view name="edit"/>
-          <view name="create"/>
-          <key name="exampleText">Username for the topic/queue if required</key>
-        </element>
-        <element name="destination_pass" type="password" label="Topic/Queue Password">
-          <view name="edit"/>
-          <view name="create"/>
-          <key name="exampleText">Password for the topic/queue if required</key>
-        </element>
+        
 
 </elements>
 </element>
@@ -152,6 +142,18 @@
 </elements>
 				</element>
 
+<element name="destination_user" type="textfield" label="Topic/Queue Username">
+           
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Username for the topic/queue if required</key>
+        </element>
+        <element name="destination_pass" type="password" label="Topic/Queue Password">
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Password for the topic/queue if required</key>
+        </element>
+        
 <element name="common_options" type="fieldset">
 		<key name="legend">Topic and Queue Common Settings</key>			
 					<view name="edit" />

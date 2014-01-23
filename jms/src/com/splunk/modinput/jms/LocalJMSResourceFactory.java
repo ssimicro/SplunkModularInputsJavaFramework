@@ -8,12 +8,12 @@ import javax.jms.Topic;
 
 public interface LocalJMSResourceFactory {
 
-	public void setParams(Map<String, String> params);
+	public void setParams(Map<String, String> params) throws Exception;
 
-	public Topic createTopic();
+	public Topic createTopic(String topicName) throws Exception;
 
-	public Queue createQueue();
+	public Queue createQueue(String queueName) throws Exception;
 
-	public ConnectionFactory createConnectionFactory();
+	public ConnectionFactory createConnectionFactory() throws Exception;
 
 }

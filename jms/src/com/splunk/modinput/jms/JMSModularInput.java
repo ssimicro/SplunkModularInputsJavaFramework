@@ -401,9 +401,9 @@ public class JMSModularInput extends ModularInput {
 				}
 				connFactory = localFactory.createConnectionFactory();
 				if (type.equals(DestinationType.QUEUE))
-					dest = localFactory.createQueue();
+					dest = localFactory.createQueue(destination);
 				else if (type.equals(DestinationType.TOPIC))
-					dest = localFactory.createTopic();
+					dest = localFactory.createTopic(destination);
 			}
 
 			if (destinationUser != null && destinationUser.length() > 0

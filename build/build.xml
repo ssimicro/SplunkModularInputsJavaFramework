@@ -15,6 +15,11 @@
 
             <include name="**/*.jar" />
         </fileset>
+        
+        <fileset dir="3rdParty" >
+
+            <include name="**/*.jar" />
+        </fileset>
     </path>
 
     <target name="init" >
@@ -339,11 +344,11 @@
 
         <tar
             compression="${compressionType}"
-            destfile="${release}/${id}-${version}${suffix}" >
+            destfile="${release}/jmx_ta-${version}${suffix}" >
 
             <zipfileset
                 dir="${temp_build}"
-                prefix="${id}" />
+                prefix="jmx_ta" />
         </tar>
 
         <delete dir="${temp_build}" />
