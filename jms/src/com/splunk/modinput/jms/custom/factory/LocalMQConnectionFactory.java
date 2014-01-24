@@ -61,6 +61,9 @@ public class LocalMQConnectionFactory implements LocalJMSResourceFactory {
 
 			String sslTrustStore = params.get("sslTrustStore");
 			this.sslTrustStore = sslTrustStore != null ? sslTrustStore : null;
+			
+			String sslTrustStorePassword = params.get("sslTrustStorePassword");
+			this.sslTrustStorePassword = sslTrustStorePassword != null ? sslTrustStorePassword : null;
 
 			String sslKeyStore = params.get("sslKeyStore");
 			this.sslKeyStore = sslKeyStore != null ? sslKeyStore : null;
