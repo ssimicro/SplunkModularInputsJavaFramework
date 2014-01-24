@@ -27,6 +27,7 @@ public class LocalMQConnectionFactory implements LocalJMSResourceFactory {
 	private int transportType;
 	private int port;
 	private String sslTrustStore;
+	private String sslTrustStorePassword;
 	private String sslKeyStore;
 	private String sslKeyStorePassword;
 	private String queueManager;
@@ -132,6 +133,9 @@ public class LocalMQConnectionFactory implements LocalJMSResourceFactory {
 				if (sslTrustStore != null)
 					System.setProperty("javax.net.ssl.trustStore",
 							sslTrustStore);
+				if (sslTrustStorePassword != null)
+					System.setProperty("javax.net.ssl.trustStorePassword",
+							sslTrustStorePassword);
 				if (sslKeyStore != null)
 					System.setProperty("javax.net.ssl.keyStore", sslKeyStore);
 				if (sslKeyStorePassword != null)
