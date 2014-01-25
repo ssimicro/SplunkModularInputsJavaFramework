@@ -1,5 +1,6 @@
 package com.splunk.modinput.jms;
 
+
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -218,7 +219,10 @@ public class JMSModularInput extends ModularInput {
 				} catch (Exception e) {
 					logger.error("Can't determine browse frequency");
 				}
-			}
+			}else if (param.getName().equals("jvm_system_properties")) {
+				setJVMSystemProperties(param.getValue());
+			} 
+			
 
 		}
 
@@ -330,7 +334,7 @@ public class JMSModularInput extends ModularInput {
 							.setParams(getParamMap(localResourceFactoryParams));
 				} catch (Exception e) {
 					logger.error("Stanza "+stanzaName+" : "+"Can't instantiate local resource factory : "
-							+ localResourceFactoryImpl + " , " + e.getMessage());
+							+ localResourceFactoryImpl + " , " + ModularInput.getStackTrace(e));
 					System.exit(2);
 				}
 			}
@@ -341,7 +345,7 @@ public class JMSModularInput extends ModularInput {
 				messageHandler.setParams(getParamMap(messageHandlerParams));
 			} catch (Exception e) {
 				logger.error("Stanza "+stanzaName+" : "+"Can't instantiate message handler : "
-						+ messageHandlerImpl + " , " + e.getMessage());
+						+ messageHandlerImpl + " , " + ModularInput.getStackTrace(e));
 				System.exit(2);
 			}
 
@@ -422,7 +426,7 @@ public class JMSModularInput extends ModularInput {
 							(Topic) dest, clientID, selector, true);
 				} catch (Exception e) {
 					logger.error("Stanza "+stanzaName+" : "+"Error creating durable subscriber for client id: "
-							+ clientID + " , " + e.getMessage());
+							+ clientID + " , " + ModularInput.getStackTrace(e));
 					messageConsumer = session.createConsumer(dest, selector);
 				}
 
@@ -443,7 +447,7 @@ public class JMSModularInput extends ModularInput {
 				if (connection != null)
 					connection.close();
 			} catch (Exception e) {
-				logger.error("Stanza "+stanzaName+" : "+"Error disconnecting : " + e.getMessage());
+				logger.error("Stanza "+stanzaName+" : "+"Error disconnecting : " + ModularInput.getStackTrace(e));
 			}
 			connected = false;
 
@@ -454,7 +458,7 @@ public class JMSModularInput extends ModularInput {
 
 				connect();
 			} catch (Throwable t) {
-				logger.error("Stanza "+stanzaName+" : "+"Error connecting : " + t.getMessage());
+				logger.error("Stanza "+stanzaName+" : "+"Error connecting : " + ModularInput.getStackTrace(t));
 			} finally {
 				disconnect();
 			}
@@ -468,7 +472,7 @@ public class JMSModularInput extends ModularInput {
 						connect();
 
 					} catch (Throwable t) {
-						logger.error("Stanza "+stanzaName+" : "+"Error connecting : " + t.getMessage());
+						logger.error("Stanza "+stanzaName+" : "+"Error connecting : " + ModularInput.getStackTrace(t));
 						try {
 							// sleep 10 secs then try to reconnect
 							Thread.sleep(10000);
@@ -497,7 +501,7 @@ public class JMSModularInput extends ModularInput {
 
 				} catch (Exception e) {
 					logger.error("Stanza "+stanzaName+" : "+"Error running message receiver : "
-							+ e.getMessage());
+							+ ModularInput.getStackTrace(e));
 					disconnect();
 
 				} finally {
@@ -511,7 +515,7 @@ public class JMSModularInput extends ModularInput {
 				Stream stream = messageHandler.handleMessage(message, this);
 				marshallObjectToXML(stream);
 			} catch (Exception e) {
-				logger.error("Stanza "+stanzaName+" : "+"Error handling message : " + e.getMessage());
+				logger.error("Stanza "+stanzaName+" : "+"Error handling message : " + ModularInput.getStackTrace(e));
 			}
 		}
 
@@ -547,7 +551,7 @@ public class JMSModularInput extends ModularInput {
 					event.addPair("latest_msg", latest);
 				}
 			} catch (Exception e) {
-				logger.error("Stanza "+stanzaName+" : "+"Error browsing queue stats : " + e.getMessage());
+				logger.error("Stanza "+stanzaName+" : "+"Error browsing queue stats : " + ModularInput.getStackTrace(e));
 			}
 
 			streamNonMessageEvent(event.toString());
@@ -579,7 +583,7 @@ public class JMSModularInput extends ModularInput {
 				}
 
 			} catch (Exception e) {
-				logger.error("Stanza "+stanzaName+" : "+"Error browsing queue : " + e.getMessage());
+				logger.error("Stanza "+stanzaName+" : "+"Error browsing queue : " + ModularInput.getStackTrace(e));
 			}
 
 		}
@@ -665,6 +669,8 @@ public class JMSModularInput extends ModularInput {
 
 	}
 
+	
+	
 	@Override
 	protected Scheme getScheme() {
 
@@ -799,6 +805,13 @@ public class JMSModularInput extends ModularInput {
 		arg.setDescription("Whether or not to strip newline characters from the message body");
 		arg.setRequired_on_create(false);
 		arg.setData_type(DataType.BOOLEAN);
+		endpoint.addArg(arg);
+		
+		arg = new Arg();
+		arg.setName("jvm_system_properties");
+		arg.setTitle("Custom JVM System Properties");
+		arg.setDescription("Custom JVM System Properties");
+		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
 
 		arg = new Arg();

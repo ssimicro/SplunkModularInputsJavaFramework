@@ -21,3 +21,4 @@ user_jndi_properties = <value>
 browse_queue_only = <value>
 browse_frequency = <value>
 browse_mode = <value>
+jvm_system_properties = <value>

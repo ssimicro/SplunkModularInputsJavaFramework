@@ -1,5 +1,8 @@
 package com.splunk.modinput.jms.custom.factory;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Map;
 
 import javax.jms.ConnectionFactory;
@@ -35,9 +38,8 @@ public class LocalMQConnectionFactory implements LocalJMSResourceFactory {
 	private String hostName;
 	private String clientID;
 
-	
 	public LocalMQConnectionFactory() {
-		
+
 	}
 
 	@Override
@@ -61,9 +63,10 @@ public class LocalMQConnectionFactory implements LocalJMSResourceFactory {
 
 			String sslTrustStore = params.get("sslTrustStore");
 			this.sslTrustStore = sslTrustStore != null ? sslTrustStore : null;
-			
+
 			String sslTrustStorePassword = params.get("sslTrustStorePassword");
-			this.sslTrustStorePassword = sslTrustStorePassword != null ? sslTrustStorePassword : null;
+			this.sslTrustStorePassword = sslTrustStorePassword != null ? sslTrustStorePassword
+					: null;
 
 			String sslKeyStore = params.get("sslKeyStore");
 			this.sslKeyStore = sslKeyStore != null ? sslKeyStore : null;
@@ -83,10 +86,10 @@ public class LocalMQConnectionFactory implements LocalJMSResourceFactory {
 
 			String clientID = params.get("clientID");
 			this.clientID = clientID != null ? clientID : null;
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			throw new Exception(
 					"Error setting parameters for LocalMQConnectionFactory : "
-							+ e.getMessage());
+							+ getStackTrace(e));
 		}
 
 	}
@@ -96,9 +99,9 @@ public class LocalMQConnectionFactory implements LocalJMSResourceFactory {
 
 		try {
 			return new MQTopic(topicName);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			throw new Exception("Error creating MQ Topic " + topicName + " : "
-					+ e.getMessage());
+					+ getStackTrace(e));
 		}
 	}
 
@@ -107,17 +110,18 @@ public class LocalMQConnectionFactory implements LocalJMSResourceFactory {
 
 		try {
 			return new MQQueue(queueName);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			throw new Exception("Error creating MQ Queue " + queueName + " : "
-					+ e.getMessage());
+					+ getStackTrace(e));
 		}
 	}
 
 	@Override
 	public ConnectionFactory createConnectionFactory() throws Exception {
 
-		MQConnectionFactory factory = new MQConnectionFactory();
+		MQConnectionFactory factory = null;
 		try {
+			factory = new MQConnectionFactory();
 
 			factory.setTransportType(transportType);
 			factory.setPort(port);
@@ -149,11 +153,18 @@ public class LocalMQConnectionFactory implements LocalJMSResourceFactory {
 
 			}
 
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			throw new Exception("Error creating MQ Connection factory : "
-					+ e.getMessage());
+					+ getStackTrace(e));
 		}
 		return factory;
+	}
+
+	public static String getStackTrace(Throwable aThrowable) {
+		Writer result = new StringWriter();
+		PrintWriter printWriter = new PrintWriter(result);
+		aThrowable.printStackTrace(printWriter);
+		return result.toString();
 	}
 
 }

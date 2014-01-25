@@ -56,6 +56,14 @@ They will be automatically picked up upon restart
 The default heap maximum is 64MB.
 If you require a larger heap, then you can alter this in $SPLUNK_HOME/etc/apps/jms_ta/bin/jms.py on line 95
 
+##JVM System Properties
+
+You can declare custom JVM System Properties when setting up new input stanzas.
+Note : these JVM System Properties will apply to the entire JVM context and all stanzas you have setup
+
+The default heap maximum is 64MB.
+If you require a larger heap, then you can alter this in $SPLUNK_HOME/etc/apps/jms_ta/bin/jms.py on line 95
+
 ## Troubleshooting
 
 * JAVA_HOME environment variable is set or "java" is on the PATH for the user's environment you are running Splunk as

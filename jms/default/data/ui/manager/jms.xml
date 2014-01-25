@@ -202,6 +202,13 @@
           <view name="create"/>
           <key name="exampleText">Parameter string in format 'key1=value1,key2=value2,key3=value3'. This gets passed to the implementation class to process.</key>
         </element>
+        
+        <element name="jvm_system_properties" type="textfield" label="Custom JVM System Properties">
+           
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Properties string in format 'sysprop1=value1,sysprop2=value2,sysprop3=value3'. Note : these JVM System Properties will apply to the entire JVM context and all stanzas you have setup</key>
+        </element>
 
 </elements>
 </element>

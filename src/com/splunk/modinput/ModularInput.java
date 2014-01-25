@@ -1,12 +1,15 @@
 package com.splunk.modinput;
 
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -182,7 +185,9 @@ public abstract class ModularInput {
 						setDisabled(stanza, isDisabled);
 						enabledCount += isDisabled ? 0 : 1;
 					} catch (Exception e) {
-						logger.error("Can't connect to Splunk REST API with the token ["+service.getToken()+"], either the token is invalid or SplunkD has exited : "
+						logger.error("Can't connect to Splunk REST API with the token ["
+								+ service.getToken()
+								+ "], either the token is invalid or SplunkD has exited : "
 								+ e.getMessage());
 					}
 				}
@@ -277,5 +282,29 @@ public abstract class ModularInput {
 	protected abstract void doValidate(Validation val);
 
 	protected abstract Scheme getScheme();
+
+	protected static String getStackTrace(Throwable aThrowable) {
+		Writer result = new StringWriter();
+		PrintWriter printWriter = new PrintWriter(result);
+		aThrowable.printStackTrace(printWriter);
+		return result.toString();
+	}
+
+	protected void setJVMSystemProperties(String propsString) {
+
+		try {
+			StringTokenizer st = new StringTokenizer(propsString, ",");
+			while (st.hasMoreTokens()) {
+				StringTokenizer st2 = new StringTokenizer(st.nextToken(), "=");
+				while (st2.hasMoreTokens()) {
+					System.setProperty(st2.nextToken(), st2.nextToken());
+
+				}
+			}
+		} catch (Throwable e) {
+			logger.error("Error setting JVM system propertys from string : "+propsString+" : "+getStackTrace(e));
+		}
+
+	}
 
 }
