@@ -1,6 +1,6 @@
 ## Monitoring of Java Virtual Machines with JMX
 
-* Version : 2.0.4
+* Version : 2.1
 * Date : January 2014
 * Author : Damien Dallimore, ddallimore@splunk.com
 
@@ -50,6 +50,8 @@ You can configure your JMX inputs via Manager->DataInputs->JMX
 
 You will need to configure your JMX config file, this is the config file where you specify JMX server(s), MBeans and MBean attributes/operations/notifications.
 You can create as many config files,with any name, as you want and place them in the jmx_ta/bin/config directory
+
+Any changes to the config file at runtime will cause it to be dynamically reloaded
 
 In your setup stanzas, you can optionally specify an alternate config file directory location relative to SPLUNK_HOME ie: etc/apps/someotherapp
 This might come in handy if you want to create another Splunk App that depends on this JMX App , and ship your own config files.
@@ -112,6 +114,14 @@ On Linux you could do this with a simple script that uses ps, grep and awk.
 Example : ps -eafH | grep "java" | grep -v "grep" | awk '{print $2}'
 
 If the pidCommand outputs multiple PIDs on multiple lines , then Splunk for JMX will handle this by spawning additional JMXServer elements internally in memory.
+
+Optionally you can also have your pid script output a seperate JVM Description for each pid in format "pid,jvmDescription"
+
+Example :
+
+1234,Some JVM Description
+3456,Another JVM Description
+6789,MOAR JVM Description
 
 Look at the example xml config file in the bin/config directory for usage examples.
 

@@ -162,6 +162,11 @@ public class JMXModularInput extends ModularInput {
 			JMXMBeanPoller poller = new JMXMBeanPoller(stanzaName, configFile);
 			while (!isDisabled(stanzaName)) {
 
+				// reload the file if it has changed
+				if (poller.configFileHasChanged()
+						|| poller.hasDynamicPIDSettings())
+					poller.loadConfigFile();
+
 				poller.execute();
 
 				try {
@@ -287,27 +292,76 @@ public class JMXModularInput extends ModularInput {
 		private Formatter formatter;
 		boolean registerNotifications = true;
 		String stanzaName;
+		String configFileName;
+		//default for the first run
+		long configFileModifiedTime = 0;
+		//if config file uses pidfile or pidcommand
+		boolean hasDynamicPIDSettings = false;
 
 		public JMXMBeanPoller(String stanzaName, String configFile) {
 
+			this.configFileName = configFile;
+			this.stanzaName = stanzaName;
+		}
+
+		/**
+		 * Determine if config file has been modified
+		 * @return
+		 */
+		public boolean configFileHasChanged() {
+			File file = getConfigFile(this.configFileName);
+			long currentModTime = file.lastModified();
+
+			if (currentModTime > this.configFileModifiedTime) {
+				this.configFileModifiedTime = currentModTime;
+				return true;
+			} else
+				return false;
+
+		}
+
+		public void loadConfigFile() {
 			try {
 				// parse XML config into POJOs
 
-				File file = getConfigFile(configFile);
+				File file = getConfigFile(configFileName);
 				this.config = loadConfig(file);
 				config.normalizeClusters();
+				this.hasDynamicPIDSettings = determineHasDynamicPIDSettings(config);
 				this.formatter = config.getFormatter();
 				if (formatter == null) {
 					formatter = new Formatter();// default
 				}
-
-				this.stanzaName = stanzaName;
 
 			} catch (Exception e) {
 
 				logger.error("Error executing JMX stanza " + stanzaName + " : "
 						+ e.getMessage());
 			}
+		}
+
+		public boolean hasDynamicPIDSettings() {
+			return hasDynamicPIDSettings;
+
+		}
+
+		private boolean determineHasDynamicPIDSettings(JMXPoller config) {
+
+			if (this.config != null) {
+				List<JMXServer> servers = this.config.getServers();
+				if (servers != null) {
+
+					for (JMXServer server : servers) {
+						if ((server.getPidCommand() != null && server
+								.getPidCommand().length() > 0)
+								|| (server.getPidFile() != null && server
+										.getPidFile().length() > 0)) {
+							return true;
+						}
+					}
+				}
+			}
+			return false;
 		}
 
 		public void execute() {

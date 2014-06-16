@@ -2,6 +2,7 @@ package com.dtdsoftware.splunk.config;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Root config POJO
@@ -20,11 +21,9 @@ public class JMXPoller {
 	// a custom formatter
 	public Formatter formatter;
 
-	
-
 	public JMXPoller() {
 	}
-	
+
 	public List<JMXServer> getServers() {
 		return servers;
 	}
@@ -38,10 +37,12 @@ public class JMXPoller {
 		if (servers != null) {
 			for (JMXServer server : servers) {
 				expandedList.add(server);
-				List<Integer> pidList = server.getAdditionalPIDsFromCommand();
+				Map<Integer, String> pidList = server
+						.getAdditionalPIDsFromCommand();
 				if (pidList != null) {
-					for (Integer pid : pidList) {
-						expandedList.add(server.cloneForAdditionalPID(pid));
+					for (Integer pid : pidList.keySet()) {
+						expandedList.add(server.cloneForAdditionalPID(pid,
+								pidList.get(pid)));
 					}
 
 				}
@@ -66,8 +67,6 @@ public class JMXPoller {
 	public void setFormatter(Formatter formatter) {
 		this.formatter = formatter;
 	}
-
-	
 
 	public List<Cluster> getClusters() {
 		return clusters;

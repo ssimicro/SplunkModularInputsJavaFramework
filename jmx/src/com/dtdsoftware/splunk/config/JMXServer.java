@@ -4,8 +4,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 
@@ -28,8 +30,9 @@ public class JMXServer {
 	// PID Command to obtain PID of locally running JVM
 	public String pidCommand;
 
-	// Where a command returns multiple PIDs,store the additional PIDs in a List
-	public List<Integer> additionalPIDsFromCommand;
+	// Where a command returns multiple PIDs,store the additional PIDs and JVM
+	// Descriptions in a Map
+	public Map<Integer, String> additionalPIDsFromCommand;
 
 	// JMX hostname, dns alias, ip address
 	public String host = "";
@@ -217,15 +220,31 @@ public class JMXServer {
 					process.getInputStream()));
 			String line;
 			if ((line = input.readLine()) != null) {
-				setProcessID(Integer.parseInt(line.trim()));
+				String rawLine = line.trim();
+				StringTokenizer st = new StringTokenizer(rawLine, ",");
+				int pid = Integer.parseInt(st.nextToken());
+				setProcessID(pid);
+				String jvmDesc = this.jvmDescription == null || this.jvmDescription.length() == 0 ? "JVM PID " + pid : this.jvmDescription;
+				if (st.hasMoreTokens())
+					jvmDesc = st.nextToken();
+				setJvmDescription(jvmDesc);
+				
 			} else {
 				throw new Exception("No command output");
 			}
 			// check for any additional PIDs in the command output
 			while ((line = input.readLine()) != null) {
 				if (additionalPIDsFromCommand == null)
-					additionalPIDsFromCommand = new ArrayList<Integer>();
-				additionalPIDsFromCommand.add(Integer.parseInt(line.trim()));
+					additionalPIDsFromCommand = new HashMap<Integer, String>();
+
+				String rawLine = line.trim();
+				StringTokenizer st = new StringTokenizer(rawLine, ",");
+				int pid = Integer.parseInt(st.nextToken());
+				String jvmDesc = "JVM PID " + pid;
+				if (st.hasMoreTokens())
+					jvmDesc = st.nextToken();
+
+				additionalPIDsFromCommand.put(pid, jvmDesc);
 			}
 
 		} catch (Exception e) {
@@ -242,24 +261,26 @@ public class JMXServer {
 
 	/**
 	 * Where a command returns multiple PIDs,store the additional PIDs in a List
+	 * 
 	 * @return
 	 */
-	public List<Integer> getAdditionalPIDsFromCommand() {
+	public Map<Integer, String> getAdditionalPIDsFromCommand() {
 		return additionalPIDsFromCommand;
 	}
 
 	/**
-	 * Where a command returns multiple PIDs, we can clone other JMXServer objects from this one
+	 * Where a command returns multiple PIDs, we can clone other JMXServer
+	 * objects from this one
+	 * 
 	 * @param pid
 	 * @return
 	 */
-	public JMXServer cloneForAdditionalPID(int pid) {
+	public JMXServer cloneForAdditionalPID(int pid, String jvmDescription) {
 
-		
 		JMXServer clone = new JMXServer();
 		clone.setProcessID(pid);
 		clone.setHost(this.getHost());
-		clone.setJvmDescription(this.getJvmDescription());
+		clone.setJvmDescription(jvmDescription);
 		clone.setMbeans(this.getMbeans());
 		return clone;
 	}
