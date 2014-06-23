@@ -1,0 +1,312 @@
+<endpoint name="data/inputs/amqp">
+  <header>AMQP Messaging</header>
+  <breadcrumb>
+    <parent hidecurrent="False">datainputstats</parent>
+    <name>AMQP Messaging</name>
+  </breadcrumb>
+  <elements>
+    <element name="sourceFields" type="fieldset">
+      <view name="list"/>
+      <view name="edit"/>
+      <view name="create"/>
+      <elements>
+
+           <element name="name" label="Stanza Name">
+          <view name="list"/>
+          <view name="create"/>
+          
+          <key name="exampleText">Name of this stanza</key>
+</element>
+
+<element name="destination_type" type="select" label="Destination Type">
+                   
+          <view name="create"/>
+          <view name="edit"/>
+          <view name="list"/>
+          <options>
+            <opt value="queue" label="queue"/>
+            <opt value="topic" label="topic"/>          
+          </options>
+</element>
+
+
+<element name="amqp_connection_settings" type="fieldset">
+			<key name="legend">AMQP Connection Settings</key>		
+					<view name="edit" />
+					<view name="create" />
+					<elements>
+
+        <element name="hostname" type="textfield" label="Hostname">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <view name="list"/>
+          <key name="exampleText">Broker Host.IP or resolvable hostname.</key>
+        </element>
+        <element name="port" type="textfield" label="Port">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <view name="list"/>
+          <key name="exampleText">Broker Port.Will default to 5672.</key>
+        </element>
+        <element name="username" type="textfield" label="Username">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Broker Username</key>
+        </element>
+        <element name="password" type="textfield" label="Password">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Broker Password</key>
+        </element>
+        <element name="virtual_host" type="textfield" label="Virtual Host">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Broker Virtual Host</key>
+        </element>
+        <element name="use_ssl" type="checkbox" label="Use SSL ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+        
+        </element>
+
+</elements>
+</element>
+       
+         
+
+<element name="amqp_common_settings" type="fieldset">
+			<key name="legend">Common settings for polling queues and topics</key>		
+					<view name="edit" />
+					<view name="create" />
+					<elements>
+
+        <element name="routing_key_pattern" type="textfield" label="Routing Pattern">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Message routing pattern</key>
+        </element>
+        <element name="exchange_name" type="textfield" label="Exchange Name">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Message exchange name</key>
+        </element>
+        <element name="ack_messages" type="checkbox" label="Acknowledge Messages ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+
+        </element>
+        <element name="channel_durable" type="checkbox" label="Is Message Channel Durable ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+       
+        </element>
+        <element name="channel_exclusive" type="checkbox" label="Is Message Channel Exclusive ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+        
+        </element>
+        <element name="channel_auto_delete" type="checkbox" label="Auto Delete Messages ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          
+        </element>
+        
+        
+
+</elements>
+</element>
+
+<element name="message_handler" type="fieldset">
+			<key name="legend">Message Processing</key>		
+					<view name="edit" />
+					<view name="create" />
+					<elements>
+					    
+					    <element name="index_message_envelope" type="checkbox" label="Index Message Envelope ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+        
+        </element>
+        
+					    <element name="index_message_propertys" type="checkbox" label="Index Message Properties ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+        
+        </element>
+        
+					    
+<element name="message_handler_impl" type="textfield" label="Implementation class for a custom message handler">
+            
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">An implementation of the com.splunk.modinput.amqp.AbstractMessageHandler class.You would provide this if you required some custom handling/formatting of the messages you consume.Ensure that the necessary jars are in the $SPLUNK_HOME/etc/apps/amqp_ta/bin/lib directory.If ommitted then the default handler 'com.splunk.modinput.amqp.DefaultMessageHandler' will be used.</key>
+        </element>
+        <element name="message_handler_params" type="textfield" label="Implementation parameter string for the custom message handler">
+           
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Parameter string in format 'key1=value1,key2=value2,key3=value3'. This gets passed to the implementation class to process.</key>
+        </element>
+        
+
+</elements>
+</element>
+
+<element name="additional_startup_settings" type="fieldset">
+			<key name="legend">Additional Startup Settings</key>		
+					<view name="edit" />
+					<view name="create" />
+					<elements>
+					        
+    
+        <element name="additional_jvm_propertys" type="textfield" label="Additional JVM System Properties">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Parameter string in format 'key1=value1,key2=value2,key3=value3'</key>
+        </element>
+        
+</elements>
+</element>
+</elements>
+</element>
+    
+    <element name="sourcetypeFields" type="fieldset">
+                      <view name="list"/>
+                      <view name="edit"/>
+                      <view name="create"/>
+                      <elements>
+                        <element name="spl-ctrl_sourcetypeSelect" type="select" label="Set sourcetype">
+                          <onChange>
+                            <!-- <key name="auto">NONE</key> -->
+                            <key name="_action">showonly</key>
+                            <group_set>
+                              <group name="sourcetype"/>
+                              <group name="spl-ctrl_from_list"/>
+                            </group_set>
+                            <key name="sourcetype">sourcetype</key>
+                            <key name="spl-ctrl_from_list">spl-ctrl_from_list</key>
+                          </onChange>
+                          <options>
+                            <!-- <opt value="auto" label="Automatic"/> -->
+                            <opt value="spl-ctrl_from_list" label="From list"/>
+                            <opt value="sourcetype" label="Manual"/>
+                          </options>
+                          <view name="edit"/>
+                          <view name="create"/>
+                          <!-- <key name="exampleText">Set to automatic and Splunk will classify and assign sourcetype automatically. Unknown sourcetypes will be given a placeholder name.</key> -->
+                          <key name="processValueEdit">[[ e for e in ['sourcetype'] if form_defaults.get(e) ][0]]</key>
+                          <key name="processValueAdd">[[ e for e in ['sourcetype'] if form_defaults.get(e) ][0]]</key>
+                        </element>
+                        <element name="sourcetype" type="textfield" label="Source type">
+                          <view name="list"/>
+                          <view name="edit"/>
+                          <view name="create"/>
+                          <key name="exampleText">If this field is left blank, the default value of script will be used for the source type.</key>
+                          <key name="processValueList">_('script') if (value==None or value=='') else value</key>
+                          <key name="submitValueAdd">form_data.get('spl-ctrl_from_list') if form_data.get('spl-ctrl_sourcetypeSelect')=='spl-ctrl_from_list' else value if form_data.get('spl-ctrl_sourcetypeSelect')=='sourcetype' else None</key>
+                          <key name="submitValueEdit">form_data.get('spl-ctrl_from_list') if form_data.get('spl-ctrl_sourcetypeSelect')=='spl-ctrl_from_list' else value if form_data.get('spl-ctrl_sourcetypeSelect')=='sourcetype' else None</key>
+                          <key name="labelList">Source type</key>
+                        </element>
+                        <element name="spl-ctrl_from_list" type="select" label="Select source type from list">
+    <view name="edit"/>
+                          <view name="create"/>
+                  <key name="exampleText">Splunk classifies all common data types automatically, but if you're looking for something specific, you can find more source types in the <![CDATA[<a href="../../../apps/remote">Splunkbase apps browser</a>]]> or online at <![CDATA[<a href="http://www.splunkbase.com/" target="_blank">www.splunkbase.com</a>]]>.</key>
+                          <key name="requiredIfVisible" />
+                          <key name="dynamicOptions" type="dict">
+                            <key name="keyName">title</key>
+                            <key name="keyValue">title</key>
+                            <key name="splunkSource">/saved/sourcetypes</key>
+                            <key name="splunkSourceParams" type="dict">
+                              <key name="count">-1</key>
+                              <key name="search">'pulldown_type=true'</key>
+                            </key>
+                            <key name="prefixOptions" type="list">
+                                <item type="list">
+                                    <item></item>
+                                    <item>Choose...</item>
+                                </item>
+                            </key>
+                          </key>
+                        </element>
+                      </elements>
+                      <key name="legend">Source type</key>
+                      <key name="helpText">Set sourcetype field for all events from this source.</key>
+                    </element>
+                            
+                            
+	<element name="spl-ctrl_EnableAdvanced" type="checkbox" label="More settings" class="spl-mgr-advanced-switch">
+        <view name="edit"/>
+        <view name="create"/>
+          <onChange>
+              <key name="_action">showonly</key>
+              <key name="0">NONE</key>
+              <key name="1">ALL</key>
+              <group_set>
+                <group name="advanced"/>
+              </group_set>
+          </onChange>
+    </element>
+	<element name="advanced" type="fieldset" class="spl-mgr-advanced-options">
+        <view name="edit"/>
+        <view name="create"/>
+        <elements>
+		    <element name="hostFields" type="fieldset">
+		      <key name="legend">Host</key>
+		      <view name="list"/>
+		      <view name="edit"/>
+		      <view name="create"/>
+		      <elements>
+		        <element name="host" type="textfield" label="Host field value">
+		          <view name="edit"/>
+		          <view name="create"/>
+		        </element>
+		      </elements>
+		    </element>  
+		    <element name="indexField" type="fieldset">
+		      <key name="legend">Index</key>
+		      <key name="helpText">Set the destination index for this source.</key>
+		      <view name="list"/>
+		      <view name="edit"/>
+		      <view name="create"/>
+		      <elements>
+		        <element name="index" type="select" label="Index">
+		          <view name="list"/>
+		          <view name="edit"/>
+		          <view name="create"/>
+		          <key name="dynamicOptions" type="dict">
+		            <key name="keyName">title</key>
+		            <key name="keyValue">title</key>
+		            <key name="splunkSource">/data/indexes</key>
+		            <key name="splunkSourceParams" type="dict">
+		              <key name="search">'isInternal=false disabled=false'</key>
+		              <key name="count">-1</key>
+		            </key>
+		          </key>
+		        </element>
+		      </elements>
+		    </element>
+		</elements>
+	</element>
+  
+	<element name="eai:acl.app" label="App">
+      <view name="list"/>
+      <key name="processValueList">entity['eai:acl']['app'] or ""</key>
+    </element>
+
+  </elements>
+</endpoint>

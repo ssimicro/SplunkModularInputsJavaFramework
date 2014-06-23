@@ -277,6 +277,80 @@
     </target>
 
     <target
+        name="build_amqp_input"
+        description="build AMQP modular input add on" >
+
+        <antcall target="compile_addon" >
+
+            <param
+                name="addon"
+                value="${amqp_dir}" />
+        </antcall>
+
+        <loadproperties srcFile="${amqp_dir}/default/app.conf" />
+
+        <copy todir="${temp_build}/metadata" >
+
+            <fileset dir="${amqp_dir}/metadata" />
+        </copy>
+
+        <copy todir="${temp_build}/bin" >
+
+            <fileset dir="${amqp_dir}/bin" />
+        </copy>
+
+        <copy todir="${temp_build}/appserver" >
+
+            <fileset dir="${amqp_dir}/appserver" />
+        </copy>
+
+        <copy todir="${temp_build}/default" >
+
+            <fileset dir="${amqp_dir}/default" />
+        </copy>
+        
+        <copy todir="${temp_build}/static" >
+
+            <fileset dir="${amqp_dir}/static" />
+        </copy>
+        
+        <copy todir="${temp_build}/README" >
+
+            <fileset dir="${amqp_dir}/README" />
+        </copy>
+
+        <copy todir="${temp_build}/bin/${lib}" >
+
+            <fileset dir="${lib}" />
+
+            <fileset dir="${amqp_dir}/bin/${lib}" />
+        </copy>
+
+        <jar jarfile="${temp_build}/bin/${lib}/${amqp_jar}" >
+
+            <fileset
+                dir="${temp_build}/${classes}"
+                includes="com/splunk/modinput/**" />
+
+            <fileset file="${src}/log4j.xml" />
+        </jar>
+
+        <delete dir="${temp_build}/${classes}" />
+
+        <tar
+            compression="${compressionType}"
+            destfile="${release}/${id}-${version}${suffix}" >
+
+            <zipfileset
+                dir="${temp_build}"
+                prefix="${id}" />
+        </tar>
+
+        <delete dir="${temp_build}" />
+    </target>
+
+
+    <target
         name="build_jmx_input"
         description="build JMX modular input add on" >
 
