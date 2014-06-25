@@ -18,22 +18,13 @@
           <key name="exampleText">Name of this stanza</key>
 </element>
 
-<element name="destination_type" type="select" label="Destination Type">
-                   
-          <view name="create"/>
-          <view name="edit"/>
-          <view name="list"/>
-          <options>
-            <opt value="queue" label="queue"/>
-            <opt value="topic" label="topic"/>          
-          </options>
-</element>
 
 
 <element name="amqp_connection_settings" type="fieldset">
 			<key name="legend">AMQP Connection Settings</key>		
 					<view name="edit" />
 					<view name="create" />
+					<view name="list"/>
 					<elements>
 
         <element name="hostname" type="textfield" label="Hostname">
@@ -81,47 +72,45 @@
          
 
 <element name="amqp_common_settings" type="fieldset">
-			<key name="legend">Common settings for polling queues and topics</key>		
+			<key name="legend">Message Consumer Settings</key>		
 					<view name="edit" />
 					<view name="create" />
+					<view name="list"/>
 					<elements>
 
+					     <element name="queue_name" label="Queue Name">
+          <view name="list"/>
+          <view name="edit"/>
+          <view name="create"/>
+          
+          <key name="exampleText">Name of queue to consume from</key>
+</element>
+
+					  
+
+					    <element name="exchange_name" type="textfield" label="Exchange Name">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <view name="list"/>
+          <key name="exampleText">Exchange name.Leave empty to use the Default Exchange.</key>
+        </element>
+        
         <element name="routing_key_pattern" type="textfield" label="Routing Pattern">
           
           <view name="edit"/>
           <view name="create"/>
-          <key name="exampleText">Message routing pattern</key>
+          <view name="list"/>
+          <key name="exampleText">Routing key pattern.</key>
         </element>
-        <element name="exchange_name" type="textfield" label="Exchange Name">
-          
-          <view name="edit"/>
-          <view name="create"/>
-          <key name="exampleText">Message exchange name</key>
-        </element>
+        
         <element name="ack_messages" type="checkbox" label="Acknowledge Messages ?">
           
           <view name="edit"/>
           <view name="create"/>
 
         </element>
-        <element name="channel_durable" type="checkbox" label="Is Message Channel Durable ?">
-          
-          <view name="edit"/>
-          <view name="create"/>
-       
-        </element>
-        <element name="channel_exclusive" type="checkbox" label="Is Message Channel Exclusive ?">
-          
-          <view name="edit"/>
-          <view name="create"/>
         
-        </element>
-        <element name="channel_auto_delete" type="checkbox" label="Auto Delete Messages ?">
-          
-          <view name="edit"/>
-          <view name="create"/>
-          
-        </element>
         
         
 

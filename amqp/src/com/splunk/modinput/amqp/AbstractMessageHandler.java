@@ -20,12 +20,14 @@ public abstract class AbstractMessageHandler {
 			AMQP.BasicProperties messageProperties, MessageReceiver context)
 			throws Exception {
 
-		SplunkLogEvent event = new SplunkLogEvent(context.destinationType
-				+ "_msg_received", messageProperties.getMessageId(), true, true);
+		SplunkLogEvent event = new SplunkLogEvent("amqp_msg_received",
+				messageProperties != null ? messageProperties.getMessageId()
+						: "", true, true);
 
-		event.addPair("msg_dest", context.destinationName);
+		event.addPair("msg_queue", context.queueName);
+		event.addPair("msg_exchange", context.exchangeName);
 
-		if (context.indexMessageEnvelope) {
+		if (context.indexMessageEnvelope && envelope != null) {
 			// JMS Message Header fields
 			event.addPair("msg_envelope_delivery_tag",
 					envelope.getDeliveryTag());
@@ -36,7 +38,7 @@ public abstract class AbstractMessageHandler {
 
 		}
 
-		if (context.indexMessagePropertys) {
+		if (context.indexMessagePropertys && messageProperties != null) {
 			event.addPair("msg_property_timestamp",
 					messageProperties.getTimestamp());
 			event.addPair("msg_property_appid", messageProperties.getAppId());
@@ -64,8 +66,11 @@ public abstract class AbstractMessageHandler {
 					messageProperties.getPriority());
 
 			Map<String, Object> headers = messageProperties.getHeaders();
-			for (String name : headers.keySet()) {
-				event.addPair("msg_property_header_" + name, headers.get(name));
+			if (headers != null) {
+				for (String name : headers.keySet()) {
+					event.addPair("msg_property_header_" + name,
+							headers.get(name));
+				}
 			}
 		}
 

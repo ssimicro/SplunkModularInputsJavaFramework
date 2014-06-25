@@ -74,19 +74,15 @@ public class AMQPModularInput extends ModularInput {
 			List<Param> params, boolean validationConnectionMode)
 			throws Exception {
 
-		String destinationType = "";
-		String destinationName = "";
+		String queueName = "";
 		String host = "";
-		int port = 5672;
+		int port = 5672; // default AMQP port
 		String username = "";
 		String password = "";
 		String virtualHost = "";
 		boolean useSsl = false;
 		String routingKeyPattern = "";
-		String exchangeName = "amqp.topic";
-		boolean channelDurable = false;
-		boolean channelExclusive = false;
-		boolean channelAutoDelete = false;
+		String exchangeName = "";
 		boolean ackMessages = false;
 		boolean indexMessageEnvelope = false;
 		boolean indexMessagePropertys = false;
@@ -99,17 +95,15 @@ public class AMQPModularInput extends ModularInput {
 				continue;
 			}
 
-			if (param.getName().equals("destination_type")) {
-				destinationType = param.getValue();
-			} else if (param.getName().equals("destination_name")) {
-				destinationName = param.getValue();
+			if (param.getName().equals("queue_name")) {
+				queueName = param.getValue();
 			} else if (param.getName().equals("hostname")) {
 				host = param.getValue();
 			} else if (param.getName().equals("port")) {
 				try {
 					port = Integer.parseInt(param.getValue());
 				} catch (Exception e) {
-					logger.error("Can't determine port value");
+					logger.error("Can't determine port value, will revert to default value of 5672.");
 				}
 			} else if (param.getName().equals("username")) {
 				username = param.getValue();
@@ -129,27 +123,6 @@ public class AMQPModularInput extends ModularInput {
 				routingKeyPattern = param.getValue();
 			} else if (param.getName().equals("exchange_name")) {
 				exchangeName = param.getValue();
-			} else if (param.getName().equals("channel_durable")) {
-				try {
-					channelDurable = Boolean.parseBoolean(param.getValue()
-							.equals("1") ? "true" : "false");
-				} catch (Exception e) {
-					logger.error("Can't determine channel durability mode");
-				}
-			} else if (param.getName().equals("channel_exclusive")) {
-				try {
-					channelExclusive = Boolean.parseBoolean(param.getValue()
-							.equals("1") ? "true" : "false");
-				} catch (Exception e) {
-					logger.error("Can't determine channel exclusive mode");
-				}
-			} else if (param.getName().equals("channel_auto_delete")) {
-				try {
-					channelAutoDelete = Boolean.parseBoolean(param.getValue()
-							.equals("1") ? "true" : "false");
-				} catch (Exception e) {
-					logger.error("Can't determine channel auto delete mode");
-				}
 			} else if (param.getName().equals("ack_messages")) {
 				try {
 					ackMessages = Boolean.parseBoolean(param.getValue().equals(
@@ -182,13 +155,11 @@ public class AMQPModularInput extends ModularInput {
 		}
 
 		if (!isDisabled(stanzaName)) {
-			MessageReceiver mr = new MessageReceiver(stanzaName,
-					destinationType, destinationName, host, port, username,
-					password, virtualHost, useSsl, routingKeyPattern,
-					exchangeName, channelDurable, channelExclusive,
-					channelAutoDelete, ackMessages, indexMessageEnvelope,
-					indexMessagePropertys, messageHandlerImpl,
-					messageHandlerParams);
+			MessageReceiver mr = new MessageReceiver(stanzaName, queueName,
+					host, port, username, password, virtualHost, useSsl,
+					routingKeyPattern, exchangeName, ackMessages,
+					indexMessageEnvelope, indexMessagePropertys,
+					messageHandlerImpl, messageHandlerParams);
 			if (validationConnectionMode)
 				mr.testConnectOnly();
 			else
@@ -198,8 +169,7 @@ public class AMQPModularInput extends ModularInput {
 
 	public class MessageReceiver extends Thread {
 
-		String destinationType;
-		String destinationName;
+		String queueName;
 		String host;
 		int port;
 		String username;
@@ -208,9 +178,6 @@ public class AMQPModularInput extends ModularInput {
 		boolean useSsl;
 		String routingKeyPattern;
 		String exchangeName;
-		boolean channelDurable;
-		boolean channelExclusive;
-		boolean channelAutoDelete;
 		boolean ackMessages;
 		boolean indexMessageEnvelope;
 		boolean indexMessagePropertys;
@@ -222,18 +189,16 @@ public class AMQPModularInput extends ModularInput {
 		Connection conn;
 		Channel channel;
 
-		public MessageReceiver(String stanzaName, String destinationType,
-				String destinationName, String host, int port, String username,
-				String password, String virtualHost, boolean useSsl,
-				String routingKeyPattern, String exchangeName,
-				boolean channelDurable, boolean channelExclusive,
-				boolean channelAutoDelete, boolean ackMessages,
+		public MessageReceiver(String stanzaName, String queueName,
+				String host, int port, String username, String password,
+				String virtualHost, boolean useSsl, String routingKeyPattern,
+				String exchangeName, boolean ackMessages,
 				boolean indexMessageEnvelope, boolean indexMessagePropertys,
 				String messageHandlerImpl, String messageHandlerParams) {
 
 			this.stanzaName = stanzaName;
-			this.destinationType = destinationType;
-			this.destinationName = destinationName;
+
+			this.queueName = queueName;
 			this.host = host;
 			this.port = port;
 			this.username = username;
@@ -242,9 +207,6 @@ public class AMQPModularInput extends ModularInput {
 			this.useSsl = useSsl;
 			this.routingKeyPattern = routingKeyPattern;
 			this.exchangeName = exchangeName;
-			this.channelDurable = channelDurable;
-			this.channelExclusive = channelExclusive;
-			this.channelAutoDelete = channelAutoDelete;
 			this.ackMessages = ackMessages;
 			this.indexMessageEnvelope = indexMessageEnvelope;
 			this.indexMessagePropertys = indexMessagePropertys;
@@ -357,18 +319,12 @@ public class AMQPModularInput extends ModularInput {
 
 				try {
 
-					if (destinationType.equals("topic"))
-						channel.exchangeDeclare(exchangeName, "topic");
-
-					channel.queueDeclare(destinationName, channelDurable,
-							channelExclusive, channelAutoDelete, null);
-
-					if (destinationType.equals("topic"))
-						channel.queueBind(destinationName, exchangeName,
-								routingKeyPattern);
+					channel.queueBind(queueName, exchangeName,
+							routingKeyPattern);
 
 					QueueingConsumer consumer = new QueueingConsumer(channel);
-					channel.basicConsume(destinationName, consumer);
+					channel.basicConsume(queueName, consumer);
+
 					while (true) {
 						QueueingConsumer.Delivery delivery = consumer
 								.nextDelivery();
@@ -412,16 +368,17 @@ public class AMQPModularInput extends ModularInput {
 
 			if (val != null) {
 				validateConnection(val);
-				List<Item> items = val.getItems();
-				for (Item item : items) {
-					List<Param> params = item.getParams();
-
-					/**
-					 * for (Param param : params) { if
-					 * (param.getName().equals("some_param")) {
-					 * validateSomeParam(param.getValue()); } }
-					 **/
-				}
+				/**
+				 * List<Item> items = val.getItems(); for (Item item : items) {
+				 * List<Param> params = item.getParams();
+				 * 
+				 * 
+				 * for (Param param : params) { if
+				 * (param.getName().equals("some_param")) {
+				 * validateSomeParam(param.getValue()); } }
+				 * 
+				 * }
+				 **/
 			}
 			System.exit(0);
 		} catch (Exception e) {
@@ -470,7 +427,7 @@ public class AMQPModularInput extends ModularInput {
 
 		Scheme scheme = new Scheme();
 		scheme.setTitle("AMQP Messaging");
-		scheme.setDescription("Poll messages from queues and topics");
+		scheme.setDescription("Index messages from an AMQP Broker");
 		scheme.setUse_external_validation(true);
 		scheme.setUse_single_instance(true);
 		scheme.setStreaming_mode(StreamingMode.XML);
@@ -484,16 +441,11 @@ public class AMQPModularInput extends ModularInput {
 
 		endpoint.addArg(arg);
 
-		arg = new Arg();
-		arg.setName("destination_type");
-		arg.setTitle("Destination Type");
-		arg.setDescription("");
-		arg.setRequired_on_create(true);
-		endpoint.addArg(arg);
+		
 
 		arg = new Arg();
-		arg.setName("destination_name");
-		arg.setTitle("Destination Name");
+		arg.setName("queue_name");
+		arg.setTitle("Queue Name");
 		arg.setDescription("");
 		arg.setRequired_on_create(true);
 		endpoint.addArg(arg);
@@ -555,29 +507,7 @@ public class AMQPModularInput extends ModularInput {
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
 
-		arg = new Arg();
-		arg.setName("channel_durable");
-		arg.setTitle("Channel Durable");
-		arg.setDescription("");
-		arg.setRequired_on_create(false);
-		arg.setData_type(DataType.BOOLEAN);
-		endpoint.addArg(arg);
-
-		arg = new Arg();
-		arg.setName("channel_exclusive");
-		arg.setTitle("Channel Exclusive");
-		arg.setDescription("");
-		arg.setRequired_on_create(false);
-		arg.setData_type(DataType.BOOLEAN);
-		endpoint.addArg(arg);
-
-		arg = new Arg();
-		arg.setName("channel_auto_delete");
-		arg.setTitle("Channel Auto Delete");
-		arg.setDescription("");
-		arg.setRequired_on_create(false);
-		arg.setData_type(DataType.BOOLEAN);
-		endpoint.addArg(arg);
+		
 
 		arg = new Arg();
 		arg.setName("ack_messages");

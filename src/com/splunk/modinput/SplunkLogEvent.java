@@ -1297,7 +1297,7 @@ public class SplunkLogEvent {
 	 * @param value
 	 */
 	public void addPair(String key, Object value) {
-		addPair(key, value.toString());
+		addPair(key, value == null ? "null" :value.toString());
 	}
 
 	/**
