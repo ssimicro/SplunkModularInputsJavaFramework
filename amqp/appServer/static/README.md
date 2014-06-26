@@ -7,7 +7,7 @@ This is a Splunk Modular Input Add-On for indexing messages from an AMQP Broker.
 
 ## What is AMQP ?
 
-From Wikipedia : 
+From Wikipedia : http://en.wikipedia.org/wiki/Advanced_Message_Queuing_Protocol
 
 
 ## Examples of AMQP v1.0  Brokers
@@ -61,7 +61,7 @@ If you don't need a custom handler then the default handler com.splunk.modinput.
 
 This handler simply trys to convert the received byte array into a textual string for indexing in Splunk.
 
-Code examples are on GitHub : 
+Code examples are on GitHub : https://github.com/damiendallimore/SplunkModularInputsJavaFramework/tree/master/amqp/src/com/splunk/modinput/amqp
 
 ## Troubleshooting
 
@@ -74,5 +74,5 @@ Code examples are on GitHub :
 
 ## Contact
 
-This project was initiated by Damien Dallimore 
+This project was initiated by Damien Dallimore , ddallimore@splunk.com
 
