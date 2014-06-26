@@ -1,16 +1,16 @@
-## Splunk AMQP Modular Input v0.5b
+## Splunk AMQP Messaging Modular Input v0.5b
 
 ## Overview
 
-This is a Splunk Modular Input Add-On for indexing messages from an AMQP Broker.It utilizes the RabbitMQ Java client library , but can be used against any AMQP v1.0 compliant broker.
+This is a Splunk Modular Input Add-On for indexing messages from an AMQP Broker.It utilizes the RabbitMQ Java client library(v3.3.3) , but can be used against any AMQP v1.0 compliant broker. Testing was performed against RabbitMQ Server v3.3.3
 
 
 ## What is AMQP ?
 
-From Wikipedia : http://en.wikipedia.org/wiki/Advanced_Message_Queuing_Protocol
+From Wikipedia : 
 
 
-## AMQP v1.0  Brokers
+## Examples of AMQP v1.0  Brokers
 
 * RabbitMQ
 * Apache ActiveMQ
@@ -33,22 +33,35 @@ From Wikipedia : http://en.wikipedia.org/wiki/Advanced_Message_Queuing_Protocol
 
 ## Configuration
 
-As this is a modular input , you can then configure your AMQP inputs via Manager->DataInputs
-
+As this is a Modular Input , you can then configure your AMQP inputs via Manager->Data Inputs->AMQP. The field entry should be straightforward and intuitive for anyone with basic experience with AMQP.
 
 ## Logging
 
 Any log entries/errors will get written to $SPLUNK_HOME/var/log/splunk/splunkd.log
 
-##JVM Heap Size
+## JVM Heap Size
 
 The default heap maximum is 64MB.
 If you require a larger heap, then you can alter this in $SPLUNK_HOME/etc/apps/amqp_ta/bin/amqp.py on line 95
 
-##JVM System Properties
+## JVM System Properties
 
 You can declare custom JVM System Properties when setting up new input stanzas.
 Note : these JVM System Properties will apply to the entire JVM context and all stanzas you have setup
+
+## Customized Message Handling
+
+The way in which the Modular Input processes the received AMQP messages is enitrely pluggable with custom implementations should you wish.
+
+To do this you code an implementation of the com.splunk.modinput.amqp.AbstractMessageHandler class and jar it up.
+
+Ensure that the necessary jars are in the $SPLUNK_HOME/etc/apps/amqp_ta/bin/lib directory.
+
+If you don't need a custom handler then the default handler com.splunk.modinput.amqp.DefaultMessageHandler will be used.
+
+This handler simply trys to convert the received byte array into a textual string for indexing in Splunk.
+
+Code examples are on GitHub : 
 
 ## Troubleshooting
 
@@ -61,18 +74,5 @@ Note : these JVM System Properties will apply to the entire JVM context and all 
 
 ## Contact
 
-This project was initiated by Damien Dallimore
-<table>
+This project was initiated by Damien Dallimore 
 
-<tr>
-<td><em>Email</em></td>
-<td>ddallimore@splunk.com</td>
-</tr>
-
-<tr>
-<td><em>Twitter</em>
-<td>@damiendallimore</td>
-</tr>
-
-
-</table>
