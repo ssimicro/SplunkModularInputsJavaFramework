@@ -172,12 +172,12 @@ public class KafkaModularInput extends ModularInput {
 			Properties connectionProperties = new Properties();
 			connectionProperties
 					.put("zookeeper.connect", zkhost + ":" + zkport);
-			connectionProperties.put("group.id", groupID);
+			connectionProperties.put("group.id", String.valueOf(groupID));
 			connectionProperties.put("zookeeper.session.timeout.ms",
-					zkSessionTimeout);
-			connectionProperties.put("zookeeper.sync.time.ms", zkSyncTime);
+					String.valueOf(zkSessionTimeout));
+			connectionProperties.put("zookeeper.sync.time.ms", String.valueOf(zkSyncTime));
 			connectionProperties.put("auto.commit.interval.ms",
-					autoCommitInterval);
+					String.valueOf(autoCommitInterval));
 
 			Map<String, String> additionalProps = getParamMap(additionalConnectionProps);
 
@@ -289,7 +289,7 @@ public class KafkaModularInput extends ModularInput {
 					while (it.hasNext())
 						streamMessageEvent(it.next().message());
 
-				} catch (Exception e) {
+				} catch (Throwable e) {
 					logger.error("Stanza " + stanzaName + " : "
 							+ "Error running message receiver : "
 							+ ModularInput.getStackTrace(e));
@@ -358,7 +358,7 @@ public class KafkaModularInput extends ModularInput {
 			List<Stanza> stanzas = new ArrayList<Stanza>();
 			for (Item item : items) {
 				Stanza stanza = new Stanza();
-				stanza.setName("amqp://" + item.getName());
+				stanza.setName("kafka://" + item.getName());
 				stanza.setParams(item.getParams());
 				stanzas.add(stanza);
 			}
@@ -412,7 +412,7 @@ public class KafkaModularInput extends ModularInput {
 		arg.setName("zookeeper_connect_port");
 		arg.setTitle("Zookeeper Port");
 		arg.setDescription("");
-		arg.setRequired_on_create(true);
+		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
 
 		arg = new Arg();
@@ -426,28 +426,28 @@ public class KafkaModularInput extends ModularInput {
 		arg.setName("zookeeper_session_timeout_ms");
 		arg.setTitle("Zookeeper Session Timeout (ms)");
 		arg.setDescription("");
-		arg.setRequired_on_create(true);
+		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
 
 		arg = new Arg();
 		arg.setName("zookeeper_sync_time_ms");
 		arg.setTitle("Zookeeper Sync Time (ms)");
 		arg.setDescription("");
-		arg.setRequired_on_create(true);
+		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
 
 		arg = new Arg();
 		arg.setName("auto_commit_interval_ms");
 		arg.setTitle("Autocommit Interval (ms)");
 		arg.setDescription("");
-		arg.setRequired_on_create(true);
+		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
 
 		arg = new Arg();
 		arg.setName("additional_consumer_properties");
 		arg.setTitle("Additional Consumer Properties");
 		arg.setDescription("");
-		arg.setRequired_on_create(true);
+		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
 
 		arg = new Arg();

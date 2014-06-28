@@ -116,7 +116,8 @@ public abstract class ModularInput {
 				System.exit(2);
 			}
 		} catch (Exception e) {
-			logger.error("Error executing modular input : " + e.getMessage());
+			logger.error("Error executing modular input : " + e.getMessage() +  " : " + ModularInput.getStackTrace(e));
+						
 			System.exit(2);
 		}
 

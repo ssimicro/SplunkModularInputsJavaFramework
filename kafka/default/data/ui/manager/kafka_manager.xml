@@ -26,7 +26,14 @@
 					<view name="create" />
 					<view name="list"/>
 					<elements>
-
+<element name="topic_name" type="textfield" label="Kafka Topic Name">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <view name="list"/>
+          <key name="exampleText">Kafka Topic Name</key>
+        </element>
+        
 <element name="group_id" type="textfield" label="Kafka Group ID">
           
           <view name="edit"/>
@@ -53,21 +60,21 @@
           
           <view name="edit"/>
           <view name="create"/>
-          <view name="list"/>
+          
           <key name="exampleText">Session timeout value in milliseconds.Will default to 400.</key>
         </element>
         <element name="zookeeper_sync_time_ms" type="textfield" label="Zookeeper Sync Time">
           
           <view name="edit"/>
           <view name="create"/>
-          <view name="list"/>
+          
           <key name="exampleText">Sync time value in milliseconds.Will default to 200.</key>
         </element>
         <element name="auto_commit_interval_ms" type="textfield" label="Autocommit Interval">
           
           <view name="edit"/>
           <view name="create"/>
-          <view name="list"/>
+         
           <key name="exampleText">Autocommit interval time value in milliseconds.Will default to 1000.</key>
         </element>
 <element name="additional_consumer_properties" type="textfield" label="Additional Consumer Connection Properties">
