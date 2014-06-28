@@ -543,7 +543,7 @@ public class AMQPModularInput extends ModularInput {
 		arg = new Arg();
 		arg.setName("message_handler_impl");
 		arg.setTitle("Implementation class for a custom message handler");
-		arg.setDescription("An implementation of the com.splunk.modinput.jms.AbstractMessageHandler class.You would provide this if you required some custom handling/formatting of the messages you consume.Ensure that the necessary jars are in the $SPLUNK_HOME/etc/apps/jms_ta/bin/lib directory");
+		arg.setDescription("An implementation of the com.splunk.modinput.amqp.AbstractMessageHandler class.You would provide this if you required some custom handling/formatting of the messages you consume.Ensure that the necessary jars are in the $SPLUNK_HOME/etc/apps/amqp_ta/bin/lib directory");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
 
