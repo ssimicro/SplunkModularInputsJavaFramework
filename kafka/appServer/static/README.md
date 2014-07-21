@@ -23,7 +23,7 @@ https://kafka.apache.org/
 
 ## Configuration
 
-As this is a Modular Input , you can then configure your AMQP inputs via Manager->Data Inputs->Kafka. The field entry should be straightforward and intuitive for anyone with basic experience with Kafka / Zookeeper.
+As this is a Modular Input , you can then configure your Kafka inputs via Manager->Data Inputs->Kafka. The field entry should be straightforward and intuitive for anyone with basic experience with Kafka / Zookeeper.
 
 ## Logging
 
