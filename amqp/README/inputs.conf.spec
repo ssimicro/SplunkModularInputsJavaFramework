@@ -18,6 +18,7 @@ use_ssl = <value>
 routing_key_pattern = <value>
 exchange_name = <value>
 ack_messages = <value>
+basic_qos_limit = <value>
 
 #message handler
 

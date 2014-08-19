@@ -83,6 +83,7 @@ public class AMQPModularInput extends ModularInput {
 		boolean useSsl = false;
 		String routingKeyPattern = "";
 		String exchangeName = "";
+		int basicQos = 10;
 		boolean ackMessages = false;
 		boolean indexMessageEnvelope = false;
 		boolean indexMessagePropertys = false;
@@ -123,6 +124,12 @@ public class AMQPModularInput extends ModularInput {
 				routingKeyPattern = param.getValue();
 			} else if (param.getName().equals("exchange_name")) {
 				exchangeName = param.getValue();
+			} else if (param.getName().equals("basic_qos_limit")) {
+				try {
+					basicQos = Integer.parseInt(param.getValue());
+				} catch (Exception e) {
+					logger.error("Can't determine basic qos value");
+				}
 			} else if (param.getName().equals("ack_messages")) {
 				try {
 					ackMessages = Boolean.parseBoolean(param.getValue().equals(
@@ -157,7 +164,7 @@ public class AMQPModularInput extends ModularInput {
 		if (!isDisabled(stanzaName)) {
 			MessageReceiver mr = new MessageReceiver(stanzaName, queueName,
 					host, port, username, password, virtualHost, useSsl,
-					routingKeyPattern, exchangeName, ackMessages,
+					routingKeyPattern, exchangeName, basicQos, ackMessages,
 					indexMessageEnvelope, indexMessagePropertys,
 					messageHandlerImpl, messageHandlerParams);
 			if (validationConnectionMode)
@@ -178,6 +185,7 @@ public class AMQPModularInput extends ModularInput {
 		boolean useSsl;
 		String routingKeyPattern;
 		String exchangeName;
+		int basicQos;
 		boolean ackMessages;
 		boolean indexMessageEnvelope;
 		boolean indexMessagePropertys;
@@ -192,7 +200,7 @@ public class AMQPModularInput extends ModularInput {
 		public MessageReceiver(String stanzaName, String queueName,
 				String host, int port, String username, String password,
 				String virtualHost, boolean useSsl, String routingKeyPattern,
-				String exchangeName, boolean ackMessages,
+				String exchangeName, int basicQos, boolean ackMessages,
 				boolean indexMessageEnvelope, boolean indexMessagePropertys,
 				String messageHandlerImpl, String messageHandlerParams) {
 
@@ -207,6 +215,7 @@ public class AMQPModularInput extends ModularInput {
 			this.useSsl = useSsl;
 			this.routingKeyPattern = routingKeyPattern;
 			this.exchangeName = exchangeName;
+			this.basicQos = basicQos;
 			this.ackMessages = ackMessages;
 			this.indexMessageEnvelope = indexMessageEnvelope;
 			this.indexMessagePropertys = indexMessagePropertys;
@@ -324,6 +333,7 @@ public class AMQPModularInput extends ModularInput {
 
 					QueueingConsumer consumer = new QueueingConsumer(channel);
 					channel.basicConsume(queueName, consumer);
+					channel.basicQos(basicQos);
 
 					while (true) {
 						QueueingConsumer.Delivery delivery = consumer
@@ -441,8 +451,6 @@ public class AMQPModularInput extends ModularInput {
 
 		endpoint.addArg(arg);
 
-		
-
 		arg = new Arg();
 		arg.setName("queue_name");
 		arg.setTitle("Queue Name");
@@ -507,7 +515,12 @@ public class AMQPModularInput extends ModularInput {
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
 
-		
+		arg = new Arg();
+		arg.setName("basic_qos_limit");
+		arg.setTitle("Basic QOS Limit");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
 
 		arg = new Arg();
 		arg.setName("ack_messages");

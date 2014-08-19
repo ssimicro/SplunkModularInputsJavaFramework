@@ -104,6 +104,14 @@
           <key name="exampleText">Routing key pattern.</key>
         </element>
         
+        <element name="basic_qos_limit" type="textfield" label="Basic QOS limit">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <view name="list"/>
+          <key name="exampleText">Basic QOS limit.Defaults to 10</key>
+        </element>
+        
         <element name="ack_messages" type="checkbox" label="Acknowledge Messages ?">
           
           <view name="edit"/>
