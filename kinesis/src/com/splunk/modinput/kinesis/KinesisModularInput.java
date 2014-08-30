@@ -265,9 +265,9 @@ public class KinesisModularInput extends ModularInput {
 
 		}
 
-		public void streamMessageEvent(byte[] message) {
+		public void streamMessageEvent(String record,String seqNumber,String partitionKey) {
 			try {
-				Stream stream = messageHandler.handleMessage(message, this);
+				Stream stream = messageHandler.handleMessage(record,seqNumber,partitionKey, this);
 				marshallObjectToXML(stream);
 			} catch (Exception e) {
 				logger.error("Stanza " + stanzaName + " : "
@@ -585,13 +585,9 @@ public class KinesisModularInput extends ModularInput {
 				String data = null;
 				for (int i = 0; i < numRetries; i++) {
 					try {
-						// For this app, we interpret the payload as UTF-8
-						// chars.
+						
 						data = decoder.decode(record.getData()).toString();
-
-						String message = record.getSequenceNumber() + ", "
-								+ record.getPartitionKey() + ", " + data;
-						context.streamMessageEvent(message.getBytes());
+						context.streamMessageEvent(data,record.getSequenceNumber(),record.getPartitionKey());
 						processedSuccessfully = true;
 						break;
 					} catch (CharacterCodingException e) {

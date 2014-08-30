@@ -1,8 +1,8 @@
 <endpoint name="data/inputs/kinesis">
-  <header>Kinesis Messaging</header>
+  <header>Kinesis Records</header>
   <breadcrumb>
     <parent hidecurrent="False">datainputstats</parent>
-    <name>Kinesis Messaging</name>
+    <name>Kinesis Records</name>
   </breadcrumb>
   <elements>
     <element name="sourceFields" type="fieldset">
@@ -47,7 +47,7 @@
           <view name="edit"/>
           <view name="create"/>
           <view name="list"/>
-          <key name="exampleText">Kinesis Endpoint ie : https://kinesis.us-east-1.amazonaws.com</key>
+          <key name="exampleText">Defaults to : https://kinesis.us-east-1.amazonaws.com</key>
         </element>
     
 <element name="initial_stream_position" type="select" label="Initial Stream Position">
@@ -55,10 +55,11 @@
           <view name="edit"/>
           <view name="create"/>
           <view name="list"/>
-          <key name="exampleText">Initial Stream Position</key>
+          <key name="exampleText">Defaults to TRIM_HORIZON</key>
           <options>
+                        <opt value="TRIM_HORIZON" label="Trim Horizon" />
 						<opt value="LATEST" label="Latest" />
-						<opt value="TRIM_HORIZON" label="Trim Horizon" />
+						
                                                
 					</options>
         </element>
@@ -101,19 +102,19 @@
             
           <view name="edit"/>
           <view name="create"/>
-          <key name="exampleText">Backoff Time (Millis)</key>
+          <key name="exampleText">Defaults to 3000</key>
         </element>
 <element name="num_retries" type="textfield" label="Number of Retries">
             
           <view name="edit"/>
           <view name="create"/>
-          <key name="exampleText">Number of Retries</key>
+          <key name="exampleText">Defaults to 10</key>
         </element>
 <element name="checkpoint_interval_millis" type="textfield" label="Checkpoint Interval (Millis)">
             
           <view name="edit"/>
           <view name="create"/>
-          <key name="exampleText">Checkpoint Interval (Millis)</key>
+          <key name="exampleText">Defaults to 60000</key>
         </element>                
         
 

@@ -9,7 +9,7 @@ import com.splunk.modinput.kinesis.KinesisModularInput.MessageReceiver;
 
 public abstract class AbstractMessageHandler {
 
-	public abstract Stream handleMessage(byte[] messageContents,MessageReceiver context) throws Exception;
+	public abstract Stream handleMessage(String record,String seqNumber,String partitionKey,MessageReceiver context) throws Exception;
 
 	public abstract void setParams(Map<String, String> params);
 

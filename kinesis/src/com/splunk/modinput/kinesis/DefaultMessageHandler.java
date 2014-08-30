@@ -13,14 +13,15 @@ import com.splunk.modinput.kinesis.KinesisModularInput.MessageReceiver;
 public class DefaultMessageHandler extends AbstractMessageHandler {
 
 	@Override
-	public Stream handleMessage(byte[] messageContents,MessageReceiver context)
+	public Stream handleMessage(String record,String seqNumber,String partitionKey,MessageReceiver context)
 			throws Exception {
 
 		SplunkLogEvent splunkEvent = buildCommonEventMessagePart(context);
 
-		String body = getMessageBody(messageContents);
-		splunkEvent.addPair("msg_body", stripNewlines(body));
-
+		splunkEvent.addPair("record", stripNewlines(record));
+		splunkEvent.addPair("sequence_number", seqNumber);
+		splunkEvent.addPair("partition_key", partitionKey);
+		
 		String text = splunkEvent.toString();
 		Stream stream = new Stream();
 		ArrayList<StreamEvent> list = new ArrayList<StreamEvent>();
