@@ -1,4 +1,4 @@
-## Splunk Kinesis Modular Input v0.5b
+## Splunk Amazon Kinesis Modular Input v0.5b
 
 ## Overview
 
@@ -48,15 +48,13 @@ Ensure that the necessary jars are in the $SPLUNK_HOME/etc/apps/kinesis_ta/bin/l
 
 If you don't need a custom handler then the default handler com.splunk.modinput.kinesis.DefaultMessageHandler will be used.
 
-This handler simply trys to convert the received byte array into a textual string for indexing in Splunk.
-
 Code examples are on GitHub : https://github.com/damiendallimore/SplunkModularInputsJavaFramework/tree/master/kinesis/src/com/splunk/modinput/kinesis
 
 ## Troubleshooting
 
 * JAVA_HOME environment variable is set or "java" is on the PATH for the user's environment you are running Splunk as
 * You are using Splunk 5+
-* You are using a 1.6+ Java Runtime
+* You are using a 1.7+ Java Runtime
 * You are running on a supported operating system
 * Look for any errors in $SPLUNK_HOME/var/log/splunk/splunkd.log
 * Run this command as the same user that you are running Splunk as and observe console output : "$SPLUNK_HOME/bin/splunk cmd python ../etc/apps/kinesis_ta/bin/kinesis.py --scheme" 
