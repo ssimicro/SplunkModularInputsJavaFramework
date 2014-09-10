@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a Splunk Modular Input Add-On for indexing messages from an AMQP Broker.It utilizes the RabbitMQ Java client library(v3.3.3) , but can be used against any AMQP v1.0 compliant broker. Testing was performed against RabbitMQ Server v3.3.3
+This is a Splunk Modular Input Add-On for indexing messages from an AMQP Broker.It utilizes the RabbitMQ Java client library(v3.3.3) , but can be used against any AMQP v0-9-1, 0-9 and 0-8 compliant broker. Testing was performed against RabbitMQ Server v3.3.3
 
 
 ## What is AMQP ?
@@ -10,7 +10,7 @@ This is a Splunk Modular Input Add-On for indexing messages from an AMQP Broker.
 From Wikipedia : http://en.wikipedia.org/wiki/Advanced_Message_Queuing_Protocol
 
 
-## Examples of AMQP v1.0  Brokers
+## Examples of AMQP  Brokers
 
 * RabbitMQ
 * Apache ActiveMQ
