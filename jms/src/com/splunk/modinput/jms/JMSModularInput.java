@@ -416,12 +416,17 @@ public class JMSModularInput extends ModularInput {
 						destinationPass);
 			else
 				connection = connFactory.createConnection();
-
+			
+			
+			if (durable && type.equals(DestinationType.TOPIC))
+			    connection.setClientID(clientID);
+			
 			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
 			if (durable && type.equals(DestinationType.TOPIC)) {
 
 				try {
+					
 					messageConsumer = session.createDurableSubscriber(
 							(Topic) dest, clientID, selector, true);
 				} catch (Exception e) {

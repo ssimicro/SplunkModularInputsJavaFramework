@@ -1,4 +1,4 @@
-## Splunk JMS Modular Input v1.3.6
+## Splunk JMS Modular Input v1.3.7
 
 ## Overview
 
@@ -73,7 +73,7 @@ If you require a larger heap, then you can alter this in $SPLUNK_HOME/etc/apps/j
 * Any 3rd party jar dependencies are present in $SPLUNK_HOME/etc/apps/jms_ta/bin/lib
 * Look for any errors in $SPLUNK_HOME/var/log/splunk/splunkd.log
 * Run this command as the same user that you are running Splunk as and observe console output : "$SPLUNK_HOME/bin/splunk cmd python ../etc/apps/jms_ta/bin/jms.py --scheme" 
-* Your configuration parameters are correct for your JMX connection (check for typos, correct credentials, correct JNDI names etc...)
+* Your configuration parameters are correct for your JMS connection (check for typos, correct credentials, correct JNDI names etc...)
 * You DNS resolution for hostnames is correctly configured
 
 ## Contact
