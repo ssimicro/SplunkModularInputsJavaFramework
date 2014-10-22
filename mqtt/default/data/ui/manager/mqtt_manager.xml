@@ -125,7 +125,7 @@
           <view name="edit"/>
           <view name="create"/>
           <view name="list"/>
-          <key name="exampleText">Defaults to 0. For messages sent at qualities of service (QoS) 1 or 2 to be reliably delivered, messages must be stored (on both the client and server) until the delivery of the message is complete.The Modular Input stores the messages on file inside the Modular Input's home directory.In the event that only QoS 0 messages are sent or received or cleanSession is set to true then a safe store is not needed.</key>
+          <key name="exampleText">Defaults to 0. For messages sent at qualities of service (QoS) 1 or 2 to be reliably delivered, messages must be stored (on both the client and server) until the delivery of the message is complete.In the event that only QoS 0 messages are sent or received or cleanSession is set to true then a safe store is not needed.</key>
      
           <options>
                         <opt value="0" label="0" />

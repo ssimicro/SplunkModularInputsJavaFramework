@@ -89,8 +89,9 @@ public class MQTTModularInput extends ModularInput {
 		int brokerPort = DEFAULT_TCP_PORT;
 		String brokerProtocol = TCP_PROTOCOL;
 
-		String reliableDeliveryDirectory = System.getProperty("user.dir");
-
+		String seperator = System.getProperty("file.separator");
+		String reliableDeliveryDirectory = System.getenv("SPLUNK_HOME")+seperator+"etc"+seperator+"apps"+seperator+"mqtt_ta";
+		
 		boolean useSSL = false;
 
 		String username = "";
@@ -146,7 +147,10 @@ public class MQTTModularInput extends ModularInput {
 					logger.error("Can't determine qos, will revert to default value.");
 				}
 			} else if (param.getName().equals("reliable_delivery_dir")) {
-				reliableDeliveryDirectory = param.getValue();
+				String val = param.getValue();
+				if(val != null && val.length() > 0)
+				  reliableDeliveryDirectory = val;
+				
 			} else if (param.getName().equals("clean_session")) {
 				try {
 					cleanSession = Boolean.parseBoolean(param.getValue()
@@ -244,7 +248,7 @@ public class MQTTModularInput extends ModularInput {
 				if (userName != null && userName.length() > 0) {
 					conOpt.setUserName(userName);
 				}
-
+				
 				this.dataStore = new MqttDefaultFilePersistence(
 						reliableDeliveryDirectory);
 				// Construct an MQTT blocking mode client
