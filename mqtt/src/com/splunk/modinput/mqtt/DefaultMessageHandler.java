@@ -1,29 +1,29 @@
-package com.splunk.modinput.jms;
+package com.splunk.modinput.mqtt;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.jms.Message;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+
 
 import com.splunk.modinput.SplunkLogEvent;
 import com.splunk.modinput.Stream;
 import com.splunk.modinput.StreamEvent;
-import com.splunk.modinput.jms.JMSModularInput.MessageReceiver;
+import com.splunk.modinput.mqtt.MQTTModularInput.MessageReceiver; 
 
 public class DefaultMessageHandler extends AbstractMessageHandler {
 
 	@Override
-	public Stream handleMessage(Message message, MessageReceiver context)
+	public Stream handleMessage(String topic, MqttMessage message,MessageReceiver context)
 			throws Exception {
 
-		SplunkLogEvent splunkEvent = buildCommonEventMessagePart(message,
-				context);
+		SplunkLogEvent splunkEvent = buildCommonEventMessagePart(context);
 
-		String body = getMessageBody(message);
-		splunkEvent.addPair("msg_body",
-				context.stripNewlines ? stripNewlines(body) : body);
-
+		splunkEvent.addPair("topic", topic);
+		splunkEvent.addPair("msg", getMessageBody(message));
+		
+		
 		String text = splunkEvent.toString();
 		Stream stream = new Stream();
 		ArrayList<StreamEvent> list = new ArrayList<StreamEvent>();

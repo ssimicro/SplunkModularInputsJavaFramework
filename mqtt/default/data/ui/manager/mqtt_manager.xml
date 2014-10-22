@@ -1,0 +1,336 @@
+<endpoint name="data/inputs/mqtt">
+  <header>MQTT Messages</header>
+  <breadcrumb>
+    <parent hidecurrent="False">datainputstats</parent>
+    <name>MQTT Messages</name>
+  </breadcrumb>
+  <elements>
+    <element name="sourceFields" type="fieldset">
+      <view name="list"/>
+      <view name="edit"/>
+      <view name="create"/>
+      <elements>
+
+           <element name="name" label="Stanza Name">
+          <view name="list"/>
+          <view name="create"/>
+          
+          <key name="exampleText">Name of this stanza</key>
+</element>
+
+
+
+<element name="connection_settings" type="fieldset">
+			<key name="legend">Connection Settings</key>		
+					<view name="edit" />
+					<view name="create" />
+					<view name="list"/>
+					<elements>
+<element name="topic_name" type="textfield" label="Topic Name">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <view name="list"/>
+          <key name="exampleText">Topic Name</key>
+        </element>
+
+
+        
+<element name="broker_host" type="textfield" label="Broker Host">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <view name="list"/>
+          <key name="exampleText">Broker Host , IP address or hostname</key>
+        </element>
+
+<element name="broker_port" type="textfield" label="Broker Port">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <view name="list"/>
+          <key name="exampleText">Broker Port.Defaults to 1883(tcp) or 8883(ssl)</key>
+        </element>
+
+<element name="use_ssl" type="checkbox" label="Use SSL ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Defaults to false.Whether or not to use an SSL connection.Use the "Additional JVM System Properties" parameter  to configure key and trust stores.</key>
+        </element>
+        
+<element name="client_id" type="textfield" label="Client ID">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Defaults to "splunk".A client identifier must be specified and be less that 23 characters. It must be unique across all clients connecting to the same server. The clientId is used by the server to store data related to the client, hence it is important that the clientId remain the same when connecting to a server if durable subscriptions or reliable messaging are required.</key>
+        </element>
+   
+
+ 
+
+        
+</elements>
+
+					
+					
+				
+</element>
+       
+<element name="authentication" type="fieldset">
+			<key name="legend">Authentication</key>		
+					<view name="edit" />
+					<view name="create" />
+					<elements>
+					    
+<element name="username" type="textfield" label="Username">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Username for the connection</key>
+        </element>
+        
+<element name="password" type="textfield" label="Password">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Password for the connection</key>
+        </element>					
+					
+</elements>
+
+					
+					
+				
+</element>
+<element name="additional_settings" type="fieldset">
+			<key name="legend">Additional Settings</key>		
+					<view name="edit" />
+					<view name="create" />
+					<elements>
+					    
+					    
+        
+					    
+<element name="clean_session" type="checkbox" label="Clean Session ?">
+            
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Defaults to false.Sets whether the client and server should remember state across restarts and reconnects.</key>
+        </element>
+
+ 
+<element name="qos" type="select" label="Quality of Service (QOS)">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <view name="list"/>
+          <key name="exampleText">Defaults to 0. For messages sent at qualities of service (QoS) 1 or 2 to be reliably delivered, messages must be stored (on both the client and server) until the delivery of the message is complete.The Modular Input stores the messages on file inside the Modular Input's home directory.In the event that only QoS 0 messages are sent or received or cleanSession is set to true then a safe store is not needed.</key>
+     
+          <options>
+                        <opt value="0" label="0" />
+						<opt value="1" label="1" />
+						<opt value="2" label="2" />
+                                               
+					</options>
+        </element>
+
+<element name="reliable_delivery_dir" type="textfield" label="Reliable Delivery Directory">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Defaults to the current working directory.Directory where the messages are stored for QOS 1/2.</key>
+        </element>	
+        
+<element name="connection_timeout" type="textfield" label="Connection Timeout">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Defaults to 30 seconds.Sets the connection timeout value. This value, measured in seconds, defines the maximum time interval the client will wait for the network connection to the MQTT server to be established.  A value of 0 disables timeout processing meaning the client will wait until the network connection is made successfully or fails.</key>
+        </element>	
+        
+<element name="keepalive_interval" type="textfield" label="Keep Alive Interval">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Defaults to 60 seconds.Sets the "keep alive" interval. This value, measured in seconds, defines the maximum time interval between messages sent or received. It enables the client to detect if the server is no longer available, without having to wait for the TCP/IP timeout. The client will ensure that at least one message travels across the network within each keep alive period. In the absence of a data-related message during the time period, the client sends a very small "ping" message, which the server will acknowledge. A value of 0 disables keepalive processing in the client.</key>
+        </element>	
+        
+
+        
+        
+</elements>
+</element>
+
+
+
+<element name="message_handler" type="fieldset">
+			<key name="legend">Message Processing</key>		
+					<view name="edit" />
+					<view name="create" />
+					<elements>
+					    
+					    
+        
+					    
+<element name="message_handler_impl" type="textfield" label="Implementation class for a custom message handler">
+            
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">An implementation of the com.splunk.modinput.mqtt.AbstractMessageHandler class.You would provide this if you required some custom handling/formatting of the messages you consume.Ensure that the necessary jars are in the $SPLUNK_HOME/etc/apps/mqtt_ta/bin/lib directory.If ommitted then the default handler 'com.splunk.modinput.mqtt.DefaultMessageHandler' will be used.</key>
+        </element>
+        <element name="message_handler_params" type="textfield" label="Implementation parameter string for the custom message handler">
+           
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Parameter string in format 'key1=value1,key2=value2,key3=value3'. This gets passed to the implementation class to process.</key>
+        </element>
+        
+
+</elements>
+</element>
+
+<element name="additional_startup_settings" type="fieldset">
+			<key name="legend">Additional Startup Settings</key>		
+					<view name="edit" />
+					<view name="create" />
+					<elements>
+					        
+    
+        <element name="additional_jvm_propertys" type="textfield" label="Additional JVM System Properties">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Parameter string in format 'key1=value1,key2=value2,key3=value3'</key>
+        </element>
+        
+</elements>
+</element>
+</elements>
+</element>
+    
+    <element name="sourcetypeFields" type="fieldset">
+                      <view name="list"/>
+                      <view name="edit"/>
+                      <view name="create"/>
+                      <elements>
+                        <element name="spl-ctrl_sourcetypeSelect" type="select" label="Set sourcetype">
+                          <onChange>
+                            <!-- <key name="auto">NONE</key> -->
+                            <key name="_action">showonly</key>
+                            <group_set>
+                              <group name="sourcetype"/>
+                              <group name="spl-ctrl_from_list"/>
+                            </group_set>
+                            <key name="sourcetype">sourcetype</key>
+                            <key name="spl-ctrl_from_list">spl-ctrl_from_list</key>
+                          </onChange>
+                          <options>
+                            <!-- <opt value="auto" label="Automatic"/> -->
+                            <opt value="spl-ctrl_from_list" label="From list"/>
+                            <opt value="sourcetype" label="Manual"/>
+                          </options>
+                          <view name="edit"/>
+                          <view name="create"/>
+                          <!-- <key name="exampleText">Set to automatic and Splunk will classify and assign sourcetype automatically. Unknown sourcetypes will be given a placeholder name.</key> -->
+                          <key name="processValueEdit">[[ e for e in ['sourcetype'] if form_defaults.get(e) ][0]]</key>
+                          <key name="processValueAdd">[[ e for e in ['sourcetype'] if form_defaults.get(e) ][0]]</key>
+                        </element>
+                        <element name="sourcetype" type="textfield" label="Source type">
+                          <view name="list"/>
+                          <view name="edit"/>
+                          <view name="create"/>
+                          <key name="exampleText">If this field is left blank, the default value of script will be used for the source type.</key>
+                          <key name="processValueList">_('script') if (value==None or value=='') else value</key>
+                          <key name="submitValueAdd">form_data.get('spl-ctrl_from_list') if form_data.get('spl-ctrl_sourcetypeSelect')=='spl-ctrl_from_list' else value if form_data.get('spl-ctrl_sourcetypeSelect')=='sourcetype' else None</key>
+                          <key name="submitValueEdit">form_data.get('spl-ctrl_from_list') if form_data.get('spl-ctrl_sourcetypeSelect')=='spl-ctrl_from_list' else value if form_data.get('spl-ctrl_sourcetypeSelect')=='sourcetype' else None</key>
+                          <key name="labelList">Source type</key>
+                        </element>
+                        <element name="spl-ctrl_from_list" type="select" label="Select source type from list">
+    <view name="edit"/>
+                          <view name="create"/>
+                  <key name="exampleText">Splunk classifies all common data types automatically, but if you're looking for something specific, you can find more source types in the <![CDATA[<a href="../../../apps/remote">Splunkbase apps browser</a>]]> or online at <![CDATA[<a href="http://www.splunkbase.com/" target="_blank">www.splunkbase.com</a>]]>.</key>
+                          <key name="requiredIfVisible" />
+                          <key name="dynamicOptions" type="dict">
+                            <key name="keyName">title</key>
+                            <key name="keyValue">title</key>
+                            <key name="splunkSource">/saved/sourcetypes</key>
+                            <key name="splunkSourceParams" type="dict">
+                              <key name="count">-1</key>
+                              <key name="search">'pulldown_type=true'</key>
+                            </key>
+                            <key name="prefixOptions" type="list">
+                                <item type="list">
+                                    <item></item>
+                                    <item>Choose...</item>
+                                </item>
+                            </key>
+                          </key>
+                        </element>
+                      </elements>
+                      <key name="legend">Source type</key>
+                      <key name="helpText">Set sourcetype field for all events from this source.</key>
+                    </element>
+                            
+                            
+	<element name="spl-ctrl_EnableAdvanced" type="checkbox" label="More settings" class="spl-mgr-advanced-switch">
+        <view name="edit"/>
+        <view name="create"/>
+          <onChange>
+              <key name="_action">showonly</key>
+              <key name="0">NONE</key>
+              <key name="1">ALL</key>
+              <group_set>
+                <group name="advanced"/>
+              </group_set>
+          </onChange>
+    </element>
+	<element name="advanced" type="fieldset" class="spl-mgr-advanced-options">
+        <view name="edit"/>
+        <view name="create"/>
+        <elements>
+		    <element name="hostFields" type="fieldset">
+		      <key name="legend">Host</key>
+		      <view name="list"/>
+		      <view name="edit"/>
+		      <view name="create"/>
+		      <elements>
+		        <element name="host" type="textfield" label="Host field value">
+		          <view name="edit"/>
+		          <view name="create"/>
+		        </element>
+		      </elements>
+		    </element>  
+		    <element name="indexField" type="fieldset">
+		      <key name="legend">Index</key>
+		      <key name="helpText">Set the destination index for this source.</key>
+		      <view name="list"/>
+		      <view name="edit"/>
+		      <view name="create"/>
+		      <elements>
+		        <element name="index" type="select" label="Index">
+		          <view name="list"/>
+		          <view name="edit"/>
+		          <view name="create"/>
+		          <key name="dynamicOptions" type="dict">
+		            <key name="keyName">title</key>
+		            <key name="keyValue">title</key>
+		            <key name="splunkSource">/data/indexes</key>
+		            <key name="splunkSourceParams" type="dict">
+		              <key name="search">'isInternal=false disabled=false'</key>
+		              <key name="count">-1</key>
+		            </key>
+		          </key>
+		        </element>
+		      </elements>
+		    </element>
+		</elements>
+	</element>
+  
+	<element name="eai:acl.app" label="App">
+      <view name="list"/>
+      <key name="processValueList">entity['eai:acl']['app'] or ""</key>
+    </element>
+
+  </elements>
+</endpoint>
