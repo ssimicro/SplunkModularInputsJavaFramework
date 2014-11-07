@@ -27,7 +27,7 @@ public abstract class ModularInput {
 
 	protected boolean connectedToSplunk = false;
 
-	protected static void marshallObjectToXML(Object obj) {
+	public static void marshallObjectToXML(Object obj) {
 		try {
 			JAXBContext context = JAXBContext.newInstance(obj.getClass());
 			Marshaller marshaller = context.createMarshaller();
@@ -284,7 +284,7 @@ public abstract class ModularInput {
 
 	protected abstract Scheme getScheme();
 
-	protected static String getStackTrace(Throwable aThrowable) {
+	public static String getStackTrace(Throwable aThrowable) {
 		Writer result = new StringWriter();
 		PrintWriter printWriter = new PrintWriter(result);
 		aThrowable.printStackTrace(printWriter);

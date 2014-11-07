@@ -423,6 +423,84 @@
     </target>
 
 <target
+        name="build_protocol_input"
+        description="build Protocol modular input add on" >
+
+        <antcall target="compile_addon" >
+
+            <param
+                name="addon"
+                value="${protocol_dir}" />
+        </antcall>
+
+        <loadproperties srcFile="${protocol_dir}/default/app.conf" />
+
+        <copy todir="${temp_build}/metadata" >
+
+            <fileset dir="${protocol_dir}/metadata" />
+        </copy>
+
+        <copy todir="${temp_build}/bin" >
+
+            <fileset dir="${protocol_dir}/bin" />
+        </copy>
+
+        <copy todir="${temp_build}/appserver" >
+
+            <fileset dir="${protocol_dir}/appserver" />
+        </copy>
+
+        <copy todir="${temp_build}/default" >
+
+            <fileset dir="${protocol_dir}/default" />
+        </copy>
+        
+        <copy todir="${temp_build}/static" >
+
+            <fileset dir="${protocol_dir}/static" />
+        </copy>
+        
+        <copy todir="${temp_build}/README" >
+
+            <fileset dir="${protocol_dir}/README" />
+        </copy>
+
+        <copy todir="${temp_build}/bin/${lib}" >
+
+            <fileset dir="${lib}" />
+
+            <fileset dir="${protocol_dir}/bin/${lib}" />
+        </copy>
+        
+        <copy todir="${temp_build}/bin/datahandlers" >
+
+            <fileset dir="${protocol_dir}/bin/datahandlers" />
+        </copy>
+
+        <jar jarfile="${temp_build}/bin/${lib}/${protocol_jar}" >
+
+            <fileset
+                dir="${temp_build}/${classes}"
+                includes="com/splunk/modinput/**" />
+
+            <fileset file="${src}/log4j.xml" />
+        </jar>
+
+        <delete dir="${temp_build}/${classes}" />
+
+        <tar
+            compression="${compressionType}"
+            destfile="${release}/${id}-${version}${suffix}" >
+
+            <zipfileset
+                dir="${temp_build}"
+                prefix="${id}" />
+        </tar>
+
+        <delete dir="${temp_build}" />
+    </target>
+    
+<target
         name="build_mqtt_input"
         description="build MQTT modular input add on" >
 

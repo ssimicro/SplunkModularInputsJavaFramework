@@ -340,6 +340,7 @@ public class MQTTModularInput extends ModularInput {
 				throws MqttException {
 			// Called when a message arrives from the server that matches any
 			// subscription made by the client
+			
 			streamMessageEvent(topic, message);
 
 		}
