@@ -70,6 +70,9 @@ Refer to http://vertx.io/core_manual_java.html#ssl-servers
 
 Client certificate based authentication can be enabled for the TLS/SSL channels you setup.
 
+## VERTX Modules
+
+Any required Vertx modules , such as various language modules for the polyglot functionality (JS , Scala , Groovy etc...) will be dynamically downloaded from online repositorys and installed in your protocol_ta/bin/vertx_modules directory.
 
 ## Performance tuning tips
 

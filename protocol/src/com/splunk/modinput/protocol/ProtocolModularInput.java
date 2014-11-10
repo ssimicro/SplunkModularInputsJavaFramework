@@ -1,5 +1,6 @@
 package com.splunk.modinput.protocol;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -64,8 +65,10 @@ public class ProtocolModularInput extends ModularInput {
 	@Override
 	protected void doRun(Input input) throws Exception {
 
+		setModsDirectory();
 		// run vertx container in embedded mode
 		PlatformManager pm = PlatformLocator.factory.createPlatformManager();
+		
 
 		if (input != null) {
 
@@ -143,6 +146,51 @@ public class ProtocolModularInput extends ModularInput {
 		}
 
 	}
+	
+	private void setModsDirectory(){
+		
+		String seperator = System.getProperty("file.separator");
+		
+		System.setProperty("vertx.mods", System.getenv("SPLUNK_HOME") + seperator
+				+ "etc" + seperator + "apps" + seperator + "protocol_ta"
+				+ seperator + "bin" + seperator + "vertx_modules");
+	}
+
+	private void deployModules(PlatformManager pm) {
+
+		String seperator = System.getProperty("file.separator");
+
+		try {
+			File modulesDir = new File(System.getenv("SPLUNK_HOME") + seperator
+					+ "etc" + seperator + "apps" + seperator + "protocol_ta"
+					+ seperator + "bin" + seperator + "vertx_modules");
+
+			File[] modules = modulesDir.listFiles();
+
+			for (File module : modules) {
+
+				pm.deployModuleFromZip(module.getCanonicalPath(), null, 1,
+						new AsyncResultHandler<String>() {
+							public void handle(AsyncResult<String> asyncResult) {
+								if (asyncResult.succeeded()) {
+									// ok
+								} else {
+									logger.error("Can't deploy module : "
+											+ ModularInput
+													.getStackTrace(asyncResult
+															.cause()));
+
+								}
+							}
+						});
+			}
+		} catch (Exception e) {
+			logger.error("Can't deploy module : "
+					+ ModularInput
+							.getStackTrace(e));
+		}
+
+	}
 
 	public static URL[] getClassPathAsURLArray() {
 
@@ -201,25 +249,25 @@ public class ProtocolModularInput extends ModularInput {
 		for (Param param : stanza.getParams()) {
 
 			String value = param.getValue();
-			if (value != null){
+			if (value != null) {
 				String trimmed = value.trim();
-				if(trimmed.length() > 0){
+				if (trimmed.length() > 0) {
 					try {
-						obj.putNumber(param.getName(), Integer.parseInt(trimmed));
+						obj.putNumber(param.getName(),
+								Integer.parseInt(trimmed));
 					} catch (NumberFormatException e) {
 						obj.putString(param.getName(), trimmed);
 					}
-					
+
 				}
-				
+
 			}
-				
+
 		}
 
 		return obj;
 	}
 
-	
 	@Override
 	protected void doValidate(Validation val) {
 

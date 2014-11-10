@@ -476,6 +476,11 @@
 
             <fileset dir="${protocol_dir}/bin/datahandlers" />
         </copy>
+        
+        <copy todir="${temp_build}/bin/vertx_modules" >
+
+            <fileset dir="${protocol_dir}/bin/vertx_modules" />
+        </copy>
 
         <jar jarfile="${temp_build}/bin/${lib}/${protocol_jar}" >
 
