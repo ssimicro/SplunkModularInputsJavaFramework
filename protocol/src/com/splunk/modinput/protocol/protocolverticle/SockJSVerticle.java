@@ -55,8 +55,7 @@ public class SockJSVerticle extends Verticle {
 		boolean useSSL = false;
 
 		if (config.containsField("use_ssl"))
-			useSSL = Boolean.parseBoolean(config.getString("use_ssl").equals(
-					"1") ? "true" : "false");
+			useSSL = Boolean.parseBoolean(config.getNumber("use_ssl").intValue() == 1 ? "true" : "false");
 
 		HttpServer server = vertx.createHttpServer();
 		
@@ -76,7 +75,7 @@ public class SockJSVerticle extends Verticle {
 						.getString("truststore_pass"));
 			if (config.containsField("client_auth_required"))
 				server.setClientAuthRequired(Boolean.parseBoolean(config
-						.getString("client_auth_required").equals("1") ? "true"
+						.getNumber("client_auth_required").intValue() == 1 ? "true"
 						: "false"));
 		}
 
@@ -84,11 +83,11 @@ public class SockJSVerticle extends Verticle {
 			server.setReceiveBufferSize(config.getNumber("receive_buffer_size")
 					.intValue());
 		if (config.containsField("tcp_nodelay"))
-			server.setTCPNoDelay(Boolean.parseBoolean(config.getString(
-					"tcp_nodelay").equals("1") ? "true" : "false"));
+			server.setTCPNoDelay(Boolean.parseBoolean(config.getNumber(
+					"tcp_nodelay").intValue() == 1 ? "true" : "false"));
 		if (config.containsField("tcp_keepalive"))
-			server.setTCPKeepAlive(Boolean.parseBoolean(config.getString(
-					"tcp_keepalive").equals("1") ? "true" : "false"));
+			server.setTCPKeepAlive(Boolean.parseBoolean(config.getNumber(
+					"tcp_keepalive").intValue() == 1 ? "true" : "false"));
 		if (config.containsField("so_linger"))
 			server.setSoLinger(config.getNumber("so_linger").intValue());
 
@@ -109,11 +108,11 @@ public class SockJSVerticle extends Verticle {
 		JsonObject sockJSConfig = new JsonObject();
 		sockJSConfig.putString("prefix", "/" + appName);
 		if (config.containsField("session_timeout"))
-			sockJSConfig.putString("session_timeout",
-					config.getString("session_timeout"));
+			sockJSConfig.putNumber("session_timeout",
+					config.getNumber("session_timeout"));
 		if (config.containsField("heartbeat_period"))
-			sockJSConfig.putString("heartbeat_period",
-					config.getString("heartbeat_period"));
+			sockJSConfig.putNumber("heartbeat_period",
+					config.getNumber("heartbeat_period"));
 
 		sockJSServer.installApp(sockJSConfig, new Handler<SockJSSocket>() {
 			public void handle(SockJSSocket sock) {

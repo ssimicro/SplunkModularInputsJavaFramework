@@ -29,7 +29,7 @@ receive_buffer_size= <value>
 *whether or not (0,1) to enable TCP Keep Alive
 tcp_keepalive= <value>
 
-*whether or not (0,1) to enable SO Linger
+*SO Linger time in seconds.Using a negative value will disable it.
 so_linger= <value>
 
 *-------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ udp_receive_buffer_size= <value>
 *whether or not (0,1) to set broadcast mode
 set_broadcast= <value>
 
-*IP address pattern of the multicast group
+*IP address pattern of the network interface
 multicast_group= <value>
 
 *time to live (number)
@@ -94,7 +94,7 @@ app_name= <value>
 *Custom Data Handler
 *---------------
 
-*custom data handler name (a vertx ployglot verticle that you've placed in the datahandlers directory)
+*custom data handler name (a vertx polyglot verticle that you've placed in the protocol_ta/bin/datahandlers directory)
 handler_verticle = <value>
 
 *A JSON Config String to pass to the handler, example :  {"foo":"1","zoo":"goo"}
@@ -111,7 +111,7 @@ additional_jvm_propertys = <value>
 *Performance Tuning and Scaling
 *-------------------------------
 
-*You can increase the number if instances to utilise more cores on your server
+*You can increase the number of instances to utilise more cores on your server
 
 *defaults to 1 , refer to http://vertx.io/core_manual_java.html#specifying-number-of-instances
 server_verticle_instances = <value>

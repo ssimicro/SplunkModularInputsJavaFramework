@@ -7,10 +7,10 @@ This is a Splunk Add-On for receiving data via a number of different data protoc
 ## Protocols
 
 * TCP
-* TCP w/ TLS (optional client certificate authentication)
+* TCP w/ TLS , optional client certificate authentication
 * UDP (unicast and multicast)
-* HTTP (PUT and POST methods only , data in body)
-* HTTPS (PUT and POST methods only , data in body) (optional client certificate authentication)
+* HTTP (PUT and POST methods only , data in request body & file uploads)
+* HTTPS (PUT and POST methods only , data in request body  & file uploads) , optional client certificate authentication
 * Websockets
 * SockJS
 
@@ -89,7 +89,7 @@ Refer to http://vertx.io/manual.html#improving-connection-time
 ## Dependencies
 
 * Splunk 5.0+
-* Java Runtime 1.5+
+* Java Runtime 1.7+
 * Supported on Windows, Linux, MacOS, Solaris, FreeBSD, HP-UX, AIX
 
 ## Setup

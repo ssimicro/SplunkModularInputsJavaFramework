@@ -39,7 +39,7 @@
         <javac
             destdir="${temp_build}/${classes}"
             srcdir="${src}"
-            target="${javaClassTarget}" >
+            target="${javaClassTarget}">
 
             <classpath refid="project.class.path" />
         </javac>

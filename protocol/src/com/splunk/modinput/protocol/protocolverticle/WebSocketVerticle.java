@@ -54,8 +54,7 @@ public class WebSocketVerticle extends Verticle {
 		boolean useSSL = false;
 
 		if (config.containsField("use_ssl"))
-			useSSL = Boolean.parseBoolean(config.getString("use_ssl").equals(
-					"1") ? "true" : "false");
+			useSSL = Boolean.parseBoolean(config.getNumber("use_ssl").intValue() == 1 ? "true" : "false");
 
 		HttpServer server = vertx.createHttpServer();
 
@@ -75,7 +74,7 @@ public class WebSocketVerticle extends Verticle {
 						.getString("truststore_pass"));
 			if (config.containsField("client_auth_required"))
 				server.setClientAuthRequired(Boolean.parseBoolean(config
-						.getString("client_auth_required").equals("1") ? "true"
+						.getNumber("client_auth_required").intValue() == 1 ? "true"
 						: "false"));
 		}
 
@@ -83,11 +82,11 @@ public class WebSocketVerticle extends Verticle {
 			server.setReceiveBufferSize(config.getNumber("receive_buffer_size")
 					.intValue());
 		if (config.containsField("tcp_nodelay"))
-			server.setTCPNoDelay(Boolean.parseBoolean(config.getString(
-					"tcp_nodelay").equals("1") ? "true" : "false"));
+			server.setTCPNoDelay(Boolean.parseBoolean(config.getNumber(
+					"tcp_nodelay").intValue() == 1 ? "true" : "false"));
 		if (config.containsField("tcp_keepalive"))
-			server.setTCPKeepAlive(Boolean.parseBoolean(config.getString(
-					"tcp_keepalive").equals("1") ? "true" : "false"));
+			server.setTCPKeepAlive(Boolean.parseBoolean(config.getNumber(
+					"tcp_keepalive").intValue() == 1 ? "true" : "false"));
 		if (config.containsField("so_linger"))
 			server.setSoLinger(config.getNumber("so_linger").intValue());
 

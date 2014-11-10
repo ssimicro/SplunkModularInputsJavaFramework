@@ -61,22 +61,22 @@ public class UDPVerticle extends Verticle {
 		final DatagramSocket socket = vertx.createDatagramSocket(ip);
 		
 
-		final boolean isMulticast = Boolean.parseBoolean(config.getString(
-				"is_multicast").equals("1") ? "true" : "false");
+		final boolean isMulticast = Boolean.parseBoolean(config.getNumber(
+				"is_multicast").intValue() == 1 ? "true" : "false");
 		final String multicastGroup = config.getString("multicast_group");
 
 		if (config.containsField("udp_receive_buffer_size"))
 			socket.setReceiveBufferSize(config.getNumber(
 					"udp_receive_buffer_size").intValue());
 		if (config.containsField("set_broadcast"))
-			socket.setBroadcast(Boolean.parseBoolean(config.getString(
-					"set_broadcast").equals("1") ? "true" : "false"));
+			socket.setBroadcast(Boolean.parseBoolean(config.getNumber(
+					"set_broadcast").intValue() == 1 ? "true" : "false"));
 
 		if (isMulticast) {
 			if (config.containsField("set_multicast_loopback_mode"))
 				socket.setMulticastLoopbackMode(Boolean
-						.parseBoolean(config.getString(
-								"set_multicast_loopback_mode").equals("1") ? "true"
+						.parseBoolean(config.getNumber(
+								"set_multicast_loopback_mode").intValue() == 1 ? "true"
 								: "false"));
 			if (config.containsField("multicast_ttl"))
 				socket.setMulticastTimeToLive(config.getNumber("multicast_ttl")

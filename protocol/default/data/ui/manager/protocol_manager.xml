@@ -1,8 +1,8 @@
-<endpoint name="data/inputs/mqtt">
-  <header>MQTT Messages</header>
+<endpoint name="data/inputs/protocol">
+  <header>Protocol Data Inputs</header>
   <breadcrumb>
     <parent hidecurrent="False">datainputstats</parent>
-    <name>MQTT Messages</name>
+    <name>Protocol Data Inputs</name>
   </breadcrumb>
   <elements>
     <element name="sourceFields" type="fieldset">
@@ -18,175 +18,411 @@
           <key name="exampleText">Name of this stanza</key>
 </element>
 
+           <element name="protocol" type="select" label="Protocol">
+					<onChange>
 
-
-<element name="connection_settings" type="fieldset">
-			<key name="legend">Connection Settings</key>		
-					<view name="edit" />
-					<view name="create" />
-					<view name="list"/>
-					<elements>
-<element name="topic_name" type="textfield" label="Topic Name">
-          
+						<key name="_action">showonly</key>
+						<group_set>
+							<group name="udp_settings" />
+							<group name="tcp_settings" />
+							<group name="sockjs_settings" />
+						</group_set>
+						<key name="udp">udp_settings</key>
+						<key name="http">tcp_settings</key>
+						<key name="tcp">tcp_settings</key>
+						<key name="sockjs">sockjs_settings</key>
+						<key name="websocket">tcp_settings</key>
+									
+					</onChange>
+					 <view name="list"/>
           <view name="edit"/>
           <view name="create"/>
-          <view name="list"/>
-          <key name="exampleText">Topic Name</key>
-        </element>
 
-
-        
-<element name="broker_host" type="textfield" label="Broker Host">
-          
-          <view name="edit"/>
-          <view name="create"/>
-          <view name="list"/>
-          <key name="exampleText">Broker Host , IP address or hostname</key>
-        </element>
-
-<element name="broker_port" type="textfield" label="Broker Port">
-          
-          <view name="edit"/>
-          <view name="create"/>
-          <view name="list"/>
-          <key name="exampleText">Broker Port.Defaults to 1883(tcp) or 8883(ssl)</key>
-        </element>
-
-<element name="use_ssl" type="checkbox" label="Use SSL ?">
-          
-          <view name="edit"/>
-          <view name="create"/>
-          <key name="exampleText">Defaults to false.Whether or not to use an SSL connection.Use the "Additional JVM System Properties" parameter  to configure key and trust stores.</key>
-        </element>
-        
-<element name="client_id" type="textfield" label="Client ID">
-          
-          <view name="edit"/>
-          <view name="create"/>
-          <key name="exampleText">Defaults to "splunk".A client identifier must be specified and be less that 23 characters. It must be unique across all clients connecting to the same server. The clientId is used by the server to store data related to the client, hence it is important that the clientId remain the same when connecting to a server if durable subscriptions or reliable messaging are required.</key>
-        </element>
-   
-
- 
-
-        
-</elements>
-
-					
-					
-				
-</element>
-       
-<element name="authentication" type="fieldset">
-			<key name="legend">Authentication</key>		
-					<view name="edit" />
-					<view name="create" />
-					<elements>
-					    
-<element name="username" type="textfield" label="Username">
-          
-          <view name="edit"/>
-          <view name="create"/>
-          <key name="exampleText">Username for the connection</key>
-        </element>
-        
-<element name="password" type="textfield" label="Password">
-          
-          <view name="edit"/>
-          <view name="create"/>
-          <key name="exampleText">Password for the connection</key>
-        </element>					
-					
-</elements>
-
-					
-					
-				
-</element>
-<element name="additional_settings" type="fieldset">
-			<key name="legend">Additional Settings</key>		
-					<view name="edit" />
-					<view name="create" />
-					<elements>
-					    
-					    
-        
-					    
-<element name="clean_session" type="checkbox" label="Clean Session ?">
-            
-          <view name="edit"/>
-          <view name="create"/>
-          <key name="exampleText">Defaults to false.Sets whether the client and server should remember state across restarts and reconnects.</key>
-        </element>
-
- 
-<element name="qos" type="select" label="Quality of Service (QOS)">
-          
-          <view name="edit"/>
-          <view name="create"/>
-          <view name="list"/>
-          <key name="exampleText">Defaults to 0. For messages sent at qualities of service (QoS) 1 or 2 to be reliably delivered, messages must be stored (on both the client and server) until the delivery of the message is complete.In the event that only QoS 0 messages are sent or received or cleanSession is set to true then a safe store is not needed.</key>
-     
           <options>
-                        <opt value="0" label="0" />
-						<opt value="1" label="1" />
-						<opt value="2" label="2" />
-                                               
-					</options>
+            <opt value="tcp" label="TCP"/> 
+            <opt value="udp" label="UDP"/>
+            <opt value="http" label="HTTP POST,PUT and File Upload"/>                   
+            <opt value="sockjs" label="SockJS"/> 
+            <opt value="websocket" label="Websockets"/>                  
+          </options>
+				</element>
+				
+
+           
+    <element name="bind_address" type="textfield" label="Server Bind Address">
+          
+        <view name="list"/>
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Network interface address to bind to , IP or hostname , defaults to 0.0.0.0 (listen on all interfaces)</key>
         </element>
+        
+    <element name="port" type="textfield" label="Server Port">
+          
+        <view name="list"/>
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Network port to open.For ports less than 1024 , you'll need to be running with root permissions</key>
+        </element>
+ 
+    
 
-<element name="reliable_delivery_dir" type="textfield" label="Reliable Delivery Directory">
+    
+    
+          <element name="tcp_settings" type="fieldset">
+			<key name="legend">Common TCP Settings</key>		
+					<view name="edit" />
+					<view name="create" />
+					<elements>
+		
+					    <element name="use_ssl" type="checkbox" label="Use a secure connection (TLS) ?">
+ <onChange>
+              <key name="_action">showonly</key>
+              <key name="0">NONE</key>
+              <key name="1">ALL</key>
+              <group_set>
+                <group name="tls"/>
+              </group_set>
+          </onChange>
           
           <view name="edit"/>
           <view name="create"/>
-          <key name="exampleText">Defaults to the current working directory.Directory where the messages are stored for QOS 1/2.</key>
-        </element>	
+       
+        </element>
         
-<element name="connection_timeout" type="textfield" label="Connection Timeout">
+					    <element name="tls" type="fieldset">
+              <key name="legend">TLS Settings</key>		
+					<view name="edit" />
+					<view name="create" />
+					<elements>
+					        
+    
+       
+        <element name="keystore_pass" type="textfield" label="Java Keystore password">
           
           <view name="edit"/>
           <view name="create"/>
-          <key name="exampleText">Defaults to 30 seconds.Sets the connection timeout value. This value, measured in seconds, defines the maximum time interval the client will wait for the network connection to the MQTT server to be established.  A value of 0 disables timeout processing meaning the client will wait until the network connection is made successfully or fails.</key>
-        </element>	
-        
-<element name="keepalive_interval" type="textfield" label="Keep Alive Interval">
+          
+        </element>
+        <element name="keystore_path" type="textfield" label="Java Keystore path">
           
           <view name="edit"/>
           <view name="create"/>
-          <key name="exampleText">Defaults to 60 seconds.Sets the "keep alive" interval. This value, measured in seconds, defines the maximum time interval between messages sent or received. It enables the client to detect if the server is no longer available, without having to wait for the TCP/IP timeout. The client will ensure that at least one message travels across the network within each keep alive period. In the absence of a data-related message during the time period, the client sends a very small "ping" message, which the server will acknowledge. A value of 0 disables keepalive processing in the client.</key>
-        </element>	
+          
+        </element>
+        <element name="truststore_pass" type="textfield" label="Java Truststore password">
+          
+          <view name="edit"/>
+          <view name="create"/>
         
-
+        </element>
+        <element name="truststore_path" type="textfield" label="Java Truststore path">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          
+        </element>
+        <element name="client_auth_required" type="checkbox" label="Client Authentication Required ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          
+        </element>
+       
         
+</elements>
+</element>
+    
+	<element name="socket_settings" type="fieldset">
+              <key name="legend">Socket Settings</key>		
+					<view name="edit" />
+					<view name="create" />
+					<elements>				    			        
+    <element name="receive_buffer_size" type="textfield" label="TCP Receive Buffer Size">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Receive Buffer Size (bytes)</key>
+        </element>
+        <element name="so_linger" type="textfield" label="SO Linger">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Time in seconds.Using a negative value will disable it</key>
+        </element>
+        <element name="tcp_nodelay" type="checkbox" label="TCP NoDelay ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          
+        </element>
+        
+        <element name="tcp_keepalive" type="checkbox" label="TCP KeepAlive ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          
+        </element>
+        
+        </elements>
+</element>
         
 </elements>
 </element>
 
-
-
-<element name="message_handler" type="fieldset">
-			<key name="legend">Message Processing</key>		
+          
+      
+<element name="udp_settings" type="fieldset">
+			<key name="legend">UDP Settings</key>		
 					<view name="edit" />
 					<view name="create" />
 					<elements>
-					    
-					    
-        
-					    
-<element name="message_handler_impl" type="textfield" label="Implementation class for a custom message handler">
-            
+					        
+    
+        <element name="ip_version" type="select" label="IP Version">
+          
           <view name="edit"/>
           <view name="create"/>
-          <key name="exampleText">An implementation of the com.splunk.modinput.mqtt.AbstractMessageHandler class.You would provide this if you required some custom handling/formatting of the messages you consume.Ensure that the necessary jars are in the $SPLUNK_HOME/etc/apps/mqtt_ta/bin/lib directory.If ommitted then the default handler 'com.splunk.modinput.mqtt.DefaultMessageHandler' will be used.</key>
+          
+          <options>
+            <opt value="v4" label="Version 4"/> 
+            <opt value="v6" label="Version 6"/>
+                            
+          </options>
         </element>
-        <element name="message_handler_params" type="textfield" label="Implementation parameter string for the custom message handler">
-           
+        <element name="udp_receive_buffer_size" type="textfield" label="UDP Receive Buffer Size">
+          
           <view name="edit"/>
           <view name="create"/>
-          <key name="exampleText">Parameter string in format 'key1=value1,key2=value2,key3=value3'. This gets passed to the implementation class to process.</key>
+          <key name="exampleText">Receive Buffer Size (bytes)</key>
+        </element>
+        <element name="set_broadcast" type="checkbox" label="Set Broadcast Mode ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          
         </element>
         
+        <element name="is_multicast" type="checkbox" label="Multicast ?">
+           <onChange>
+              <key name="_action">showonly</key>
+              <key name="0">NONE</key>
+              <key name="1">ALL</key>
+              <group_set>
+                <group name="multicast"/>
+              </group_set>
+          </onChange>
+          <view name="edit"/>
+          <view name="create"/>
+          
+        </element>
+        
+        <element name="multicast" type="fieldset">
+			<key name="legend">Multicast Settings</key>		
+					<view name="edit" />
+					<view name="create" />
+					<elements>
+		<element name="multicast_group" type="textfield" label="Multicast Group">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">IP address pattern of the network interface</key>
+        </element>
+        <element name="multicast_ttl" type="textfield" label="Multicast TTL">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Time to live</key>
+        </element>			    
+        <element name="set_multicast_loopback_mode" type="checkbox" label="Set Multicast Loopback Mode ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          
+        </element>
+        
+        </elements>
+</element>
+        
+</elements>
+</element>
+          
+<element name="sockjs_settings" type="fieldset">
+			<key name="legend">SockJS Settings</key>		
+					<view name="edit" />
+					<view name="create" />
+					<elements>
+					        
+    
+        <element name="session_timeout" type="textfield" label="Session Timeout">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Session timeout in seconds</key>
+        </element>
+        <element name="heartbeat_period" type="textfield" label="Heartbeat Period">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Heatbeat period in seconds</key>
+        </element>
+        <element name="app_name" type="textfield" label="Application Name">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Defaults to "splunk" , so the URI would be http://somehost/splunk</key>
+        </element>
+       <element name="use_ssl" type="checkbox" label="Use a secure connection (TLS) ?">
+ <onChange>
+              <key name="_action">showonly</key>
+              <key name="0">NONE</key>
+              <key name="1">ALL</key>
+              <group_set>
+                <group name="tls"/>
+              </group_set>
+          </onChange>
+          
+          <view name="edit"/>
+          <view name="create"/>
+       
+        </element>
+        
+					    <element name="tls" type="fieldset">
+              <key name="legend">TLS Settings</key>		
+					<view name="edit" />
+					<view name="create" />
+					<elements>
+					        
+    
+       
+        <element name="keystore_pass" type="textfield" label="Java Keystore password">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          
+        </element>
+        <element name="keystore_path" type="textfield" label="Java Keystore path">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          
+        </element>
+        <element name="truststore_pass" type="textfield" label="Java Truststore password">
+          
+          <view name="edit"/>
+          <view name="create"/>
+        
+        </element>
+        <element name="truststore_path" type="textfield" label="Java Truststore path">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          
+        </element>
+        <element name="client_auth_required" type="checkbox" label="Client Authentication Required ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          
+        </element>
+       
+        
+</elements>
+</element>
+    <element name="socket_settings" type="fieldset">
+              <key name="legend">Socket Settings</key>		
+					<view name="edit" />
+					<view name="create" />
+					<elements>	
+					    			        
+    <element name="receive_buffer_size" type="textfield" label="TCP Receive Buffer Size">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Receive Buffer Size (bytes)</key>
+        </element>
+        <element name="so_linger" type="textfield" label="SO Linger">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Time in seconds.Using a negative value will disable it</key>
+        </element>
+        <element name="tcp_nodelay" type="checkbox" label="TCP NoDelay ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          
+        </element>
+        
+        <element name="tcp_keepalive" type="checkbox" label="TCP KeepAlive ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          
+        </element>
+        
+        </elements>
+</element>
+        
+</elements>
+</element>
+          
+          
+<element name="data_handler_settings" type="fieldset">
+			<key name="legend">Custom Data Handler</key>		
+					<view name="edit" />
+					<view name="create" />
+					<elements>
+					        
+    
+        <element name="handler_verticle" type="textfield" label="Custom data handler name">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Custom data handler name, a vertx polyglot verticle that you've placed in the protocol_ta/bin/datahandlers directory. ie: ExampleHandler , ExampleHandler.js , foo.somepackage.MyHandler , SomeHandler.py</key>
+        </element>
+        
+        <element name="handler_config" type="textfield" label="Custom data handler config">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">A JSON Config String to pass to the handler, example :  {"foo":"1","zoo":"goo"}</key>
+        </element>
+        
+        
+</elements>
+</element>
+         
 
+<element name="scalability_settings" type="fieldset">
+			<key name="legend">Scalability and Performance Tuning</key>		
+					<view name="edit" />
+					<view name="create" />
+					<elements>
+					        
+    
+        <element name="server_verticle_instances" type="textfield" label="Server verticle instances">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Defaults to 1.You can increase the number of instances to utilise more cores on your server.Refer to http://vertx.io/core_manual_java.html#specifying-number-of-instances</key>
+        </element>
+        
+        <element name="handler_verticle_instances" type="textfield" label="Data handler verticle instances">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Defaults to 1.You can increase the number of instances to utilise more cores on your server.Refer to http://vertx.io/core_manual_java.html#specifying-number-of-instances</key>
+        </element>
+        
+        <element name="accept_backlog" type="textfield" label="Accept backlog (requires OS settings also)">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Refer to http://vertx.io/manual.html#improving-connection-time</key>
+        </element>
+        
+        
 </elements>
 </element>
 

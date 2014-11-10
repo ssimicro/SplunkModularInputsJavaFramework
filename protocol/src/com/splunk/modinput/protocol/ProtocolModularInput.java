@@ -1,5 +1,7 @@
 package com.splunk.modinput.protocol;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -83,7 +85,7 @@ public class ProtocolModularInput extends ModularInput {
 						logger.error("No Port defined");
 						System.exit(2);
 					}
-					
+
 					String protocol = config.getString("protocol");
 
 					if (!config.containsField("bind_address")) {
@@ -95,7 +97,7 @@ public class ProtocolModularInput extends ModularInput {
 					if (!config.containsField("handler_verticle_instances")) {
 						config.putNumber("handler_verticle_instances", 1);
 					}
-					
+
 					if (config.containsField("additional_jvm_properties"))
 						setJVMSystemProperties(config
 								.getString("additional_jvm_properties"));
@@ -109,7 +111,10 @@ public class ProtocolModularInput extends ModularInput {
 								"{\"generated\":\"true\"}");
 					}
 					pm.deployVerticle(protocolVerticles.get(protocol), config,
-							null, config.getNumber("server_verticle_instances").intValue(), null, new AsyncResultHandler<String>() {
+							getClassPathAsURLArray(),
+							config.getNumber("server_verticle_instances")
+									.intValue(), null,
+							new AsyncResultHandler<String>() {
 								public void handle(
 										AsyncResult<String> asyncResult) {
 									if (asyncResult.succeeded()) {
@@ -139,6 +144,50 @@ public class ProtocolModularInput extends ModularInput {
 
 	}
 
+	public static URL[] getClassPathAsURLArray() {
+
+		String seperator = System.getProperty("file.separator");
+
+		String classpathRootDir = System.getenv("SPLUNK_HOME") + seperator
+				+ "etc" + seperator + "apps" + seperator + "protocol_ta"
+				+ seperator + "bin" + seperator;
+
+		String datahandlersCP = classpathRootDir + "datahandlers";
+		String modinputCP = classpathRootDir + "lib" + seperator
+				+ "protocolmodinput.jar";
+		URL[] classPathAsURLArray = new URL[2];
+
+		try {
+			classPathAsURLArray[0] = new URL("file:///"
+					+ datahandlersCP.replace('\\', '/'));
+			classPathAsURLArray[1] = new URL("file:///"
+					+ modinputCP.replace('\\', '/'));
+		} catch (MalformedURLException e) {
+			logger.error("Error getting verticle classpath"
+					+ ModularInput.getStackTrace(e));
+		}
+
+		/**
+		 * String classPath = System.getProperty("java.class.path");
+		 * 
+		 * String[] splitClassPath =
+		 * classPath.split(System.getProperty("path.separator"));
+		 * 
+		 * URL[] classPathAsURLArray = new URL[splitClassPath.length];
+		 * 
+		 * for (int i=0; i<splitClassPath.length; i++) {
+		 * 
+		 * try { classPathAsURLArray[i] = new URL("file:///" +
+		 * splitClassPath[i].replace('\\', '/')); } catch (MalformedURLException
+		 * ex) { logger.error("Error getting verticle classpath");
+		 * classPathAsURLArray = null; }
+		 * 
+		 * }
+		 **/
+
+		return classPathAsURLArray;
+	}
+
 	/**
 	 * Convert stanza fields into JSON
 	 * 
@@ -152,13 +201,25 @@ public class ProtocolModularInput extends ModularInput {
 		for (Param param : stanza.getParams()) {
 
 			String value = param.getValue();
-			if (value != null && value.trim().length() > 0)
-				obj.putString(param.getName(), param.getValue());
+			if (value != null){
+				String trimmed = value.trim();
+				if(trimmed.length() > 0){
+					try {
+						obj.putNumber(param.getName(), Integer.parseInt(trimmed));
+					} catch (NumberFormatException e) {
+						obj.putString(param.getName(), trimmed);
+					}
+					
+				}
+				
+			}
+				
 		}
 
 		return obj;
 	}
 
+	
 	@Override
 	protected void doValidate(Validation val) {
 
@@ -385,21 +446,21 @@ public class ProtocolModularInput extends ModularInput {
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("handler_verticle_instances");
 		arg.setTitle("Handler Verticle Instances");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("accept_backlog");
 		arg.setTitle("Accept Backlog");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		scheme.setEndpoint(endpoint);
 
 		return scheme;
