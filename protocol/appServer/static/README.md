@@ -62,16 +62,16 @@ To get started , you can refer to the  default handler examples in the datahandl
 
 ## Supported languages and file extensions
 
-Javascript .js 
-CoffeeScript .coffee
-Ruby .rb
-Python .py
-Groovy .groovy
-Java .class / .java
-Scala .scala
-Clojure .clj
-PHP .php
-Ceylon .ceylon
+* Javascript .js 
+* CoffeeScript .coffee
+* Ruby .rb
+* Python .py
+* Groovy .groovy
+* Java .java (compiled to .class)
+* Scala .scala
+* Clojure .clj
+* PHP .php
+* Ceylon .ceylon
 
 Note : experimental Nashorn support is included for js and coffee (requires Java 8). To use the Nashorn JS/Coffee engine rather than the default Rhino engine , then edit protocol_ta/bin/vertx_conf/langs.properties
 
