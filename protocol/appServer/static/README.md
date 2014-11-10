@@ -60,6 +60,21 @@ If you don't need a custom handler then the default handler com.splunk.modinput.
 
 To get started , you can refer to the  default handler examples in the datahandlers directory.
 
+## Supported languages and file extensions
+
+Javascript .js 
+CoffeeScript .coffee
+Ruby .rb
+Python .py
+Groovy .groovy
+Java .class / .java
+Scala .scala
+Clojure .clj
+PHP .php
+Ceylon .ceylon
+
+Note : experimental Nashorn support is included for js and coffee (requires Java 8). To use the Nashorn JS/Coffee engine rather than the default Rhino engine , then edit protocol_ta/bin/vertx_conf/langs.properties
+
 ## SSL / TLS
 
 This is provisioned using your own Java Keystore that you can create using the keytool utility that is part of the JDK.
@@ -70,9 +85,11 @@ Refer to http://vertx.io/core_manual_java.html#ssl-servers
 
 Client certificate based authentication can be enabled for the TLS/SSL channels you setup.
 
-## VERTX Modules
+## VERTX Modules and Repositorys
 
 Any required Vertx modules , such as various language modules for the polyglot functionality (JS , Scala , Groovy etc...) will be dynamically downloaded from online repositorys and installed in your protocol_ta/bin/vertx_modules directory.
+
+You can edit your repository locations in protocol_ta/bin/vertx_conf/langs.properties
 
 ## Performance tuning tips
 
