@@ -89,7 +89,7 @@ Client certificate based authentication can be enabled for the TLS/SSL channels 
 
 Any required Vertx modules , such as various language modules for the polyglot functionality (JS , Scala , Groovy etc...) will be dynamically downloaded from online repositorys and installed in your protocol_ta/bin/vertx_modules directory.
 
-You can edit your repository locations in protocol_ta/bin/vertx_conf/langs.properties
+You can edit your repository locations in protocol_ta/bin/vertx_conf/repos.txt
 
 ## Performance tuning tips
 
