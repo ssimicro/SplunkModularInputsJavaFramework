@@ -29,7 +29,7 @@ This Modular Input utilizes VERTX.IO version 2.1.4 under the hood.http://vertx.i
 This framework provides for an implementation that is :
 
 * asynchronous
-* event driven
+* event driven (reactive)
 * polyglot (code custom data handlers in java , javascript , groovy , scala , clojure , ruby , python , any JVM lang with a vertx module)
 * non blocking IO
 * scales over all your available cores
