@@ -95,7 +95,7 @@ You can edit your repository locations in protocol_ta/bin/vertx_conf/repos.txt
 
 Due to the nature of the async/event driven/non blocking architecture , the out of the box default settings may just well suffice for you.
 
-But there are some other parameters that you can tune to take more advantage of your underlying computing resource(cpu core setc..) available to you.
+But there are some other parameters that you can tune to take more advantage of your underlying computing resource(ie: cpu cores) available to you.
 
 These are the "server_verticle_instances" and "handler_verticle_instances" params.
 
@@ -143,7 +143,7 @@ Note : these JVM System Properties will apply to the entire JVM context and all 
 
 * JAVA_HOME environment variable is set or "java" is on the PATH for the user's environment you are running Splunk as
 * You are using Splunk 5+
-* You are using a 1.5+ Java Runtime
+* You are using a 1.7+ Java Runtime
 * You are running on a supported operating system
 * Look for any errors in $SPLUNK_HOME/var/log/splunk/splunkd.log
 * Run this command as the same user that you are running Splunk as and observe console output : "$SPLUNK_HOME/bin/splunk cmd python ../etc/apps/protocol_ta/bin/protocol.py --scheme" 
