@@ -35,8 +35,7 @@ public class TCPVerticle extends Verticle {
 				config.getString("handler_config"));
 
 		handlerConfig.putString("address", address);
-		handlerConfig.putString("stanza", config.getString("stanza"));
-
+		
 		container.deployWorkerVerticle(config.getString("handler_verticle"),
 				handlerConfig, config.getNumber("handler_verticle_instances").intValue(), false, new AsyncResultHandler<String>() {
 					public void handle(AsyncResult<String> asyncResult) {
@@ -104,6 +103,7 @@ public class TCPVerticle extends Verticle {
 					public void handle(Buffer buffer) {
 						
 						EventBus eb = vertx.eventBus();
+						
 						eb.send(address, buffer.getBytes());
 					}
 				});

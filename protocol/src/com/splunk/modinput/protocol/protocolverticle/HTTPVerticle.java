@@ -36,8 +36,7 @@ public class HTTPVerticle extends Verticle {
 				config.getString("handler_config"));
 
 		handlerConfig.putString("address", address);
-		handlerConfig.putString("stanza", config.getString("stanza"));
-
+		
 		container.deployWorkerVerticle(config.getString("handler_verticle"),
 				handlerConfig, config.getNumber("handler_verticle_instances").intValue(), false, new AsyncResultHandler<String>() {
 					public void handle(AsyncResult<String> asyncResult) {

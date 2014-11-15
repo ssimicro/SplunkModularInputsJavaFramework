@@ -27,12 +27,11 @@ public class DefaultHandlerVerticle extends Verticle {
 		// handler config JSON
 		JsonObject config = container.config();
 
-		// stanza name
-		final String stanza = config.getString("stanza");
-
+	
 		// Event Bus (so we can receive the data)
 		String eventBusAddress = config.getString("address");
-		EventBus eb = vertx.eventBus();
+		final String outputAddress = config.getString("output_address");
+		final EventBus eb = vertx.eventBus();
 
 		// data handler that will process our received data
 		Handler<Message<byte[]>> myHandler = new Handler<Message<byte[]>>() {
@@ -43,10 +42,7 @@ public class DefaultHandlerVerticle extends Verticle {
 					byte[] data = message.body();
 					// parse into String
 					String output = new String(data);
-					// wrap in a Stream object
-					Stream stream = HandlerUtil.getStream(output, stanza);
-					// marshall out to Splunk
-					ModularInput.marshallObjectToXML(stream);
+					eb.send(outputAddress, output);
 				} catch (Exception e) {
 					logger.error("Error writing received data: "
 							+ ModularInput.getStackTrace(e));

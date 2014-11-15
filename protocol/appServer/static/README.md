@@ -1,4 +1,4 @@
-## Protocol Data Inputs v0.5b
+## Protocol Data Inputs v0.6b
 
 ## Overview
 
@@ -105,6 +105,11 @@ You can also tune the TCP accept queue settings (also requires OS tweaks) , part
 
 Refer to http://vertx.io/manual.html#improving-connection-time
 
+## Data Output
+
+By default data will be output to STDOUT in Modular Input Stream XML format.
+
+However you can bypass this if you wish and declare that data is output to a Splunk TCP port
 
 ## Dependencies
 

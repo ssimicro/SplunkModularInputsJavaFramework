@@ -65,8 +65,47 @@
           <key name="exampleText">Network port to open.For ports less than 1024 , you'll need to be running with root permissions</key>
         </element>
  
-    
+  <element name="output_type" type="select" label="Data Output">
+					<onChange>
 
+						<key name="_action">showonly</key>
+						<key name="stdout">NONE</key>
+						<group_set>
+							<group name="tcp_output_settings" />
+							
+						</group_set>
+						<key name="tcp">tcp_output_settings</key>
+												
+					</onChange>
+					 <view name="list"/>
+          <view name="edit"/>
+          <view name="create"/>
+
+          <options>
+              <opt value="stdout" label="STDOUT"/>
+            <opt value="tcp" label="TCP"/> 
+                                      
+          </options>
+				</element>
+				  
+<element name="tcp_output_settings" type="fieldset">
+			<key name="legend">TCP Output</key>		
+					<view name="edit" />
+					<view name="create" />
+					<elements>
+					        
+    
+        <element name="output_port" type="textfield" label="TCP Output Port">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">TCP Output Port. TCP input in Splunk will be dynamically created for you if it does not exist.</key>
+        </element>
+        
+        
+        
+</elements>
+</element>
     
     
           <element name="tcp_settings" type="fieldset">
@@ -390,6 +429,7 @@
         </element>
         
         
+        
 </elements>
 </element>
          
@@ -409,6 +449,13 @@
         </element>
         
         <element name="handler_verticle_instances" type="textfield" label="Data handler verticle instances">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Defaults to 1.You can increase the number of instances to utilise more cores on your server.Refer to http://vertx.io/core_manual_java.html#specifying-number-of-instances</key>
+        </element>
+        
+        <element name="output_verticle_instances" type="textfield" label="Output verticle instances">
           
           <view name="edit"/>
           <view name="create"/>

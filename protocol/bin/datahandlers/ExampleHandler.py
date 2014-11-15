@@ -3,8 +3,8 @@ from core.event_bus import EventBus
 
 config = vertx.config()
 
-stanza = config['stanza'];
 event_bus_address = config['address'];
+output_address = config['output_address'];
 
 def msg_handler(message):
 
@@ -14,7 +14,7 @@ def msg_handler(message):
     #pre-processing / transforming the received data
     output = "Ignoring received data and replacing with Python GOATS!!!!!!";
 
-    #bundle up String output and send to Splunk
-    print "<stream><event stanza=\""+stanza+"\"><data>"+output+"</data></event></stream>";
+    #pass along to output handler
+    EventBus.send(output_address,output);
     
 id = EventBus.register_handler(event_bus_address, handler=msg_handler)

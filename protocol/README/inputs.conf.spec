@@ -100,6 +100,17 @@ handler_verticle = <value>
 *A JSON Config String to pass to the handler, example :  {"foo":"1","zoo":"goo"}
 handler_config = <value>
 
+*------------
+*Data Output
+*------------
+
+* One of [stdout | tcp ]. Defaults to stdout.
+output_type = <value>
+
+* For tcp output.
+output_port = <value>
+
+
 *---------------------
 *JVM System Properties
 *---------------------
@@ -118,6 +129,9 @@ server_verticle_instances = <value>
 
 *defaults to 1 , refer to http://vertx.io/core_manual_java.html#specifying-number-of-instances
 handler_verticle_instances = <value>
+
+*defaults to 1 , refer to http://vertx.io/core_manual_java.html#specifying-number-of-instances
+output_verticle_instances = <value>
 
 * Refer to http://vertx.io/manual.html#improving-connection-time
 accept_backlog = <value>

@@ -17,9 +17,13 @@ public class ExampleHandler extends Verticle {
 	public void start() {
 
 		JsonObject config = container.config();
-		final String stanza = config.getString("stanza");
+		
+		
 		String eventBusAddress = config.getString("address");
-		EventBus eb = vertx.eventBus();
+		final String outputAddress = config.getString("output_address");
+		
+		// Event Bus (so we can receive the data)
+		final EventBus eb = vertx.eventBus();
 
 		Handler<Message<byte[]>> myHandler = new Handler<Message<byte[]>>() {
 			public void handle(Message<byte[]> message) {
@@ -32,9 +36,8 @@ public class ExampleHandler extends Verticle {
                     //pre-processing / transforming the received data
 					String output = "Ignoring received data and replacing with JAVA GOATS!!!!!!";
 
-					//bundle up String output and send to Splunk
-					Stream stream = HandlerUtil.getStream(output, stanza);
-					ModularInput.marshallObjectToXML(stream);
+					//pass along to output handler
+					eb.send(outputAddress, output);
 
 				} catch (Exception e) {
 					logger.error("Error writing received data: "

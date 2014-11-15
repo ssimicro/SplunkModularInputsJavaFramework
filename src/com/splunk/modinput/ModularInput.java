@@ -17,7 +17,11 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.log4j.Logger;
 
+import com.splunk.Args;
+import com.splunk.InputCollection;
+import com.splunk.InputKind;
 import com.splunk.Service;
+
 
 public abstract class ModularInput {
 
@@ -42,6 +46,25 @@ public abstract class ModularInput {
 		} catch (Exception e) {
 			logger.error("Error writing XML : " + e.getMessage());
 		}
+	}
+	
+	public static String marshallObjectToXMLString(Object obj) {
+		String xml = "";
+		try {
+			JAXBContext context = JAXBContext.newInstance(obj.getClass());
+			Marshaller marshaller = context.createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
+					Boolean.TRUE);
+			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+			StringWriter sw = new StringWriter();
+			marshaller.marshal(obj, sw);
+			xml = sw.toString();
+			
+
+		} catch (Exception e) {
+			logger.error("Error getting XML String : " + e.getMessage());
+		}
+		return xml.trim();
 	}
 
 	protected static Object unmarshallXMLToObject(Class clazz, String xml) {
@@ -116,11 +139,40 @@ public abstract class ModularInput {
 				System.exit(2);
 			}
 		} catch (Exception e) {
-			logger.error("Error executing modular input : " + e.getMessage() +  " : " + ModularInput.getStackTrace(e));
-						
+			logger.error("Error executing modular input : " + e.getMessage()
+					+ " : " + ModularInput.getStackTrace(e));
+
 			System.exit(2);
 		}
 
+	}
+
+	protected void createTCPInput(Input input, int tcpPort, String index,
+			String sourcetype,String source) {
+
+		String host = input.getServer_host();
+		String uri = input.getServer_uri();
+		int port = 8089;
+		String token = input.getSession_key();
+		try {
+			int portOffset = uri.indexOf(":", 8);
+			port = Integer.parseInt(uri.substring(portOffset + 1));
+		} catch (Exception e) {
+
+		}
+		Service service = new Service("localhost", port);
+		service.setToken("Splunk " + token);
+		InputCollection inputs = service.getInputs();
+
+		if (!inputs.containsKey(String.valueOf(tcpPort))) {
+			Args args = new Args();
+			args.add("index", index);
+			args.add("sourcetype", sourcetype);
+			args.add("source", sourcetype);
+			
+			service.getInputs().create(
+					String.valueOf(tcpPort), InputKind.Tcp, args);
+		}
 	}
 
 	// polls splunkd via REST API to check whether input is enabled/disabled
@@ -303,7 +355,8 @@ public abstract class ModularInput {
 				}
 			}
 		} catch (Throwable e) {
-			logger.error("Error setting JVM system propertys from string : "+propsString+" : "+getStackTrace(e));
+			logger.error("Error setting JVM system propertys from string : "
+					+ propsString + " : " + getStackTrace(e));
 		}
 
 	}
