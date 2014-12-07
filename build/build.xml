@@ -583,6 +583,79 @@
         <delete dir="${temp_build}" />
     </target>
 
+<target
+        name="build_mq_input"
+        description="build MQ modular input add on" >
+
+        <antcall target="compile_addon" >
+
+            <param
+                name="addon"
+                value="${mq_dir}" />
+        </antcall>
+
+        <loadproperties srcFile="${mq_dir}/default/app.conf" />
+
+        <copy todir="${temp_build}/metadata" >
+
+            <fileset dir="${mq_dir}/metadata" />
+        </copy>
+
+        <copy todir="${temp_build}/bin" >
+
+            <fileset dir="${mq_dir}/bin" />
+        </copy>
+
+        <copy todir="${temp_build}/appserver" >
+
+            <fileset dir="${mq_dir}/appserver" />
+        </copy>
+
+        <copy todir="${temp_build}/default" >
+
+            <fileset dir="${mq_dir}/default" />
+        </copy>
+        
+        <copy todir="${temp_build}/static" >
+
+            <fileset dir="${mq_dir}/static" />
+        </copy>
+        
+        <copy todir="${temp_build}/README" >
+
+            <fileset dir="${mq_dir}/README" />
+        </copy>
+
+        <copy todir="${temp_build}/bin/${lib}" >
+
+            <fileset dir="${lib}" />
+
+            <fileset dir="${mq_dir}/bin/${lib}" />
+        </copy>
+
+        <jar jarfile="${temp_build}/bin/${lib}/${mq_jar}" >
+
+            <fileset
+                dir="${temp_build}/${classes}"
+                includes="com/splunk/modinput/**" />
+
+            <fileset file="${src}/log4j.xml" />
+        </jar>
+
+        <delete dir="${temp_build}/${classes}" />
+
+        <tar
+            compression="${compressionType}"
+            destfile="${release}/${id}-${version}${suffix}" >
+
+            <zipfileset
+                dir="${temp_build}"
+                prefix="${id}" />
+        </tar>
+
+        <delete dir="${temp_build}" />
+    </target>
+
 
 <target
         name="build_kinesis_input"

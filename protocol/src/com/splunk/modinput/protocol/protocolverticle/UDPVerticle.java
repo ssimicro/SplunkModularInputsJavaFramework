@@ -35,9 +35,10 @@ public class UDPVerticle extends Verticle {
 				config.getString("handler_config"));
 
 		handlerConfig.putString("address", address);
-		
+
 		container.deployWorkerVerticle(config.getString("handler_verticle"),
-				handlerConfig, config.getNumber("handler_verticle_instances").intValue(), false, new AsyncResultHandler<String>() {
+				handlerConfig, config.getNumber("handler_verticle_instances")
+						.intValue(), false, new AsyncResultHandler<String>() {
 					public void handle(AsyncResult<String> asyncResult) {
 						if (asyncResult.succeeded()) {
 							// ok
@@ -58,7 +59,6 @@ public class UDPVerticle extends Verticle {
 			}
 		}
 		final DatagramSocket socket = vertx.createDatagramSocket(ip);
-		
 
 		final boolean isMulticast = Boolean.parseBoolean(config.getNumber(
 				"is_multicast").intValue() == 1 ? "true" : "false");
@@ -94,7 +94,7 @@ public class UDPVerticle extends Verticle {
 				new AsyncResultHandler<DatagramSocket>() {
 					public void handle(AsyncResult<DatagramSocket> asyncResult) {
 						if (asyncResult.succeeded()) {
-							
+
 							socket.dataHandler(new Handler<DatagramPacket>() {
 								public void handle(DatagramPacket packet) {
 									EventBus eb = vertx.eventBus();
@@ -133,11 +133,11 @@ public class UDPVerticle extends Verticle {
 					}
 				});
 		socket.exceptionHandler(new Handler<Throwable>() {
-            public void handle(Throwable t) {
-            	logger.error("Error in the UDP Server: "
+			public void handle(Throwable t) {
+				logger.error("Error in the UDP Server: "
 						+ ModularInput.getStackTrace(t));
-            }
-        });
+			}
+		});
 
 	}
 }

@@ -36,9 +36,10 @@ public class SockJSVerticle extends Verticle {
 				config.getString("handler_config"));
 
 		handlerConfig.putString("address", address);
-		
+
 		container.deployWorkerVerticle(config.getString("handler_verticle"),
-				handlerConfig, config.getNumber("handler_verticle_instances").intValue(), false, new AsyncResultHandler<String>() {
+				handlerConfig, config.getNumber("handler_verticle_instances")
+						.intValue(), false, new AsyncResultHandler<String>() {
 					public void handle(AsyncResult<String> asyncResult) {
 						if (asyncResult.succeeded()) {
 							// ok
@@ -54,13 +55,15 @@ public class SockJSVerticle extends Verticle {
 		boolean useSSL = false;
 
 		if (config.containsField("use_ssl"))
-			useSSL = Boolean.parseBoolean(config.getNumber("use_ssl").intValue() == 1 ? "true" : "false");
+			useSSL = Boolean.parseBoolean(config.getNumber("use_ssl")
+					.intValue() == 1 ? "true" : "false");
 
 		HttpServer server = vertx.createHttpServer();
-		
+
 		if (config.containsField("accept_backlog"))
-			server.setAcceptBacklog(config.getNumber("accept_backlog").intValue());
-		
+			server.setAcceptBacklog(config.getNumber("accept_backlog")
+					.intValue());
+
 		if (useSSL) {
 			server.setSSL(true);
 			if (config.containsField("keystore_path"))
@@ -73,9 +76,9 @@ public class SockJSVerticle extends Verticle {
 				server.setTrustStorePassword(config
 						.getString("truststore_pass"));
 			if (config.containsField("client_auth_required"))
-				server.setClientAuthRequired(Boolean.parseBoolean(config
-						.getNumber("client_auth_required").intValue() == 1 ? "true"
-						: "false"));
+				server.setClientAuthRequired(Boolean
+						.parseBoolean(config.getNumber("client_auth_required")
+								.intValue() == 1 ? "true" : "false"));
 		}
 
 		if (config.containsField("receive_buffer_size"))
@@ -122,11 +125,11 @@ public class SockJSVerticle extends Verticle {
 					}
 				});
 				sock.exceptionHandler(new Handler<Throwable>() {
-		            public void handle(Throwable t) {
-		            	logger.error("Error in the SockJS Server: "
+					public void handle(Throwable t) {
+						logger.error("Error in the SockJS Server: "
 								+ ModularInput.getStackTrace(t));
-		            }
-		        });
+					}
+				});
 			}
 		});
 

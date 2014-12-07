@@ -54,11 +54,13 @@ public class ProtocolModularInput extends ModularInput {
 						"com.splunk.modinput.protocol.protocolverticle.WebSocketVerticle");
 		protocolVerticles.put("sockjs",
 				"com.splunk.modinput.protocol.protocolverticle.SockJSVerticle");
-		
-		outputVerticles.put("stdout",
-				"com.splunk.modinput.protocol.outputverticle.STDOUTOutputVerticle");
-		outputVerticles.put("tcp",
-				"com.splunk.modinput.protocol.outputverticle.TCPOutputVerticle");
+
+		outputVerticles
+				.put("stdout",
+						"com.splunk.modinput.protocol.outputverticle.STDOUTOutputVerticle");
+		outputVerticles
+				.put("tcp",
+						"com.splunk.modinput.protocol.outputverticle.TCPOutputVerticle");
 	}
 
 	public static void main(String[] args) {
@@ -74,7 +76,6 @@ public class ProtocolModularInput extends ModularInput {
 		setModsDirectory();
 		// run vertx container in embedded mode
 		PlatformManager pm = PlatformLocator.factory.createPlatformManager();
-		
 
 		if (input != null) {
 
@@ -94,56 +95,56 @@ public class ProtocolModularInput extends ModularInput {
 						logger.error("No Port defined");
 						System.exit(2);
 					}
-					
 
 					String protocol = config.getString("protocol");
 
 					String outputAddress = UUID.randomUUID().toString();
-					
+
 					if (!config.containsField("handler_config")) {
 						config.putString("handler_config",
 								"{\"generated\":\"true\"}");
 					}
-					
+
 					if (!config.containsField("output_type")) {
 						config.putString("output_type", "stdout");
 					}
-					
+
 					String outputType = config.getString("output_type");
-				
+
 					JsonObject handlerConfig = new JsonObject(
 							config.getString("handler_config"));
-					
-					handlerConfig.putString("stanza", config.getString("stanza"));
+
+					handlerConfig.putString("stanza",
+							config.getString("stanza"));
 					handlerConfig.putString("output_type", outputType);
 					handlerConfig.putString("output_address", outputAddress);
-					
-					if(outputType.equalsIgnoreCase("tcp")){
-					    
-						
-						//defaults
+
+					if (outputType.equalsIgnoreCase("tcp")) {
+
+						// defaults
 						int outputPort = 9999;
 						String index = "main";
 						String source = "pdi";
 						String sourcetype = "pdi";
-						
+
 						if (config.containsField("output_port"))
-							outputPort = config.getNumber("output_port").intValue();
+							outputPort = config.getNumber("output_port")
+									.intValue();
 						if (config.containsField("index"))
 							index = config.getString("index");
 						if (config.containsField("source"))
 							source = config.getString("source");
 						if (config.containsField("sourcetype"))
 							sourcetype = config.getString("sourcetype");
-						createTCPInput(input,outputPort,index,sourcetype,source);
-						
+						createTCPInput(input, outputPort, index, sourcetype,
+								source);
+
 						handlerConfig.putNumber("output_port", outputPort);
-						
+
 					}
-					
-					
-					config.putString("handler_config",handlerConfig.toString());
-					
+
+					config.putString("handler_config", handlerConfig.toString());
+
 					if (!config.containsField("bind_address")) {
 						config.putString("bind_address", "0.0.0.0");
 					}
@@ -165,7 +166,8 @@ public class ProtocolModularInput extends ModularInput {
 						config.putString("handler_verticle",
 								DEFAULT_HANDLER_VERTICLE);
 
-					pm.deployWorkerVerticle(false,outputVerticles.get(outputType), handlerConfig,
+					pm.deployWorkerVerticle(false, outputVerticles
+							.get(outputType), handlerConfig,
 							getClassPathAsURLArray(),
 							config.getNumber("output_verticle_instances")
 									.intValue(), null,
@@ -183,7 +185,7 @@ public class ProtocolModularInput extends ModularInput {
 									}
 								}
 							});
-					
+
 					pm.deployVerticle(protocolVerticles.get(protocol), config,
 							getClassPathAsURLArray(),
 							config.getNumber("server_verticle_instances")
@@ -217,14 +219,15 @@ public class ProtocolModularInput extends ModularInput {
 		}
 
 	}
-	
-	private void setModsDirectory(){
-		
+
+	private void setModsDirectory() {
+
 		String seperator = System.getProperty("file.separator");
-		
-		System.setProperty("vertx.mods", System.getenv("SPLUNK_HOME") + seperator
-				+ "etc" + seperator + "apps" + seperator + "protocol_ta"
-				+ seperator + "bin" + seperator + "vertx_modules");
+
+		System.setProperty("vertx.mods", System.getenv("SPLUNK_HOME")
+				+ seperator + "etc" + seperator + "apps" + seperator
+				+ "protocol_ta" + seperator + "bin" + seperator
+				+ "vertx_modules");
 	}
 
 	private void deployModules(PlatformManager pm) {
@@ -257,8 +260,7 @@ public class ProtocolModularInput extends ModularInput {
 			}
 		} catch (Exception e) {
 			logger.error("Can't deploy module : "
-					+ ModularInput
-							.getStackTrace(e));
+					+ ModularInput.getStackTrace(e));
 		}
 
 	}
@@ -383,14 +385,14 @@ public class ProtocolModularInput extends ModularInput {
 		arg.setDescription("");
 		arg.setRequired_on_create(true);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("output_type");
 		arg.setTitle("Output Type");
 		arg.setDescription("");
 		arg.setRequired_on_create(true);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("output_port");
 		arg.setTitle("Output Port");
@@ -586,7 +588,7 @@ public class ProtocolModularInput extends ModularInput {
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("output_verticle_instances");
 		arg.setTitle("Output Verticle Instances");

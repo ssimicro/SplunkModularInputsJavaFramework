@@ -7,8 +7,6 @@ import org.vertx.java.core.json.JsonObject;
 import org.vertx.java.platform.Verticle;
 
 import com.splunk.modinput.ModularInput;
-import com.splunk.modinput.Stream;
-import com.splunk.modinput.protocol.handlerverticle.HandlerUtil;
 
 public class ExampleHandler extends Verticle {
 

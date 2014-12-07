@@ -9,7 +9,6 @@ import org.vertx.java.core.json.JsonObject;
 import org.vertx.java.platform.Verticle;
 
 import com.splunk.modinput.ModularInput;
-import com.splunk.modinput.Stream;
 
 /**
  * Default Handler that just parses a raw received byte array into a String
@@ -27,7 +26,6 @@ public class DefaultHandlerVerticle extends Verticle {
 		// handler config JSON
 		JsonObject config = container.config();
 
-	
 		// Event Bus (so we can receive the data)
 		String eventBusAddress = config.getString("address");
 		final String outputAddress = config.getString("output_address");
@@ -40,8 +38,11 @@ public class DefaultHandlerVerticle extends Verticle {
 				try {
 					// raw received bytes
 					byte[] data = message.body();
+
 					// parse into String
 					String output = new String(data);
+
+					// pass along to output handler
 					eb.send(outputAddress, output);
 				} catch (Exception e) {
 					logger.error("Error writing received data: "
