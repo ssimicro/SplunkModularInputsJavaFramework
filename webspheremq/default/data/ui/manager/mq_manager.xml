@@ -1,8 +1,8 @@
-<endpoint name="data/inputs/mqtt">
-  <header>MQTT Messages</header>
+<endpoint name="data/inputs/webspheremq">
+  <header>Websphere MQ</header>
   <breadcrumb>
     <parent hidecurrent="False">datainputstats</parent>
-    <name>MQTT Messages</name>
+    <name>Websphere MQ</name>
   </breadcrumb>
   <elements>
     <element name="sourceFields" type="fieldset">
@@ -18,168 +18,177 @@
           <key name="exampleText">Name of this stanza</key>
 </element>
 
-
-
-<element name="connection_settings" type="fieldset">
-			<key name="legend">Connection Settings</key>		
-					<view name="edit" />
-					<view name="create" />
-					<view name="list"/>
-					<elements>
-<element name="topic_name" type="textfield" label="Topic Name">
-          
-          <view name="edit"/>
-          <view name="create"/>
-          <view name="list"/>
-          <key name="exampleText">Topic Name</key>
-        </element>
-
-
-        
-<element name="broker_host" type="textfield" label="Broker Host">
-          
-          <view name="edit"/>
-          <view name="create"/>
-          <view name="list"/>
-          <key name="exampleText">Broker Host , IP address or hostname</key>
-        </element>
-
-<element name="broker_port" type="textfield" label="Broker Port">
-          
-          <view name="edit"/>
-          <view name="create"/>
-          <view name="list"/>
-          <key name="exampleText">Broker Port.Defaults to 1883(tcp) or 8883(ssl)</key>
-        </element>
-
-<element name="use_ssl" type="checkbox" label="Use SSL ?">
-          
-          <view name="edit"/>
-          <view name="create"/>
-          <key name="exampleText">Defaults to false.Whether or not to use an SSL connection.Use the "Additional JVM System Properties" parameter  to configure key and trust stores.</key>
-        </element>
-        
-<element name="client_id" type="textfield" label="Client ID">
-          
-          <view name="edit"/>
-          <view name="create"/>
-          <key name="exampleText">Defaults to "splunk".A client identifier must be specified and be less that 23 characters. It must be unique across all clients connecting to the same server. The clientId is used by the server to store data related to the client, hence it is important that the clientId remain the same when connecting to a server if durable subscriptions or reliable messaging are required.</key>
-        </element>
-   
-
- 
-
-        
-</elements>
-
-					
-					
-				
-</element>
-       
-<element name="authentication" type="fieldset">
-			<key name="legend">Authentication</key>		
+<element name="inquirys" type="fieldset">
+			<key name="legend">MQ Objects to inquire</key>		
 					<view name="edit" />
 					<view name="create" />
 					<elements>
 					    
+        <element name="inquire_queues" type="checkbox" label="Inquire Queues ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Issues an Inquire Queue Status (MQCMD_INQUIRE_Q_STATUS) command</key>
+        </element>
+       <element name="inquire_topics" type="checkbox" label="Inquire Topics ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Issues an Inquire Topic Status (MQCMD_INQUIRE_TOPIC_STATUS) command</key>
+        </element>
+       
+        <element name="inquire_channels" type="checkbox" label="Inquire Channels ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Issues an Inquire Channel Status (MQCMD_INQUIRE_CHANNEL_STATUS) command</key>
+        </element>  
+        <element name="inquire_listeners" type="checkbox" label="Inquire Listeners ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Issues an Inquire Channel Listener Status (MQCMD_INQUIRE_LISTENER_STATUS) command </key>
+        </element>
+        <element name="inquire_subscriptions" type="checkbox" label="Inquire Subscriptions ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Issues an Inquire Subscription Status (MQCMD_INQUIRE_SUB_STATUS) command</key>
+        </element>
+        <element name="inquire_services" type="checkbox" label="Inquire Services ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Issues an Inquire Service Status (MQCMD_INQUIRE_SERVICE_STATUS) command</key>
+        </element>
+        <element name="inquire_current_queuemanager" type="checkbox" label="Inquire Current Queue Manager ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Issues an Inquire Queue Manager Status (MQCMD_INQUIRE_Q_MGR_STATUS) command</key>
+        </element>
+        
+       
+</elements>
+</element> 
+
+
+<element name="connection_settings" type="fieldset">
+			<key name="legend">MQ Manager Connection Settings</key>		
+					<view name="edit" />
+					<view name="create" />
+					<view name="list" />
+					<elements>
+
+<element name="host" type="textfield" label="Host">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <view name="list" />
+          <key name="exampleText">Defaults to localhost</key>
+        </element>
+
+<element name="port" type="textfield" label="Port">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <view name="list" />
+          <key name="exampleText">Defaults to 1414</key>
+        </element>
+
+<element name="manager_name" type="textfield" label="MQ Manager Name">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <view name="list" />
+        </element>
+        
+<element name="channel_name" type="textfield" label="Channel Name">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <view name="list" />
+          <key name="exampleText">Defaults to SYSTEM.DEF.SVRCONN</key>
+        </element>
+
 <element name="username" type="textfield" label="Username">
           
           <view name="edit"/>
           <view name="create"/>
-          <key name="exampleText">Username for the connection</key>
+          <view name="list" />
         </element>
         
 <element name="password" type="textfield" label="Password">
           
           <view name="edit"/>
           <view name="create"/>
-          <key name="exampleText">Password for the connection</key>
-        </element>					
-					
-</elements>
-
-					
-					
-				
-</element>
-<element name="additional_settings" type="fieldset">
-			<key name="legend">Additional Settings</key>		
-					<view name="edit" />
-					<view name="create" />
-					<elements>
-					    
-					    
-        
-					    
-<element name="clean_session" type="checkbox" label="Clean Session ?">
-            
-          <view name="edit"/>
-          <view name="create"/>
-          <key name="exampleText">Defaults to false.Sets whether the client and server should remember state across restarts and reconnects.</key>
+          <view name="list" />
         </element>
-
  
-<element name="qos" type="select" label="Quality of Service (QOS)">
+<element name="polling_frequency" type="textfield" label="Polling Frequency">
           
           <view name="edit"/>
           <view name="create"/>
-          <view name="list"/>
-          <key name="exampleText">Defaults to 0. For messages sent at qualities of service (QoS) 1 or 2 to be reliably delivered, messages must be stored (on both the client and server) until the delivery of the message is complete.In the event that only QoS 0 messages are sent or received or cleanSession is set to true then a safe store is not needed.</key>
-     
-          <options>
-                        <opt value="0" label="0" />
-						<opt value="1" label="1" />
-						<opt value="2" label="2" />
-                                               
-					</options>
+          <view name="list" />
+          <key name="exampleText">Defaults to 60 seconds</key>
         </element>
-
-<element name="reliable_delivery_dir" type="textfield" label="Reliable Delivery Directory">
+        
+<element name="use_ssl" type="checkbox" label="Use SSL ?">
+          
+          <onChange>
+              <key name="_action">showonly</key>
+              <key name="0">NONE</key>
+              <key name="1">ALL</key>
+              <group_set>
+                <group name="ssl_settings"/>
+              </group_set>
+          </onChange>
           
           <view name="edit"/>
           <view name="create"/>
-          <key name="exampleText">Defaults to the current working directory.Directory where the messages are stored for QOS 1/2.</key>
-        </element>	
-        
-<element name="connection_timeout" type="textfield" label="Connection Timeout">
-          
-          <view name="edit"/>
-          <view name="create"/>
-          <key name="exampleText">Defaults to 30 seconds.Sets the connection timeout value. This value, measured in seconds, defines the maximum time interval the client will wait for the network connection to the MQTT server to be established.  A value of 0 disables timeout processing meaning the client will wait until the network connection is made successfully or fails.</key>
-        </element>	
-        
-<element name="keepalive_interval" type="textfield" label="Keep Alive Interval">
-          
-          <view name="edit"/>
-          <view name="create"/>
-          <key name="exampleText">Defaults to 60 seconds.Sets the "keep alive" interval. This value, measured in seconds, defines the maximum time interval between messages sent or received. It enables the client to detect if the server is no longer available, without having to wait for the TCP/IP timeout. The client will ensure that at least one message travels across the network within each keep alive period. In the absence of a data-related message during the time period, the client sends a very small "ping" message, which the server will acknowledge. A value of 0 disables keepalive processing in the client.</key>
-        </element>	
-        
-
-        
-        
-</elements>
-</element>
-
-
-
-<element name="message_handler" type="fieldset">
-			<key name="legend">Message Processing</key>		
+        </element>
+ 
+<element name="ssl_settings" type="fieldset">
+			<key name="legend">SSL Settings</key>		
 					<view name="edit" />
 					<view name="create" />
-					<elements>
+					<elements>	
 					    
-					    
+<element name="ssl_fips_required" type="checkbox" label="SSL FIPS Required ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Refer here for more info : http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.ibm.mq.dev.doc/q031220_.htm</key>
+        </element>
+        
+<element name="ssl_cipher_suite" type="textfield" label="SSL Cipher Suite">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Refer here for more info : http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.ibm.mq.dev.doc/q031220_.htm</key>
+        </element>
+ 
+</elements>
+</element>
+				    
+</elements>
+</element>
+        
+ 
+<element name="event_handler" type="fieldset">
+			<key name="legend">Custom Event Processing</key>		
+					<view name="edit" />
+					<view name="create" />
+					<elements>					    					    
         
 					    
-<element name="message_handler_impl" type="textfield" label="Implementation class for a custom message handler">
+<element name="event_handler_impl" type="textfield" label="Implementation class for a custom message handler">
             
           <view name="edit"/>
           <view name="create"/>
-          <key name="exampleText">An implementation of the com.splunk.modinput.mqtt.AbstractMessageHandler class.You would provide this if you required some custom handling/formatting of the messages you consume.Ensure that the necessary jars are in the $SPLUNK_HOME/etc/apps/mqtt_ta/bin/lib directory.If ommitted then the default handler 'com.splunk.modinput.mqtt.DefaultMessageHandler' will be used.</key>
+          <key name="exampleText">An implementation of the com.splunk.modinput.mq.AbstractMessageHandler class.You would provide this if you required some custom handling/formatting of the PCF metrics you poll.Ensure that the necessary jars are in the $SPLUNK_HOME/etc/apps/mq_ta/bin/lib directory.If ommitted then the default handler 'com.splunk.modinput.mq.DefaultMessageHandler' will be used.</key>
         </element>
-        <element name="message_handler_params" type="textfield" label="Implementation parameter string for the custom message handler">
+        <element name="event_handler_params" type="textfield" label="Implementation parameter string for the custom message handler">
            
           <view name="edit"/>
           <view name="create"/>

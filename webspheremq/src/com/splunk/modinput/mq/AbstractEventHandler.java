@@ -2,20 +2,19 @@ package com.splunk.modinput.mq;
 
 import java.util.Map;
 
-
 import com.splunk.modinput.Stream;
 import com.splunk.modinput.mq.MQModularInput.MQPoller;
-
 
 /**
  * Implement this class to provide your own custom event handler
  * 
  * @author ddallimore
- *
+ * 
  */
 public abstract class AbstractEventHandler {
 
-	public abstract Stream handleMessage(Map <Object,Object> eventValues,MQPoller context) throws Exception;
+	public abstract Stream handleMessage(Map<Object, Object> eventValues,
+			MQPoller context) throws Exception;
 
 	public abstract void setParams(Map<String, String> params);
 

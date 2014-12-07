@@ -6,11 +6,8 @@ This is a Splunk Modular Input Add-On for indexing performance and environment m
 
 * queues
 * topics
-* pubsub
 * channels
 * listeners
-* processes
-* connections
 * subscriptions
 * services
 * queue manager

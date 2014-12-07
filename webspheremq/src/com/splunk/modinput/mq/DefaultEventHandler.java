@@ -4,27 +4,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
 import com.google.gson.Gson;
 import com.splunk.modinput.Stream;
 import com.splunk.modinput.StreamEvent;
-import com.splunk.modinput.mq.MQModularInput.MQPoller; 
+import com.splunk.modinput.mq.MQModularInput.MQPoller;
 
 /**
  * Default handler that just outputs events in JSON.
  * 
  * @author ddallimore
- *
+ * 
  */
 public class DefaultEventHandler extends AbstractEventHandler {
 
 	@Override
-	public Stream handleMessage(Map <Object,Object> eventValues,MQPoller context)
-			throws Exception {
+	public Stream handleMessage(Map<Object, Object> eventValues,
+			MQPoller context) throws Exception {
 
-				
 		String text = jsonify(eventValues);
-		
+
 		Stream stream = new Stream();
 		ArrayList<StreamEvent> list = new ArrayList<StreamEvent>();
 		List<String> chunks = chunkData(text, 1024);
@@ -45,9 +43,9 @@ public class DefaultEventHandler extends AbstractEventHandler {
 	}
 
 	private String jsonify(Map<Object, Object> eventValues) {
-		
-		Gson gson = new Gson(); 
-		return gson.toJson(eventValues); 
+
+		Gson gson = new Gson();
+		return gson.toJson(eventValues);
 	}
 
 	public static List<String> chunkData(String text, int size) {

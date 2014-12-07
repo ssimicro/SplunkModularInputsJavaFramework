@@ -29,6 +29,12 @@ import com.splunk.modinput.Validation;
 import com.splunk.modinput.ValidationError;
 import com.splunk.modinput.Scheme.StreamingMode;
 
+/**
+ * Splunk Modular Input for monitoring Websphere MQ
+ * 
+ * @author ddallimore
+ * 
+ */
 public class MQModularInput extends ModularInput {
 
 	private static final String DEFAULT_EVENT_HANDLER = "com.splunk.modinput.mq.DefaultEventHandler";
@@ -88,14 +94,15 @@ public class MQModularInput extends ModularInput {
 
 		boolean inquireQueues = false;
 		boolean inquireTopics = false;
-		boolean inquirePubSub = false;
 		boolean inquireChannels = false;
 		boolean inquireListeners = false;
-		boolean inquireProcesses = false;
-		boolean inquireConnections = false;
 		boolean inquireSubscriptions = false;
 		boolean inquireServices = false;
 		boolean inquireCurrentQueueManager = false;
+
+		String sslCipherSuite = "";
+		boolean sslFipsRequired = false;
+		boolean useSSL = false;
 
 		for (Param param : params) {
 			String value = param.getValue();
@@ -146,13 +153,6 @@ public class MQModularInput extends ModularInput {
 				} catch (Exception e) {
 					logger.error("Can't determine setting for inquire_topics");
 				}
-			} else if (param.getName().equals("inquire_pubsub ")) {
-				try {
-					inquirePubSub = Boolean.parseBoolean(param.getValue()
-							.equals("1") ? "true" : "false");
-				} catch (Exception e) {
-					logger.error("Can't determine setting for inquire_pubsub ");
-				}
 			} else if (param.getName().equals("inquire_channels")) {
 				try {
 					inquireChannels = Boolean.parseBoolean(param.getValue()
@@ -166,20 +166,6 @@ public class MQModularInput extends ModularInput {
 							.equals("1") ? "true" : "false");
 				} catch (Exception e) {
 					logger.error("Can't determine setting for inquire_listeners");
-				}
-			} else if (param.getName().equals("inquire_processes")) {
-				try {
-					inquireProcesses = Boolean.parseBoolean(param.getValue()
-							.equals("1") ? "true" : "false");
-				} catch (Exception e) {
-					logger.error("Can't determine setting for inquire_processes");
-				}
-			} else if (param.getName().equals("inquire_connections")) {
-				try {
-					inquireConnections = Boolean.parseBoolean(param.getValue()
-							.equals("1") ? "true" : "false");
-				} catch (Exception e) {
-					logger.error("Can't determine setting for inquire_connections");
 				}
 			} else if (param.getName().equals("inquire_subscriptions")) {
 				try {
@@ -202,6 +188,23 @@ public class MQModularInput extends ModularInput {
 				} catch (Exception e) {
 					logger.error("Can't determine setting for inquire_current_queuemanager");
 				}
+			} else if (param.getName().equals("use_ssl")) {
+				try {
+					useSSL = Boolean
+							.parseBoolean(param.getValue().equals("1") ? "true"
+									: "false");
+				} catch (Exception e) {
+					logger.error("Can't determine setting for use_ssl");
+				}
+			} else if (param.getName().equals("ssl_fips_required")) {
+				try {
+					sslFipsRequired = Boolean.parseBoolean(param.getValue()
+							.equals("1") ? "true" : "false");
+				} catch (Exception e) {
+					logger.error("Can't determine setting for ssl_fips_required");
+				}
+			} else if (param.getName().equals("ssl_cipher_suite")) {
+				sslCipherSuite = param.getValue();
 			}
 
 		}
@@ -209,10 +212,10 @@ public class MQModularInput extends ModularInput {
 			MQPoller mr = new MQPoller(stanzaName, mqHost, mqPort, mqUsername,
 					mqPassword, mqManagerChannel, mqManagerName,
 					eventHandlerImpl, eventHandlerParams, pollingFrequency,
-					inquireQueues, inquireTopics, inquirePubSub,
-					inquireChannels, inquireListeners, inquireProcesses,
-					inquireConnections, inquireSubscriptions, inquireServices,
-					inquireCurrentQueueManager);
+					inquireQueues, inquireTopics, inquireChannels,
+					inquireListeners, inquireSubscriptions, inquireServices,
+					inquireCurrentQueueManager, useSSL, sslCipherSuite,
+					sslFipsRequired);
 			if (validationConnectionMode)
 				mr.testConnectOnly();
 			else
@@ -234,11 +237,8 @@ public class MQModularInput extends ModularInput {
 
 		boolean inquireQueues = false;
 		boolean inquireTopics = false;
-		boolean inquirePubSub = false;
 		boolean inquireChannels = false;
 		boolean inquireListeners = false;
-		boolean inquireProcesses = false;
-		boolean inquireConnections = false;
 		boolean inquireSubscriptions = false;
 		boolean inquireServices = false;
 		boolean inquireCurrentQueueManager = false;
@@ -249,15 +249,19 @@ public class MQModularInput extends ModularInput {
 		MQQueueManager qMgr;
 		PCFMessageAgent agent;
 
+		String sslCipherSuite = "";
+		boolean sslFipsRequired = false;
+		boolean useSSL = false;
+
 		public MQPoller(String stanzaName, String mqHost, int mqPort,
 				String mqUsername, String mqPassword, String mqManagerChannel,
 				String mqManagerName, String eventHandlerImpl,
 				String eventHandlerParams, int pollingFrequency,
 				boolean inquireQueues, boolean inquireTopics,
-				boolean inquirePubSub, boolean inquireChannels,
-				boolean inquireListeners, boolean inquireProcesses,
-				boolean inquireConnections, boolean inquireSubscriptions,
-				boolean inquireServices, boolean inquireCurrentQueueManager) {
+				boolean inquireChannels, boolean inquireListeners,
+				boolean inquireSubscriptions, boolean inquireServices,
+				boolean inquireCurrentQueueManager, boolean useSSL,
+				String sslCipherSuite, boolean sslFipsRequired) {
 
 			this.stanzaName = stanzaName;
 			this.mqHost = mqHost;
@@ -270,14 +274,15 @@ public class MQModularInput extends ModularInput {
 			this.pollingFrequency = pollingFrequency;
 			this.inquireQueues = inquireQueues;
 			this.inquireTopics = inquireTopics;
-			this.inquirePubSub = inquirePubSub;
 			this.inquireChannels = inquireChannels;
 			this.inquireListeners = inquireListeners;
-			this.inquireProcesses = inquireProcesses;
-			this.inquireConnections = inquireConnections;
 			this.inquireSubscriptions = inquireSubscriptions;
 			this.inquireServices = inquireServices;
 			this.inquireCurrentQueueManager = inquireCurrentQueueManager;
+
+			this.sslCipherSuite = sslCipherSuite;
+			this.sslFipsRequired = sslFipsRequired;
+			this.useSSL = useSSL;
 
 			try {
 				eventHandler = (AbstractEventHandler) Class.forName(
@@ -338,6 +343,12 @@ public class MQModularInput extends ModularInput {
 				MQEnvironment.password = this.mqPassword;
 
 			}
+
+			if (useSSL) {
+				MQEnvironment.sslCipherSuite = sslCipherSuite;
+				MQEnvironment.sslFipsRequired = sslFipsRequired;
+			}
+
 			this.qMgr = new MQQueueManager(this.mqManagerName);
 
 			this.agent = new PCFMessageAgent();
@@ -402,14 +413,8 @@ public class MQModularInput extends ModularInput {
 						inquireListeners();
 					if (inquireTopics)
 						inquireTopics();
-					if (inquirePubSub)
-						inquirePubSub();
 					if (inquireSubscriptions)
 						inquireSubscriptions();
-					if (inquireConnections)
-						inquireConnections();
-					if (inquireProcesses)
-						inquireProcesses();
 					if (inquireServices)
 						inquireServices();
 					if (inquireCurrentQueueManager)
@@ -434,51 +439,303 @@ public class MQModularInput extends ModularInput {
 		}
 
 		private void inquireCurrentQueueManager() {
-			// TODO Auto-generated method stub
+			PCFMessage request;
+			PCFMessage[] response;
+			int[] attrs = { MQConstants.MQIACF_Q_MGR_STATUS,
+					MQConstants.MQIACF_CONNECTION_COUNT,
+					MQConstants.MQCACF_Q_MGR_START_DATE,
+					MQConstants.MQCACF_Q_MGR_START_TIME,
+					MQConstants.MQCA_Q_MGR_NAME };
+			request = new PCFMessage(MQConstants.MQCMD_INQUIRE_Q_MGR_STATUS);
+			request.addParameter(MQConstants.MQIACF_Q_MGR_STATUS_ATTRS, attrs);
+			try {
+				response = agent.send(request);
+				for (int i = 0; i < response.length; i++) {
+
+					Map<Object, Object> event = new HashMap<Object, Object>();
+
+					event.put("inquiry_type", "queuemanager");
+					event.put("timestamp", System.currentTimeMillis());
+
+					event.put("status", response[i]
+							.getParameterValue(MQConstants.MQIACF_Q_MGR_STATUS));
+					event.put(
+							"connection_count",
+							response[i]
+									.getParameterValue(MQConstants.MQIACF_CONNECTION_COUNT));
+					event.put(
+							"start_date",
+							response[i]
+									.getParameterValue(MQConstants.MQCACF_Q_MGR_START_DATE));
+					event.put(
+							"start_time",
+							response[i]
+									.getParameterValue(MQConstants.MQCACF_Q_MGR_START_TIME));
+					event.put("manager_name", response[i]
+							.getParameterValue(MQConstants.MQCA_Q_MGR_NAME));
+
+					streamEvent(event);
+				}
+			} catch (Exception e) {
+				logger.error("Stanza " + stanzaName + " : "
+						+ "Error inquiring queue manager: "
+						+ ModularInput.getStackTrace(e));
+			}
 
 		}
 
 		private void inquireServices() {
-			// TODO Auto-generated method stub
+			PCFMessage request;
+			PCFMessage[] response;
+			int[] attrs = { MQConstants.MQCA_SERVICE_NAME,
+					MQConstants.MQIACF_SERVICE_STATUS,
+					MQConstants.MQCACF_SERVICE_START_DATE,
+					MQConstants.MQCACF_SERVICE_START_TIME };
+			request = new PCFMessage(MQConstants.MQCMD_INQUIRE_SERVICE_STATUS);
+			request.addParameter(MQConstants.MQCA_SERVICE_NAME, "*");
+			request.addParameter(MQConstants.MQIACF_SERVICE_STATUS_ATTRS, attrs);
+			try {
+				response = agent.send(request);
+				for (int i = 0; i < response.length; i++) {
 
-		}
+					Map<Object, Object> event = new HashMap<Object, Object>();
 
-		private void inquireProcesses() {
-			// TODO Auto-generated method stub
+					event.put("inquiry_type", "service");
+					event.put("timestamp", System.currentTimeMillis());
 
-		}
+					event.put("service_name", response[i]
+							.getParameterValue(MQConstants.MQCA_SERVICE_NAME));
+					event.put(
+							"status",
+							response[i]
+									.getParameterValue(MQConstants.MQIACF_SERVICE_STATUS));
+					event.put(
+							"start_date",
+							response[i]
+									.getParameterValue(MQConstants.MQCACF_SERVICE_START_DATE));
+					event.put(
+							"start_time",
+							response[i]
+									.getParameterValue(MQConstants.MQCACF_SERVICE_START_TIME));
 
-		private void inquireConnections() {
-			// TODO Auto-generated method stub
+					streamEvent(event);
+				}
+			} catch (Exception e) {
+				logger.error("Stanza " + stanzaName + " : "
+						+ "Error inquiring services: "
+						+ ModularInput.getStackTrace(e));
+			}
 
 		}
 
 		private void inquireSubscriptions() {
-			// TODO Auto-generated method stub
+			PCFMessage request;
+			PCFMessage[] response;
+			int[] attrs = { MQConstants.MQCA_TOPIC_STRING,
+					MQConstants.MQCACF_SUB_USER_ID,
+					MQConstants.MQCACF_LAST_MSG_DATE,
+					MQConstants.MQCACF_LAST_MSG_TIME,
+					MQConstants.MQIACF_MESSAGE_COUNT,
+					MQConstants.MQIACF_SUB_TYPE };
 
-		}
+			request = new PCFMessage(MQConstants.MQCMD_INQUIRE_SUB_STATUS);
+			request.addParameter(MQConstants.MQCACF_SUB_NAME, "*");
+			request.addParameter(MQConstants.MQIACF_SUB_TYPE,
+					MQConstants.MQSUBTYPE_ALL);
+			request.addParameter(MQConstants.MQIACF_SUB_STATUS_ATTRS, attrs);
 
-		private void inquirePubSub() {
-			// TODO Auto-generated method stub
+			try {
+				response = agent.send(request);
+				for (int i = 0; i < response.length; i++) {
+
+					Map<Object, Object> event = new HashMap<Object, Object>();
+
+					event.put("inquiry_type", "subscriptions");
+					event.put("timestamp", System.currentTimeMillis());
+					event.put("topic_string", response[i]
+							.getParameterValue(MQConstants.MQCA_TOPIC_STRING));
+					event.put("sub_user_id", response[i]
+							.getParameterValue(MQConstants.MQCACF_SUB_USER_ID));
+					event.put(
+							"last_msg_date",
+							response[i]
+									.getParameterValue(MQConstants.MQCACF_LAST_MSG_DATE));
+					event.put(
+							"last_msg_time",
+							response[i]
+									.getParameterValue(MQConstants.MQCACF_LAST_MSG_TIME));
+					event.put(
+							"msg_count",
+							response[i]
+									.getParameterValue(MQConstants.MQIACF_MESSAGE_COUNT));
+					event.put("sub_type", response[i]
+							.getParameterValue(MQConstants.MQIACF_SUB_TYPE));
+					streamEvent(event);
+				}
+			} catch (Exception e) {
+				logger.error("Stanza " + stanzaName + " : "
+						+ "Error inquiring subscriptions: "
+						+ ModularInput.getStackTrace(e));
+			}
 
 		}
 
 		private void inquireTopics() {
-			// TODO Auto-generated method stub
+			PCFMessage request;
+			PCFMessage[] response;
+			request = new PCFMessage(MQConstants.MQCMD_INQUIRE_TOPIC_STATUS);
+			request.addParameter(MQConstants.MQCA_TOPIC_STRING, "#");
+			request.addParameter(MQConstants.MQIACF_TOPIC_STATUS_TYPE,
+					MQConstants.MQIACF_TOPIC_STATUS);
+
+			try {
+				response = agent.send(request);
+				for (int i = 0; i < response.length; i++) {
+
+					Map<Object, Object> event = new HashMap<Object, Object>();
+
+					event.put("inquiry_type", "topic");
+					event.put("timestamp", System.currentTimeMillis());
+
+					event.put("topic_string", response[i]
+							.getParameterValue(MQConstants.MQCA_TOPIC_STRING));
+					event.put("pub_count", response[i]
+							.getParameterValue(MQConstants.MQIA_PUB_COUNT));
+					event.put("sub_count", response[i]
+							.getParameterValue(MQConstants.MQIA_SUB_COUNT));
+					streamEvent(event);
+				}
+			} catch (Exception e) {
+				logger.error("Stanza " + stanzaName + " : "
+						+ "Error inquiring topics: "
+						+ ModularInput.getStackTrace(e));
+			}
 
 		}
 
 		private void inquireListeners() {
-			// TODO Auto-generated method stub
+			PCFMessage request;
+			PCFMessage[] response;
+			int[] attrs = { MQConstants.MQCACH_LISTENER_NAME,
+					MQConstants.MQCACH_LISTENER_START_DATE,
+					MQConstants.MQCACH_LISTENER_START_TIME,
+					MQConstants.MQIACH_LISTENER_STATUS };
+			request = new PCFMessage(MQConstants.MQCMD_INQUIRE_LISTENER_STATUS);
+			request.addParameter(MQConstants.MQCACH_LISTENER_NAME, "*");
+			request.addParameter(MQConstants.MQIACF_LISTENER_STATUS_ATTRS,
+					attrs);
+			try {
+				response = agent.send(request);
+				for (int i = 0; i < response.length; i++) {
+
+					Map<Object, Object> event = new HashMap<Object, Object>();
+
+					event.put("inquiry_type", "listener");
+					event.put("timestamp", System.currentTimeMillis());
+					event.put(
+							"listener_name",
+							response[i]
+									.getParameterValue(MQConstants.MQCACH_LISTENER_NAME));
+					event.put(
+							"start_date",
+							response[i]
+									.getParameterValue(MQConstants.MQCACH_LISTENER_START_DATE));
+					event.put(
+							"start_time",
+							response[i]
+									.getParameterValue(MQConstants.MQCACH_LISTENER_START_TIME));
+					event.put(
+							"status",
+							response[i]
+									.getParameterValue(MQConstants.MQIACH_LISTENER_STATUS));
+
+					streamEvent(event);
+				}
+			} catch (Exception e) {
+				logger.error("Stanza " + stanzaName + " : "
+						+ "Error inquiring listeners: "
+						+ ModularInput.getStackTrace(e));
+			}
 
 		}
 
 		private void inquireQueues() {
-			// TODO Auto-generated method stub
+			PCFMessage request;
+			PCFMessage[] response;
+			int[] attrs = { MQConstants.MQCA_Q_NAME,
+					MQConstants.MQIA_CURRENT_Q_DEPTH,
+					MQConstants.MQCACF_LAST_GET_DATE,
+					MQConstants.MQCACF_LAST_GET_TIME,
+					MQConstants.MQCACF_LAST_PUT_DATE,
+					MQConstants.MQCACF_LAST_PUT_TIME,
+					MQConstants.MQIACF_OLDEST_MSG_AGE,
+					MQConstants.MQIA_OPEN_INPUT_COUNT,
+					MQConstants.MQIA_OPEN_OUTPUT_COUNT,
+					MQConstants.MQIACF_UNCOMMITTED_MSGS };
+			request = new PCFMessage(MQConstants.MQCMD_INQUIRE_Q_STATUS);
+			request.addParameter(MQConstants.MQCA_Q_NAME, "*");
+			request.addParameter(MQConstants.MQIACF_Q_STATUS_TYPE,
+					MQConstants.MQIACF_Q_STATUS);
+			request.addParameter(MQConstants.MQIACF_Q_STATUS_ATTRS, attrs);
+			try {
+				response = agent.send(request);
+				for (int i = 0; i < response.length; i++) {
+
+					Map<Object, Object> event = new HashMap<Object, Object>();
+
+					event.put("inquiry_type", "queue");
+					event.put("timestamp", System.currentTimeMillis());
+					event.put("queue_name", response[i]
+							.getParameterValue(MQConstants.MQCA_Q_NAME));
+					event.put(
+							"queue_depth",
+							response[i]
+									.getParameterValue(MQConstants.MQIA_CURRENT_Q_DEPTH));
+					event.put(
+							"last_get_date",
+							response[i]
+									.getParameterValue(MQConstants.MQCACF_LAST_GET_DATE));
+					event.put(
+							"last_get_time",
+							response[i]
+									.getParameterValue(MQConstants.MQCACF_LAST_GET_TIME));
+					event.put(
+							"last_put_date",
+							response[i]
+									.getParameterValue(MQConstants.MQCACF_LAST_PUT_DATE));
+					event.put(
+							"last_put_time",
+							response[i]
+									.getParameterValue(MQConstants.MQCACF_LAST_PUT_TIME));
+					event.put(
+							"oldest_msg_age",
+							response[i]
+									.getParameterValue(MQConstants.MQIACF_OLDEST_MSG_AGE));
+					event.put(
+							"open_input_count",
+							response[i]
+									.getParameterValue(MQConstants.MQIA_OPEN_INPUT_COUNT));
+					event.put(
+							"open_output_count",
+							response[i]
+									.getParameterValue(MQConstants.MQIA_OPEN_OUTPUT_COUNT));
+					event.put(
+							"uncommitted_msgs",
+							response[i]
+									.getParameterValue(MQConstants.MQIACF_UNCOMMITTED_MSGS));
+
+					streamEvent(event);
+				}
+			} catch (Exception e) {
+				logger.error("Stanza " + stanzaName + " : "
+						+ "Error inquiring queues: "
+						+ ModularInput.getStackTrace(e));
+			}
 
 		}
 
 		private void inquireChannels() {
+
 			PCFMessage request;
 			PCFMessage[] response;
 			int[] attrs = { MQConstants.MQCACH_CHANNEL_NAME,
@@ -501,8 +758,8 @@ public class MQModularInput extends ModularInput {
 					Map<Object, Object> event = new HashMap<Object, Object>();
 
 					event.put("inquiry_type", "channel");
-					event.put("time", System.currentTimeMillis());
-					event.put("name", response[i]
+					event.put("timestamp", System.currentTimeMillis());
+					event.put("channel_name", response[i]
 							.getParameterValue(MQConstants.MQCACH_CHANNEL_NAME));
 					event.put(
 							"status",
@@ -620,119 +877,118 @@ public class MQModularInput extends ModularInput {
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("inquire_topics");
 		arg.setTitle("Inquire Topics");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
-		arg = new Arg();
-		arg.setName("inquire_pubsub");
-		arg.setTitle("Inquire PubSub");
-		arg.setDescription("");
-		arg.setRequired_on_create(false);
-		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("inquire_channels");
 		arg.setTitle("Inquire Channels");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("inquire_listeners");
 		arg.setTitle("Inquire Listeners");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
-		arg = new Arg();
-		arg.setName("inquire_processes");
-		arg.setTitle("Inquire Processes");
-		arg.setDescription("");
-		arg.setRequired_on_create(false);
-		endpoint.addArg(arg);
-		
-		arg = new Arg();
-		arg.setName("inquire_connections");
-		arg.setTitle("Inquire Connections");
-		arg.setDescription("");
-		arg.setRequired_on_create(false);
-		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("inquire_subscriptions");
 		arg.setTitle("Inquire Subscriptions");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("inquire_services");
 		arg.setTitle("Inquire Services");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("inquire_current_queuemanager");
 		arg.setTitle("Inquire Current Queue Manager");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("host");
 		arg.setTitle("MQ Host");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("port");
 		arg.setTitle("MQ Port");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("manager_name");
 		arg.setTitle("MQ Manager Name");
 		arg.setDescription("");
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("channel_name");
 		arg.setTitle("MQ Channel Name");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("username");
 		arg.setTitle("MQ Username");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("password");
 		arg.setTitle("MQ Password");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
+		arg = new Arg();
+		arg.setName("use_ssl");
+		arg.setTitle("Use SSL ?");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("ssl_cipher_suite");
+		arg.setTitle("SSL Cipher Suite");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("ssl_fips_required");
+		arg.setTitle("SSL FIPS Required ?");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
 		arg = new Arg();
 		arg.setName("polling_frequency");
 		arg.setTitle("Polling Frequency");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
-		
+
 		arg = new Arg();
 		arg.setName("additional_jvm_propertys");
 		arg.setTitle("Additional JVM Propertys");
