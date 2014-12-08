@@ -1,4 +1,4 @@
-<endpoint name="data/inputs/webspheremq">
+<endpoint name="data/inputs/mq">
   <header>Websphere MQ</header>
   <breadcrumb>
     <parent hidecurrent="False">datainputstats</parent>
@@ -24,44 +24,44 @@
 					<view name="create" />
 					<elements>
 					    
-        <element name="inquire_queues" type="checkbox" label="Inquire Queues ?">
+        <element name="inquire_queues" type="checkbox" label="Inquire Queues">
           
           <view name="edit"/>
           <view name="create"/>
           <key name="exampleText">Issues an Inquire Queue Status (MQCMD_INQUIRE_Q_STATUS) command</key>
         </element>
-       <element name="inquire_topics" type="checkbox" label="Inquire Topics ?">
+       <element name="inquire_topics" type="checkbox" label="Inquire Topics">
           
           <view name="edit"/>
           <view name="create"/>
           <key name="exampleText">Issues an Inquire Topic Status (MQCMD_INQUIRE_TOPIC_STATUS) command</key>
         </element>
        
-        <element name="inquire_channels" type="checkbox" label="Inquire Channels ?">
+        <element name="inquire_channels" type="checkbox" label="Inquire Channels">
           
           <view name="edit"/>
           <view name="create"/>
           <key name="exampleText">Issues an Inquire Channel Status (MQCMD_INQUIRE_CHANNEL_STATUS) command</key>
         </element>  
-        <element name="inquire_listeners" type="checkbox" label="Inquire Listeners ?">
+        <element name="inquire_listeners" type="checkbox" label="Inquire Listeners">
           
           <view name="edit"/>
           <view name="create"/>
           <key name="exampleText">Issues an Inquire Channel Listener Status (MQCMD_INQUIRE_LISTENER_STATUS) command </key>
         </element>
-        <element name="inquire_subscriptions" type="checkbox" label="Inquire Subscriptions ?">
+        <element name="inquire_subscriptions" type="checkbox" label="Inquire Subscriptions">
           
           <view name="edit"/>
           <view name="create"/>
           <key name="exampleText">Issues an Inquire Subscription Status (MQCMD_INQUIRE_SUB_STATUS) command</key>
         </element>
-        <element name="inquire_services" type="checkbox" label="Inquire Services ?">
+        <element name="inquire_services" type="checkbox" label="Inquire Services">
           
           <view name="edit"/>
           <view name="create"/>
           <key name="exampleText">Issues an Inquire Service Status (MQCMD_INQUIRE_SERVICE_STATUS) command</key>
         </element>
-        <element name="inquire_current_queuemanager" type="checkbox" label="Inquire Current Queue Manager ?">
+        <element name="inquire_current_queuemanager" type="checkbox" label="Inquire Current Queue Manager">
           
           <view name="edit"/>
           <view name="create"/>
@@ -80,7 +80,7 @@
 					<view name="list" />
 					<elements>
 
-<element name="host" type="textfield" label="Host">
+<element name="hostname" type="textfield" label="Host">
           
           <view name="edit"/>
           <view name="create"/>
@@ -133,7 +133,7 @@
           <key name="exampleText">Defaults to 60 seconds</key>
         </element>
         
-<element name="use_ssl" type="checkbox" label="Use SSL ?">
+<element name="use_ssl" type="checkbox" label="Use SSL">
           
           <onChange>
               <key name="_action">showonly</key>
@@ -148,13 +148,18 @@
           <view name="create"/>
         </element>
  
-<element name="ssl_settings" type="fieldset">
-			<key name="legend">SSL Settings</key>		
-					<view name="edit" />
-					<view name="create" />
-					<elements>	
-					    
-<element name="ssl_fips_required" type="checkbox" label="SSL FIPS Required ?">
+
+				    
+</elements>
+</element>
+  
+  <element name="ssl_settings" type="fieldset">
+      <key name="legend">SSL Settings</key>   
+          <view name="edit" />
+          <view name="create" />
+          <elements>  
+              
+<element name="ssl_fips_required" type="checkbox" label="SSL FIPS Required">
           
           <view name="edit"/>
           <view name="create"/>
@@ -170,10 +175,7 @@
  
 </elements>
 </element>
-				    
-</elements>
-</element>
-        
+
  
 <element name="event_handler" type="fieldset">
 			<key name="legend">Custom Event Processing</key>		
@@ -182,13 +184,13 @@
 					<elements>					    					    
         
 					    
-<element name="event_handler_impl" type="textfield" label="Implementation class for a custom message handler">
+<element name="event_handler_impl" type="textfield" label="Implementation class for a custom event handler">
             
           <view name="edit"/>
           <view name="create"/>
-          <key name="exampleText">An implementation of the com.splunk.modinput.mq.AbstractMessageHandler class.You would provide this if you required some custom handling/formatting of the PCF metrics you poll.Ensure that the necessary jars are in the $SPLUNK_HOME/etc/apps/mq_ta/bin/lib directory.If ommitted then the default handler 'com.splunk.modinput.mq.DefaultMessageHandler' will be used.</key>
+          <key name="exampleText">An implementation of the com.splunk.modinput.mq.AbstractEventHandler class.You would provide this if you required some custom handling/formatting of the PCF metrics you poll.Ensure that the necessary jars are in the $SPLUNK_HOME/etc/apps/mq_ta/bin/lib directory.If ommitted then the default handler 'com.splunk.modinput.mq.DefaultEventHandler' will be used.</key>
         </element>
-        <element name="event_handler_params" type="textfield" label="Implementation parameter string for the custom message handler">
+        <element name="event_handler_params" type="textfield" label="Implementation parameter string for the custom event handler">
            
           <view name="edit"/>
           <view name="create"/>

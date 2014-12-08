@@ -110,7 +110,7 @@ public class MQModularInput extends ModularInput {
 				continue;
 			}
 
-			if (param.getName().equals("host")) {
+			if (param.getName().equals("hostname")) {
 				mqHost = param.getValue();
 			} else if (param.getName().equals("port")) {
 				try {
@@ -921,7 +921,7 @@ public class MQModularInput extends ModularInput {
 		endpoint.addArg(arg);
 
 		arg = new Arg();
-		arg.setName("host");
+		arg.setName("hostname");
 		arg.setTitle("MQ Host");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);

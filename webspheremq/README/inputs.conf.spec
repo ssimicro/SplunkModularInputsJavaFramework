@@ -12,7 +12,7 @@ inquire_current_queuemanager = <value>
 #queue manager connection settings
 
 #defaults to localhost
-host = <value>
+hostname = <value>
 
 #defaults to 1414
 port = <value>
