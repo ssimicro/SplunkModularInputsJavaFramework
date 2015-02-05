@@ -101,6 +101,7 @@ public class TCPVerticle extends Verticle {
 
 		server.connectHandler(new Handler<NetSocket>() {
 			public void handle(NetSocket sock) {
+				
 				sock.dataHandler(new Handler<Buffer>() {
 					public void handle(Buffer buffer) {
 

@@ -1,5 +1,6 @@
 package com.splunk.modinput.kafka;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,13 +13,15 @@ import com.splunk.modinput.kafka.KafkaModularInput.MessageReceiver;
 
 public class DefaultMessageHandler extends AbstractMessageHandler {
 
+	String charset = Charset.defaultCharset().name();
+	
 	@Override
 	public Stream handleMessage(byte[] messageContents,MessageReceiver context)
 			throws Exception {
 
 		SplunkLogEvent splunkEvent = buildCommonEventMessagePart(context);
 
-		String body = getMessageBody(messageContents);
+		String body = getMessageBody(messageContents,charset);
 		splunkEvent.addPair("msg_body", stripNewlines(body));
 
 		String text = splunkEvent.toString();
@@ -54,7 +57,10 @@ public class DefaultMessageHandler extends AbstractMessageHandler {
 
 	@Override
 	public void setParams(Map<String, String> params) {
-		// Do nothing , params not used
+		
+		if(params.containsKey("charset"))
+		  this.charset = params.get("charset");
+		
 
 	}
 

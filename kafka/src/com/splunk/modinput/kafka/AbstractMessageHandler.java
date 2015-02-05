@@ -24,9 +24,9 @@ public abstract class AbstractMessageHandler {
 
 	}
 
-	protected String getMessageBody(byte[] messageContents) {
+	protected String getMessageBody(byte[] messageContents,String charset) throws Exception {
 
-		return new String(messageContents);
+		return new String(messageContents,charset);
 
 	}
 
