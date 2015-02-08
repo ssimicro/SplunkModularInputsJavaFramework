@@ -284,6 +284,13 @@ public class JMXModularInput extends ModularInput {
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
 
+		arg = new Arg();
+		arg.setName("additional_jvm_propertys");
+		arg.setTitle("Additional JVM Propertys");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+		
 		scheme.setEndpoint(endpoint);
 
 		return scheme;
