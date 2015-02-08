@@ -9,3 +9,8 @@ config_file_dir = <value>
 *how frequently to execute the polling in seconds.Defaults to 60
 polling_frequency = <value>
 
+
+#additional startup settings
+
+additional_jvm_propertys = <value>
+
