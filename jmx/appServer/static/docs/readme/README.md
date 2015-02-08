@@ -49,7 +49,7 @@ The data collection logic is implemented as a modular input.
 You can configure your JMX inputs via Manager->DataInputs->JMX
 
 You will need to configure your JMX config file, this is the config file where you specify JMX server(s), MBeans and MBean attributes/operations/notifications.
-You can create as many config files,with any name, as you want and place them in the jmx_ta/bin/config directory
+You can create as many config files,with any name, as you want and place them in the SPLUNK4JMX/bin/config directory
 
 Any changes to the config file at runtime will cause it to be dynamically reloaded
 
@@ -225,7 +225,7 @@ http://download.oracle.com/javase/1.5.0/docs/guide/management/agent.html#remote
 
 ### MX4J SUPPORT
 
-If you wish to use MX4J as your JMX implementation for remote connectors(rmi and iiop) or use any of the MX4J specific JMX connectors(soap, burlap, hessian, local), then it is simply a matter of setting the USE_MX4J variable in the jmx_ta/bin/jmx.py script to True.
+If you wish to use MX4J as your JMX implementation for remote connectors(rmi and iiop) or use any of the MX4J specific JMX connectors(soap, burlap, hessian, local), then it is simply a matter of setting the USE_MX4J variable in the SPLUNK4JMX/bin/jmx.py script to True.
 
 For more details about MX4J browse here : http://mx4j.sourceforge.net
 
@@ -234,16 +234,16 @@ Note : If using any of the HTTPS connectors(soap+ssl, hessian+ssl, burlap+ssl), 
 ### JVM HEAP Settings
 
 The JMX modular input executes all of the stanzas in a single JVM instance.
-If you need to boost HEAP size , then you can adjust the variables MIN_HEAP and MAX_HEAP in in the jmx_ta/bin/jmx.py script
+If you need to boost HEAP size , then you can adjust the variables MIN_HEAP and MAX_HEAP in in the SPLUNK4JMX/bin/jmx.py script
 
 ### ADDING JAVA CLASSES TO THE APPLICATION CLASSPATH
 
-You can dump a jar file in the "jmx_ta/bin/lib/" directory and it will be automatically loaded. 
+You can dump a jar file in the "SPLUNK4JMX/bin/lib/" directory and it will be automatically loaded. 
 Why would you want to do this ? Well perhaps you have created a custom formatter implementation as described above.
 
 ### ADDING JAVA CLASSES TO THE BOOT CLASSPATH
 
-Any classes that you need prepended to the java bootclasspath should be put in "jmx_ta/bin/lib/boot".
+Any classes that you need prepended to the java bootclasspath should be put in "SPLUNK4JMX/bin/lib/boot".
 Why would you want to do this ? Well perhaps you are targeting a JVM with some proprietary JMX logic that requires additional libraries on the JMX client side ie: using the IIOP connector with IBM  Websphere products is one such scenario I've encountered.
 
 

@@ -206,7 +206,7 @@ public class JMXModularInput extends ModularInput {
 								throw new Exception(
 										"Config file "
 												+ value
-												+ " does not exist.Ensure that this file is placed in the jmx_ta/bin/config directory.");
+												+ " does not exist.Ensure that this file is placed in the SPLUNK4JMX/bin/config directory.");
 							}
 							if (configFile.isDirectory()) {
 								throw new Exception(

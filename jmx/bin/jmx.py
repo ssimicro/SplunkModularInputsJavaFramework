@@ -11,7 +11,7 @@ import os, sys, signal
 from subprocess import Popen
 
 JAVA_MAIN_CLASS = 'com.splunk.modinput.jmx.JMXModularInput'
-MODINPUT_NAME = 'jmx'
+MODINPUT_NAME = 'SPLUNK4JMX'
 
 #Set to True to use the MX4J JMX implementation
 USE_MX4J = False
@@ -44,7 +44,7 @@ def writePidFile():
     f.close()
     
 def getPIDFilePath():
-    return MODINPUT_HOME+MODINPUT_NAME+"_ta.pid"
+    return MODINPUT_HOME+MODINPUT_NAME+".pid"
     
 def usage():
     print "usage: %s [--scheme|--validate-arguments]"
@@ -80,7 +80,7 @@ def run_java():
          JAVA_EXECUTABLE = os.path.expandvars('$JAVA_HOME') + "/bin/java"
       
       SPLUNK_HOME = os.path.expandvars('$SPLUNK_HOME')
-      MODINPUT_HOME = SPLUNK_HOME + "/etc/apps/"+MODINPUT_NAME+"_ta/"
+      MODINPUT_HOME = SPLUNK_HOME + "/etc/apps/"+MODINPUT_NAME+"/"
       CONFIG_HOME = MODINPUT_HOME + "bin/config/"
       CLASSPATH = MODINPUT_HOME + "bin/lib/*"
      
@@ -98,7 +98,7 @@ def run_java():
          JAVA_EXECUTABLE = os.path.expandvars('%JAVA_HOME%') + "\\bin\\java"
         
       SPLUNK_HOME = os.path.expandvars('%SPLUNK_HOME%')
-      MODINPUT_HOME = SPLUNK_HOME  + "\\etc\\apps\\"+MODINPUT_NAME+"_ta\\"
+      MODINPUT_HOME = SPLUNK_HOME  + "\\etc\\apps\\"+MODINPUT_NAME+"\\"
       CONFIG_HOME = MODINPUT_HOME + "bin\\config\\"
       CLASSPATH = build_classpath(MODINPUT_HOME + "bin\\lib\\",";")
       

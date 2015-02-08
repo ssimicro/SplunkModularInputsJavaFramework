@@ -803,7 +803,7 @@
 
             <zipfileset
                 dir="${temp_build}"
-                prefix="jmx_ta" />
+                prefix="SPLUNK4JMX" />
         </tar>
 
         <delete dir="${temp_build}" />
