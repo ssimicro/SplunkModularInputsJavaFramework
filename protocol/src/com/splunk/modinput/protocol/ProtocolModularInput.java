@@ -158,9 +158,9 @@ public class ProtocolModularInput extends ModularInput {
 						config.putNumber("output_verticle_instances", 1);
 					}
 
-					if (config.containsField("additional_jvm_properties"))
+					if (config.containsField("additional_jvm_propertys"))
 						setJVMSystemProperties(config
-								.getString("additional_jvm_properties"));
+								.getString("additional_jvm_propertys"));
 
 					if (!config.containsField("handler_verticle"))
 						config.putString("handler_verticle",

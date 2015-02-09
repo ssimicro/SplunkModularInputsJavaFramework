@@ -213,6 +213,7 @@ public abstract class ModularInput {
 
 	}
 
+	
 	class StateCheckerThread extends Thread {
 
 		Service service;
@@ -221,6 +222,8 @@ public abstract class ModularInput {
 			this.service = service;
 		}
 
+		
+		
 		public void run() {
 
 			int enabledCount = 1;

@@ -125,7 +125,7 @@ public class JMXModularInput extends ModularInput {
 							}
 
 						}
-						else if (param.getName().equals("additional_jvm_properties")) {
+						else if (param.getName().equals("additional_jvm_propertys")) {
 							setJVMSystemProperties(param.getValue());
 						}
 

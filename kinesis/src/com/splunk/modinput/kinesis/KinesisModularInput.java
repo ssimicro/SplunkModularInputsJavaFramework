@@ -146,7 +146,7 @@ public class KinesisModularInput extends ModularInput {
 				messageHandlerImpl = param.getValue();
 			} else if (param.getName().equals("message_handler_params")) {
 				messageHandlerParams = param.getValue();
-			} else if (param.getName().equals("additional_jvm_properties")) {
+			} else if (param.getName().equals("additional_jvm_propertys")) {
 				setJVMSystemProperties(param.getValue());
 			}
 

@@ -130,7 +130,7 @@ public class MQModularInput extends ModularInput {
 				eventHandlerImpl = param.getValue();
 			} else if (param.getName().equals("event_handler_params")) {
 				eventHandlerParams = param.getValue();
-			} else if (param.getName().equals("additional_jvm_properties")) {
+			} else if (param.getName().equals("additional_jvm_propertys")) {
 				setJVMSystemProperties(param.getValue());
 			} else if (param.getName().equals("polling_frequency")) {
 				try {
