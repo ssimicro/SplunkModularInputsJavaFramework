@@ -1,3 +1,8 @@
+0.7
+----
+Enabled TLS1.2 support by default.
+Made Core Modular Framework compatible with Splunk Java SDK
+
 0.6
 -----
 Abstracted the output transport logic out into verticles.

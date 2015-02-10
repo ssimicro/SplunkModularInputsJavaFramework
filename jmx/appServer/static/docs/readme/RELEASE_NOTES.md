@@ -1,3 +1,8 @@
+2.2
+----
+Enabled TLS1.2 support by default.
+Made Core Modular Framework compatible with Splunk Java SDK
+
 2.1
 ----
 Config file dynamically reloaded if it changes

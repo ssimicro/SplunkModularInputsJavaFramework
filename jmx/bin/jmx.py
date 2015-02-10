@@ -12,6 +12,8 @@ from subprocess import Popen
 
 JAVA_MAIN_CLASS = 'com.splunk.modinput.jmx.JMXModularInput'
 MODINPUT_NAME = 'SPLUNK4JMX'
+SECURE_TRANSPORT = "tls"
+#SECURE_TRANSPORT = "ssl"
 
 #Set to True to use the MX4J JMX implementation
 USE_MX4J = False
@@ -115,7 +117,7 @@ def run_java():
     if RUNMODE == 3:
       checkForRunningProcess()
 
-    java_args = [ JAVA_EXECUTABLE,"-Xbootclasspath/a:"+BOOTPATH, "-classpath",CLASSPATH,"-Xms"+MIN_HEAP,"-Xmx"+MAX_HEAP,"-Dconfighome="+CONFIG_HOME,"-Dsplunkhome="+SPLUNK_HOME,JAVA_MAIN_CLASS]
+    java_args = [ JAVA_EXECUTABLE,"-Xbootclasspath/a:"+BOOTPATH, "-classpath",CLASSPATH,"-Xms"+MIN_HEAP,"-Xmx"+MAX_HEAP,"-Dconfighome="+CONFIG_HOME,"-Dsplunkhome="+SPLUNK_HOME,"-Dsplunk.securetransport.protocol="+SECURE_TRANSPORT,JAVA_MAIN_CLASS]
     java_args.extend(sys.argv[1:])
 
     # Now we can run our command   

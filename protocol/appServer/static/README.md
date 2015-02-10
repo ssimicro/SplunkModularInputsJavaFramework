@@ -1,4 +1,4 @@
-## Protocol Data Inputs v0.6b
+## Protocol Data Inputs v0.7b
 
 ## Overview
 

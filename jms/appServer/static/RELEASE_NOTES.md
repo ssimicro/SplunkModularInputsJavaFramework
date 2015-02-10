@@ -1,3 +1,8 @@
+1.3.8
+-----
+Enabled TLS1.2 support by default.
+Made Core Modular Framework compatible with Splunk Java SDK
+
 1.3.7
 -----
 Changed the point in the code where client ID is set for durable topic subscriptions

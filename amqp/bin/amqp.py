@@ -12,7 +12,8 @@ from subprocess import Popen
 
 JAVA_MAIN_CLASS = 'com.splunk.modinput.amqp.AMQPModularInput'
 MODINPUT_NAME = 'amqp'
-
+SECURE_TRANSPORT = "tls"
+#SECURE_TRANSPORT = "ssl"
 
 def checkForRunningProcess():
 
@@ -92,7 +93,7 @@ def run_java():
     if RUNMODE == 3:
       checkForRunningProcess()
 
-    java_args = [ JAVA_EXECUTABLE, "-classpath",CLASSPATH,"-Xms64m","-Xmx64m",JAVA_MAIN_CLASS]
+    java_args = [ JAVA_EXECUTABLE, "-classpath",CLASSPATH,"-Xms64m","-Xmx64m","-Dsplunk.securetransport.protocol="+SECURE_TRANSPORT,JAVA_MAIN_CLASS]
     java_args.extend(sys.argv[1:])
 
     # Now we can run our command   

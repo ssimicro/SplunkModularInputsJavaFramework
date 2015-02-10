@@ -1,4 +1,4 @@
-## Splunk Hello World Modular Input v1.0
+## Splunk Hello World Modular Input v1.1
 
 ## Overview
 

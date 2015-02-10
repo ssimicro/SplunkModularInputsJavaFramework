@@ -162,6 +162,8 @@ public abstract class ModularInput {
 		}
 		Service service = new Service("localhost", port);
 		service.setToken("Splunk " + token);
+		service.version = service.getInfo().getVersion();
+		
 		InputCollection inputs = service.getInputs();
 
 		if (!inputs.containsKey(String.valueOf(tcpPort))) {
@@ -207,6 +209,8 @@ public abstract class ModularInput {
 		}
 		Service service = new Service("localhost", port);
 		service.setToken("Splunk " + token);
+		
+		service.version = service.getInfo().getVersion();
 
 		StateCheckerThread checker = new StateCheckerThread(service);
 		checker.start();
