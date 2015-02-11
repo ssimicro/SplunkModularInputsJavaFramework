@@ -15,7 +15,7 @@ This Modular Input utilizes the PAHO Java client library version 0.4.0 , http://
 ## Dependencies
 
 * Splunk 5.0+
-* Java Runtime 1.5+
+* Java Runtime 1.7+
 * Supported on Windows, Linux, MacOS, Solaris, FreeBSD, HP-UX, AIX
 
 ## Setup
@@ -58,7 +58,7 @@ Code examples are on GitHub : https://github.com/damiendallimore/SplunkModularIn
 
 * JAVA_HOME environment variable is set or "java" is on the PATH for the user's environment you are running Splunk as
 * You are using Splunk 5+
-* You are using a 1.5+ Java Runtime
+* You are using a 1.7+ Java Runtime
 * You are running on a supported operating system
 * Look for any errors in $SPLUNK_HOME/var/log/splunk/splunkd.log
 * Run this command as the same user that you are running Splunk as and observe console output : "$SPLUNK_HOME/bin/splunk cmd python ../etc/apps/mqtt_ta/bin/mqtt.py --scheme" 

@@ -33,7 +33,7 @@ Currently supports the following  JMX Connectors :
 
 * Splunk 5.0+ , if you only want to use as a JMX Modular Input
 * Splunk 6.0+ , if you want to use the Simple XML dashboards also
-* Java Runtime 1.6+
+* Java Runtime 1.7+
 * Supported on all Splunk platforms : Windows, Linux, MacOS, Solaris, FreeBSD, HP-UX, AIX
 
 ## Setup

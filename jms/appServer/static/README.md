@@ -19,7 +19,7 @@ You can then supply messaging provider specific jar files at runtime.
 ## Dependencies
 
 * Splunk 5.0+
-* Java Runtime 1.6+
+* Java Runtime 1.7+
 * Supported on Windows, Linux, MacOS, Solaris, FreeBSD, HP-UX, AIX
 
 ## Setup
@@ -68,7 +68,7 @@ If you require a larger heap, then you can alter this in $SPLUNK_HOME/etc/apps/j
 
 * JAVA_HOME environment variable is set or "java" is on the PATH for the user's environment you are running Splunk as
 * You are using Splunk 5+
-* You are using a 1.6+ Java Runtime
+* You are using a 1.7+ Java Runtime
 * You are running on a supported operating system
 * Any 3rd party jar dependencies are present in $SPLUNK_HOME/etc/apps/jms_ta/bin/lib
 * Look for any errors in $SPLUNK_HOME/var/log/splunk/splunkd.log

@@ -7,7 +7,7 @@ This is a Splunk modular input "Hello World" example
 ## Dependencies
 
 * Splunk 5.0+
-* Java Runtime 1.6+
+* Java Runtime 1.7+
 * Supported on Windows, Linux, MacOS, Solaris, FreeBSD, HP-UX, AIX
 
 ## Setup
