@@ -1,3 +1,7 @@
+0.7
+---
+Added a message handler (BodyOnlyMessageHandler) that just outputs the mqtt body
+
 0.6
 ----
 Enabled TLS1.2 support by default.
