@@ -1,3 +1,7 @@
+2.2.1
+-----
+Fixed minor typos
+
 2.2
 ----
 Enabled TLS1.2 support by default.
