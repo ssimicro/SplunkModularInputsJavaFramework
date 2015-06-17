@@ -1,3 +1,7 @@
+0.8
+---
+Added chroot support
+
 0.7
 ----
 Enabled TLS1.2 support by default.

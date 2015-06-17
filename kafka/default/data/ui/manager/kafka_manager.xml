@@ -56,6 +56,13 @@
           <view name="list"/>
           <key name="exampleText">Zookeeper Port.Will default to 2181.</key>
         </element>
+        <element name="zookeeper_connect_chroot" type="textfield" label="Zookeeper CHROOT path">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <view name="list"/>
+          <key name="exampleText">Zookeeper CHROOT path ie:  foo/bar </key>
+        </element>
         <element name="zookeeper_session_timeout_ms" type="textfield" label="Zookeeper Session Timeout">
           
           <view name="edit"/>
