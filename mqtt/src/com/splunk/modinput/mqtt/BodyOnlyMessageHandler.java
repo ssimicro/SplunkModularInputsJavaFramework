@@ -18,7 +18,8 @@ public class BodyOnlyMessageHandler extends AbstractMessageHandler {
 			throws Exception {
 
 		
-		String text = getMessageBody(message);
+		long timestamp = System.currentTimeMillis();
+		String text = timestamp +" "+getMessageBody(message);
 		Stream stream = new Stream();
 		ArrayList<StreamEvent> list = new ArrayList<StreamEvent>();
 		List<String> chunks = chunkData(text, 1024);

@@ -1,9 +1,9 @@
-## Splunk Kafka Messaging Modular Input v0.7b
+## Splunk Kafka Messaging Modular Input v0.8b
 
 ## Overview
 
 This is a Splunk Modular Input Add-On for indexing messages from a Kafka broker or cluster of brokers that are managed by Zookeeper.
-Kafka version 8.1.1 is used for the consumer and the testing of this Modular Input.
+Kafka version 0.8.1.1 is used for the consumer and the testing of this Modular Input.
 
 ## What is Kafka ?
 
@@ -12,8 +12,9 @@ https://kafka.apache.org/
 ## Dependencies
 
 * Splunk 5.0+
-* Java Runtime 176+
+* Java Runtime 1.7+
 * Supported on Windows, Linux, MacOS, Solaris, FreeBSD, HP-UX, AIX
+* Kafka 0.8+
 
 ## Setup
 
@@ -58,6 +59,7 @@ Code examples are on GitHub : https://github.com/damiendallimore/SplunkModularIn
 * JAVA_HOME environment variable is set or "java" is on the PATH for the user's environment you are running Splunk as
 * You are using Splunk 5+
 * You are using a 1.7+ Java Runtime
+* You are targetting Kafka version 0.8+
 * You are running on a supported operating system
 * Look for any errors in $SPLUNK_HOME/var/log/splunk/splunkd.log
 * Run this command as the same user that you are running Splunk as and observe console output : "$SPLUNK_HOME/bin/splunk cmd python ../etc/apps/kafka_ta/bin/kafka.py --scheme" 
