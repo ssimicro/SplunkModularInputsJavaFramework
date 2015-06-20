@@ -1,3 +1,9 @@
+0.8.1
+---
+Added support for raw connection string format so that multiple zookeeper hosts
+can be provided in a comma delimited manner
+ie: hostname1:port1,hostname2:port2,hostname3:port3/chroot/path 
+
 0.8
 ---
 Added chroot support

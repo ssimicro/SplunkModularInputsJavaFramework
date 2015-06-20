@@ -1,4 +1,4 @@
-## Splunk Kafka Messaging Modular Input v0.8b
+## Splunk Kafka Messaging Modular Input v0.8.1b
 
 ## Overview
 

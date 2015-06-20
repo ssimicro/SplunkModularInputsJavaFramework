@@ -78,6 +78,7 @@ public class KafkaModularInput extends ModularInput {
 		String zkhost = "";
 		int zkport = 2181; // default Zookeeper port
 		String zkchroot = "";
+		String zkconnectRawString = "";
 		String groupID = "";
 		int zkSessionTimeout = 400;
 		int zkSyncTime = 200;
@@ -98,6 +99,8 @@ public class KafkaModularInput extends ModularInput {
 				zkhost = param.getValue();
 			} else if (param.getName().equals("zookeeper_connect_chroot")) {
 				zkchroot = param.getValue();
+			} else if (param.getName().equals("zookeeper_connect_rawstring")) {
+				zkconnectRawString = param.getValue();
 			} else if (param.getName().equals("zookeeper_connect_port")) {
 				try {
 					zkport = Integer.parseInt(param.getValue());
@@ -141,9 +144,10 @@ public class KafkaModularInput extends ModularInput {
 
 		if (!isDisabled(stanzaName)) {
 			MessageReceiver mr = new MessageReceiver(stanzaName, topicName,
-					zkhost, zkport, zkchroot, groupID, zkSessionTimeout,
-					zkSyncTime, autoCommitInterval, additionalConnectionProps,
-					messageHandlerImpl, messageHandlerParams);
+					zkhost, zkport, zkchroot, zkconnectRawString, groupID,
+					zkSessionTimeout, zkSyncTime, autoCommitInterval,
+					additionalConnectionProps, messageHandlerImpl,
+					messageHandlerParams);
 			if (validationConnectionMode)
 				mr.testConnectOnly();
 			else
@@ -163,7 +167,8 @@ public class KafkaModularInput extends ModularInput {
 		ConsumerConnector consumer;
 
 		public MessageReceiver(String stanzaName, String topicName,
-				String zkhost, int zkport, String zkchroot, String groupID,
+				String zkhost, int zkport, String zkchroot,
+				String zkconnectRawString, String groupID,
 				int zkSessionTimeout, int zkSyncTime, int autoCommitInterval,
 				String additionalConnectionProps, String messageHandlerImpl,
 				String messageHandlerParams) {
@@ -174,9 +179,14 @@ public class KafkaModularInput extends ModularInput {
 
 			Properties connectionProperties = new Properties();
 
-			String connectionString = zkhost + ":" + zkport;
-			if (zkchroot.length() > 0)
-				connectionString += "/" + zkchroot;
+			String connectionString = "";
+			if (zkconnectRawString.length() > 0)
+				connectionString = zkconnectRawString;
+			else {
+				connectionString = zkhost + ":" + zkport;
+				if (zkchroot.length() > 0)
+					connectionString += "/" + zkchroot;
+			}
 
 			connectionProperties.put("zookeeper.connect", connectionString);
 			connectionProperties.put("group.id", String.valueOf(groupID));
@@ -426,6 +436,13 @@ public class KafkaModularInput extends ModularInput {
 		arg = new Arg();
 		arg.setName("zookeeper_connect_chroot");
 		arg.setTitle("Zookeeper CHROOT");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("zookeeper_connect_rawstring");
+		arg.setTitle("Zookeeper Raw Connection String");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);

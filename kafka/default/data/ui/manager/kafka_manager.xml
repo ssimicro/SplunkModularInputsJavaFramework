@@ -63,6 +63,13 @@
           <view name="list"/>
           <key name="exampleText">Zookeeper CHROOT path ie:  foo/bar </key>
         </element>
+        <element name="zookeeper_connect_rawstring" type="textfield" label="Zookeeper Raw Connection String">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <view name="list"/>
+          <key name="exampleText">Zookeeper raw connection string. This will override any host/port/chroot settings above.Using this format , multiple hosts can be provided in a comma delimited manner ie: hostname1:port1,hostname2:port2,hostname3:port3/chroot/path </key>
+        </element>
         <element name="zookeeper_session_timeout_ms" type="textfield" label="Zookeeper Session Timeout">
           
           <view name="edit"/>

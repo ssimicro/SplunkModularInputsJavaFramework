@@ -9,6 +9,7 @@ topic_name = <value>
 zookeeper_connect_host = <value>
 zookeeper_connect_port = <value>
 zookeeper_connect_chroot = <value>
+zookeeper_connect_rawstring = <value>
 group_id = <value>
 zookeeper_session_timeout_ms = <value>
 zookeeper_sync_time_ms = <value>
