@@ -58,8 +58,10 @@ public class JMSModularInput extends ModularInput {
 
 	public static void main(String[] args) {
 
+		logger.info("Initialising JMS Mod Input");
 		JMSModularInput instance = new JMSModularInput();
 		instance.init(args);
+		logger.info("JMS Mod Input initialised");
 
 	}
 
@@ -70,10 +72,13 @@ public class JMSModularInput extends ModularInput {
 
 		if (input != null) {
 
+			logger.info("Running JMS Modular Input");
 			for (Stanza stanza : input.getStanzas()) {
 
 				String name = stanza.getName();
 
+				logger.info("Running stanza name "+name);
+				
 				if (name != null && name.startsWith("jms://queue/")) {
 
 					startMessageReceiverThread(name, name.substring(12),
@@ -104,6 +109,7 @@ public class JMSModularInput extends ModularInput {
 			String destination, List<Param> params, DestinationType type,
 			boolean validationConnectionMode) throws Exception {
 
+		logger.info("Initialising properties for message receiver");
 		String jndiURL = "";
 		String jndiContextFactory = "";
 		String jndiUser = "";
@@ -322,9 +328,13 @@ public class JMSModularInput extends ModularInput {
 			this.browseFrequency = browseFrequency;
 			this.browseMode = browseMode;
 
+			logger.info("destination:"+destination+",jndiUrl:"+jndiURL+",jndiContextFactory:"+jndiContextFactory+",jndiUser:"+jndiUser+",jndiPass:"+jndiPass+",destinationUser:"+destinationUser+",destinationPass:"+destinationPass+",jmsConnectionFactory:"+jmsConnectionFactory+",durable:"+durable+",clientID:"+clientID+",type:"+type+",indexHeader:"+indexHeader+",indexProperties:"+indexProperties+",stripNewLines:"+stripNewlines+",selector:"+selector+",initMode:"+initMode+",stanzaName:"+stanzaName+",browseQueueOnly:"+browseQueueOnly+",browseFrequency:"+browseFrequency+",browseMode:"+browseMode);
+			
+			
 			if (userJNDIPropertiesString != null
 					&& userJNDIPropertiesString.length() > 0) {
 				userJNDIProperties = getParamMap(userJNDIPropertiesString);
+				logger.info("userJNDIProperties:"+userJNDIPropertiesString);
 			}
 			if (initMode.equals(InitMode.LOCAL)) {
 				try {
@@ -332,6 +342,7 @@ public class JMSModularInput extends ModularInput {
 							localResourceFactoryImpl).newInstance();
 					localFactory
 							.setParams(getParamMap(localResourceFactoryParams));
+					logger.info("localFactory:"+localResourceFactoryImpl);
 				} catch (Exception e) {
 					logger.error("Stanza "+stanzaName+" : "+"Can't instantiate local resource factory : "
 							+ localResourceFactoryImpl + " , " + ModularInput.getStackTrace(e));
@@ -343,6 +354,7 @@ public class JMSModularInput extends ModularInput {
 				messageHandler = (AbstractMessageHandler) Class.forName(
 						messageHandlerImpl).newInstance();
 				messageHandler.setParams(getParamMap(messageHandlerParams));
+				logger.info("messageHandler:"+messageHandlerImpl);
 			} catch (Exception e) {
 				logger.error("Stanza "+stanzaName+" : "+"Can't instantiate message handler : "
 						+ messageHandlerImpl + " , " + ModularInput.getStackTrace(e));
@@ -378,6 +390,7 @@ public class JMSModularInput extends ModularInput {
 
 			if (initMode.equals(InitMode.JNDI)) {
 
+				logger.info("Connecting in JNDI mode");
 				Hashtable<String, String> env = new Hashtable<String, String>();
 				env.put(Context.INITIAL_CONTEXT_FACTORY,
 						this.jndiContextFactory);
@@ -392,18 +405,23 @@ public class JMSModularInput extends ModularInput {
 					env.putAll(userJNDIProperties);
 				}
 
+				logger.info("Creating initial context");
 				ctx = new InitialContext(env);
-
+				logger.info("Looking up Connection Factory object");
 				connFactory = (ConnectionFactory) ctx
 						.lookup(this.jmsConnectionFactory);
+				logger.info("Looking up Destination object");
 				dest = (Destination) ctx.lookup(destination);
 			}
 
 			else if (initMode.equals(InitMode.LOCAL)) {
+				logger.info("Connecting in Local mode");
 				if (localFactory == null) {
 					throw new Exception("LocalFactory Object is null");
 				}
+				logger.info("Creating Connection Factory object");
 				connFactory = localFactory.createConnectionFactory();
+				logger.info("Creating Destination object");
 				if (type.equals(DestinationType.QUEUE))
 					dest = localFactory.createQueue(destination);
 				else if (type.equals(DestinationType.TOPIC))
@@ -411,22 +429,29 @@ public class JMSModularInput extends ModularInput {
 			}
 
 			if (destinationUser != null && destinationUser.length() > 0
-					&& destinationPass != null && destinationPass.length() > 0)
+					&& destinationPass != null && destinationPass.length() > 0){
+				logger.info("Creating authenticated connection");
 				connection = connFactory.createConnection(destinationUser,
 						destinationPass);
-			else
+			}
+			else{
+				logger.info("Creating unauthenticated connection");
 				connection = connFactory.createConnection();
+			}
 			
-			
-			if (durable && type.equals(DestinationType.TOPIC))
+			if (durable && type.equals(DestinationType.TOPIC)){
+				logger.info("Topic connection is durable");
 			    connection.setClientID(clientID);
+			}
 			
+			logger.info("Creating session for the connection");
 			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
 			if (durable && type.equals(DestinationType.TOPIC)) {
 
 				try {
 					
+					logger.info("Subscribing to durable topic");
 					messageConsumer = session.createDurableSubscriber(
 							(Topic) dest, clientID, selector, true);
 				} catch (Exception e) {
@@ -435,17 +460,23 @@ public class JMSModularInput extends ModularInput {
 					messageConsumer = session.createConsumer(dest, selector);
 				}
 
-			} else if (browseQueueOnly && type.equals(DestinationType.QUEUE))
+			} else if (browseQueueOnly && type.equals(DestinationType.QUEUE)){
+				logger.info("Browsing queue");
 				queueBrowser = session.createBrowser((Queue) dest, selector);
-			else
+			}
+			else{
+				logger.info("Consuming from destination");
 				messageConsumer = session.createConsumer(dest, selector);
-
+			}
+			logger.info("Starting connection");
 			connection.start();
 			connected = true;
+			logger.info("Connection started");
 
 		}
 
 		private void disconnect() {
+			logger.info("Disconnecting session and connection");
 			try {
 				if (session != null)
 					session.close();
@@ -460,7 +491,7 @@ public class JMSModularInput extends ModularInput {
 
 		public void testConnectOnly() throws Exception {
 			try {
-
+				logger.info("Test connection");
 				connect();
 			} catch (Throwable t) {
 				logger.error("Stanza "+stanzaName+" : "+"Error connecting : " + ModularInput.getStackTrace(t));
@@ -471,9 +502,11 @@ public class JMSModularInput extends ModularInput {
 
 		public void run() {
 
+			logger.info("Running JMS message poller");
 			while (!isDisabled(stanzaName)) {
 				while (!connected) {
 					try {
+						logger.info("Connecting.....");
 						connect();
 
 					} catch (Throwable t) {
@@ -491,6 +524,7 @@ public class JMSModularInput extends ModularInput {
 
 					if (browseQueueOnly) {
 
+						logger.info("Browsing queue....");
 						if (browseMode.equals(BrowseMode.STATS))
 							browseQueueStats(queueBrowser);
 						else if (browseMode.equals(BrowseMode.ALL))
@@ -500,7 +534,9 @@ public class JMSModularInput extends ModularInput {
 							Thread.sleep(browseFrequency * 1000);
 					} else {
 						// block and wait for message
+						logger.info("Waiting for message");
 						Message message = messageConsumer.receive();
+						logger.info("Message received");
 						streamMessageEvent(message);
 					}
 
@@ -517,7 +553,10 @@ public class JMSModularInput extends ModularInput {
 
 		private void streamMessageEvent(Message message) {
 			try {
+				
+				logger.info("Processing received message with handler");
 				Stream stream = messageHandler.handleMessage(message, this);
+				logger.info("Streaming message to Splunk for indexing");
 				marshallObjectToXML(stream);
 			} catch (Exception e) {
 				logger.error("Stanza "+stanzaName+" : "+"Error handling message : " + ModularInput.getStackTrace(e));

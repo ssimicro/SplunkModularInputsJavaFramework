@@ -1,4 +1,4 @@
-## Splunk JMS Modular Input v1.3.8
+## Splunk JMS Modular Input v1.3.9
 
 ## Overview
 
@@ -44,6 +44,7 @@ So choose local , and then you can specify the name of implementation class, as 
 ## Logging
 
 Any log entries/errors will get written to $SPLUNK_HOME/var/log/splunk/splunkd.log
+To turn on more verbose INFO level logging , set the logging level in the $SPLUNK_HOME/etc/apps/jms_ta/bin/jms.py script ie: ERROR , INFO
 
 ## Third party jars
 

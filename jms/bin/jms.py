@@ -14,6 +14,7 @@ JAVA_MAIN_CLASS = 'com.splunk.modinput.jms.JMSModularInput'
 MODINPUT_NAME = 'jms'
 SECURE_TRANSPORT = "tls"
 #SECURE_TRANSPORT = "ssl"
+LOGGING_LEVEL="ERROR"
 
 def checkForRunningProcess():
 
@@ -93,7 +94,7 @@ def run_java():
     if RUNMODE == 3:
       checkForRunningProcess()
 
-    java_args = [ JAVA_EXECUTABLE, "-classpath",CLASSPATH,"-Xms64m","-Xmx64m","-Dsplunk.securetransport.protocol="+SECURE_TRANSPORT,JAVA_MAIN_CLASS]
+    java_args = [ JAVA_EXECUTABLE, "-classpath",CLASSPATH,"-Xms64m","-Xmx64m","-Dsplunk.securetransport.protocol="+SECURE_TRANSPORT,"-Dsplunk.logging.level="+LOGGING_LEVEL,JAVA_MAIN_CLASS]
     java_args.extend(sys.argv[1:])
 
     # Now we can run our command   

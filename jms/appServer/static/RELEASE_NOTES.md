@@ -1,3 +1,7 @@
+1.3.9
+-----
+Added more verbose INFO level logging
+
 1.3.8
 -----
 Enabled TLS1.2 support by default.

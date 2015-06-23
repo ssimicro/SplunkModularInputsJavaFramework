@@ -15,6 +15,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.splunk.Args;
@@ -41,6 +42,8 @@ public abstract class ModularInput {
 			StringWriter sw = new StringWriter();
 			marshaller.marshal(obj, sw);
 			String xml = sw.toString();
+			logger.info("Data sent to Splunk:"+xml);
+			logger.info("Size of data sent to Splunk:"+xml.length());
 			System.out.println(xml.trim());
 
 		} catch (Exception e) {
@@ -104,9 +107,11 @@ public abstract class ModularInput {
 	protected void doScheme() {
 
 		try {
+			logger.info("Getting scheme");
 			Scheme scheme = getScheme();
 			sendScheme(scheme);
 			System.exit(0);
+			logger.info("Scheme sent");
 		} catch (Exception e) {
 			logger.error("Error getting scheme : " + e.getMessage());
 			System.exit(2);
@@ -116,6 +121,9 @@ public abstract class ModularInput {
 
 	protected void init(String[] args) {
 
+		String loggingLevel = System.getProperty("splunk.logging.level", "ERROR");
+		logger.setLevel(Level.toLevel(loggingLevel));
+		logger.info("Initialising Modular Input");
 		try {
 			if (args.length == 1) {
 				if (args[0].equals("--scheme")) {
@@ -131,6 +139,7 @@ public abstract class ModularInput {
 			} else if (args.length == 2) {
 				if (args[0].equals("--validate-arguments")) {
 
+					logger.info("Validating arguments");
 					Validation val = getValidation(args[1]);
 					doValidate(val);
 				}
@@ -230,6 +239,7 @@ public abstract class ModularInput {
 		
 		public void run() {
 
+			logger.info("Running state checker");
 			int enabledCount = 1;
 			while (enabledCount > 0) {
 				enabledCount = 0;
@@ -297,7 +307,7 @@ public abstract class ModularInput {
 
 		public void run() {
 			try {
-
+				logger.info("Running connection poller");
 				int failCount = 0;
 				while (true) {
 					Socket socket = null;
