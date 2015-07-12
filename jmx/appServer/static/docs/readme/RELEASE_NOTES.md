@@ -1,3 +1,7 @@
+2.2.2
+-----
+Fixed docs link in nav menu
+
 2.2.1
 -----
 Fixed minor typos

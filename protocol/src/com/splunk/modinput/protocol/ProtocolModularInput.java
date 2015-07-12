@@ -607,5 +607,4 @@ public class ProtocolModularInput extends ModularInput {
 
 		return scheme;
 	}
-
 }

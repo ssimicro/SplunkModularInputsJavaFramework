@@ -22,9 +22,9 @@
 
 <collection label="Documentation"> 
  
-  <a href="/static/app/jmx_ta/docs/readme/README.md">User Guide</a> 
-  <a href="/static/app/jmx_ta/docs/configuration_schema/config.pdf">XML Configuration Schema Guide</a>   
-  <a href="/static/app/jmx_ta/docs/javadoc/com/dtdsoftware/splunk/formatter/Formatter.html">Custom Formatter javadocs</a>
+  <a href="/static/app/SPLUNK4JMX/docs/readme/README.md">User Guide</a> 
+  <a href="/static/app/SPLUNK4JMX/docs/configuration_schema/config.pdf">XML Configuration Schema Guide</a>   
+  <a href="/static/app/SPLUNK4JMX/docs/javadoc/com/dtdsoftware/splunk/formatter/Formatter.html">Custom Formatter javadocs</a>
   <a href="http://en.wikipedia.org/wiki/Java_Management_Extensions">JMX Overview</a>
   <a href="http://download.oracle.com/javase/1.5.0/docs/guide/management/agent.html#remote">Enabling your target JVM</a>
   <a href="http://docs.oracle.com/javase/7/docs/api/javax/management/NotificationFilter.html">Custom NotificationFilter javadocs</a>
