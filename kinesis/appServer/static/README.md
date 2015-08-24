@@ -1,4 +1,4 @@
-## Splunk Amazon Kinesis Modular Input v0.7b
+## Splunk Amazon Kinesis Modular Input v0.8b
 
 ## Overview
 

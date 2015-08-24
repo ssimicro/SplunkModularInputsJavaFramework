@@ -24,10 +24,10 @@ import com.splunk.modinput.Param;
 import com.splunk.modinput.Scheme;
 
 import com.splunk.modinput.Stanza;
-import com.splunk.modinput.Stream;
 import com.splunk.modinput.Validation;
 import com.splunk.modinput.ValidationError;
 import com.splunk.modinput.Scheme.StreamingMode;
+import com.splunk.modinput.transport.Transport;
 
 /**
  * Splunk Modular Input for monitoring Websphere MQ
@@ -104,6 +104,8 @@ public class MQModularInput extends ModularInput {
 		boolean sslFipsRequired = false;
 		boolean useSSL = false;
 
+		Transport transport = getTransportInstance(params,stanzaName);
+		
 		for (Param param : params) {
 			String value = param.getValue();
 			if (value == null) {
@@ -215,7 +217,7 @@ public class MQModularInput extends ModularInput {
 					inquireQueues, inquireTopics, inquireChannels,
 					inquireListeners, inquireSubscriptions, inquireServices,
 					inquireCurrentQueueManager, useSSL, sslCipherSuite,
-					sslFipsRequired);
+					sslFipsRequired,transport);
 			if (validationConnectionMode)
 				mr.testConnectOnly();
 			else
@@ -261,7 +263,7 @@ public class MQModularInput extends ModularInput {
 				boolean inquireChannels, boolean inquireListeners,
 				boolean inquireSubscriptions, boolean inquireServices,
 				boolean inquireCurrentQueueManager, boolean useSSL,
-				String sslCipherSuite, boolean sslFipsRequired) {
+				String sslCipherSuite, boolean sslFipsRequired,Transport transport) {
 
 			this.stanzaName = stanzaName;
 			this.mqHost = mqHost;
@@ -288,6 +290,7 @@ public class MQModularInput extends ModularInput {
 				eventHandler = (AbstractEventHandler) Class.forName(
 						eventHandlerImpl).newInstance();
 				eventHandler.setParams(getParamMap(eventHandlerParams));
+				eventHandler.setTransport(transport);
 			} catch (Exception e) {
 				logger.error("Stanza " + stanzaName + " : "
 						+ "Can't instantiate event handler : "
@@ -323,8 +326,8 @@ public class MQModularInput extends ModularInput {
 
 		public void streamEvent(Map<Object, Object> eventValues) {
 			try {
-				Stream stream = eventHandler.handleMessage(eventValues, this);
-				marshallObjectToXML(stream);
+				eventHandler.handleMessage(eventValues, this);
+			
 			} catch (Exception e) {
 				logger.error("Stanza " + stanzaName + " : "
 						+ "Error handling MQ event : "
@@ -1009,6 +1012,43 @@ public class MQModularInput extends ModularInput {
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
+		
+		arg = new Arg();
+		arg.setName("output_type");
+		arg.setTitle("Output Type");
+		arg.setDescription("");
+		arg.setRequired_on_create(true);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("hec_port");
+		arg.setTitle("HEC Port");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("hec_token");
+		arg.setTitle("HEC Token");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("hec_poolsize");
+		arg.setTitle("HEC Pool Size");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("hec_https");
+		arg.setTitle("Use HTTPs");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+		
+		
 
 		scheme.setEndpoint(endpoint);
 

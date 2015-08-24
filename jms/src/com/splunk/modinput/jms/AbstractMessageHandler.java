@@ -12,13 +12,27 @@ import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
 
 import com.splunk.modinput.SplunkLogEvent;
-import com.splunk.modinput.Stream;
+
 import com.splunk.modinput.jms.JMSModularInput.MessageReceiver;
+import com.splunk.modinput.transport.Transport;
 
 
 public abstract class AbstractMessageHandler {
 	
-	public abstract Stream handleMessage(Message message,MessageReceiver context) throws Exception;
+	private Transport transport;
+
+    public void setTransport(Transport transport){
+		
+		this.transport = transport;
+	}
+	
+	public void transportMessage(String message){
+		
+		if(transport != null)
+		  this.transport.transport(message);
+	}
+	
+	public abstract void handleMessage(Message message,MessageReceiver context) throws Exception;
 	public abstract void setParams(Map<String, String> params);
 
 	protected SplunkLogEvent buildCommonEventMessagePart(Message message,MessageReceiver context) throws Exception{

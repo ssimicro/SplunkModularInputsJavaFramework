@@ -1,4 +1,4 @@
-## Splunk Websphere MQ Modular Input v0.6b
+## Splunk Websphere MQ Modular Input v0.7b
 
 ## Overview
 

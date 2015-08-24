@@ -4,34 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.splunk.modinput.Stream;
-import com.splunk.modinput.StreamEvent;
+
 import com.splunk.modinput.kinesis.KinesisModularInput.MessageReceiver;
 
 public class JSONOnlyMessageHandler extends AbstractMessageHandler {
 
 	@Override
-	public Stream handleMessage(String record, String seqNumber,
+	public void handleMessage(String record, String seqNumber,
 			String partitionKey, MessageReceiver context) throws Exception {
 
 		String text = stripNewlines(record);
 
-		Stream stream = new Stream();
-		ArrayList<StreamEvent> list = new ArrayList<StreamEvent>();
-		List<String> chunks = chunkData(text, 1024);
-
-		for (int i = 0; i < chunks.size(); i++) {
-			StreamEvent event = new StreamEvent();
-			event.setUnbroken("1");
-			event.setData(chunks.get(i));
-			event.setStanza(context.stanzaName);
-			// if we are seeing the last chunk, set the "done" element
-			if (i == chunks.size() - 1)
-				event.setDone(" ");
-			list.add(event);
-		}
-		stream.setEvents(list);
-		return stream;
+		transportMessage(text);
 
 	}
 

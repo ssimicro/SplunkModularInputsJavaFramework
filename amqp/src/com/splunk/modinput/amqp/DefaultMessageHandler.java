@@ -7,14 +7,13 @@ import java.util.Map;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Envelope;
 import com.splunk.modinput.SplunkLogEvent;
-import com.splunk.modinput.Stream;
-import com.splunk.modinput.StreamEvent;
+
 import com.splunk.modinput.amqp.AMQPModularInput.MessageReceiver;
 
 public class DefaultMessageHandler extends AbstractMessageHandler {
 
 	@Override
-	public Stream handleMessage(byte[] messageContents, Envelope envelope,
+	public void handleMessage(byte[] messageContents, Envelope envelope,
 			AMQP.BasicProperties messageProperties, MessageReceiver context)
 			throws Exception {
 
@@ -25,22 +24,7 @@ public class DefaultMessageHandler extends AbstractMessageHandler {
 		splunkEvent.addPair("msg_body", stripNewlines(body));
 
 		String text = splunkEvent.toString();
-		Stream stream = new Stream();
-		ArrayList<StreamEvent> list = new ArrayList<StreamEvent>();
-		List<String> chunks = chunkData(text, 1024);
-
-		for (int i = 0; i < chunks.size(); i++) {
-			StreamEvent event = new StreamEvent();
-			event.setUnbroken("1");
-			event.setData(chunks.get(i));
-			event.setStanza(context.stanzaName);
-			// if we are seeing the last chunk, set the "done" element
-			if (i == chunks.size() - 1)
-				event.setDone(" ");
-			list.add(event);
-		}
-		stream.setEvents(list);
-		return stream;
+		transportMessage(text);
 
 	}
 

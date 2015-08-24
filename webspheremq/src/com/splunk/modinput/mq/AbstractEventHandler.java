@@ -2,8 +2,9 @@ package com.splunk.modinput.mq;
 
 import java.util.Map;
 
-import com.splunk.modinput.Stream;
+
 import com.splunk.modinput.mq.MQModularInput.MQPoller;
+import com.splunk.modinput.transport.Transport;
 
 /**
  * Implement this class to provide your own custom event handler
@@ -13,7 +14,19 @@ import com.splunk.modinput.mq.MQModularInput.MQPoller;
  */
 public abstract class AbstractEventHandler {
 
-	public abstract Stream handleMessage(Map<Object, Object> eventValues,
+	private Transport transport;
+
+    public void setTransport(Transport transport){
+		
+		this.transport = transport;
+	}
+	
+	public void transportMessage(String message){
+		
+		if(transport != null)
+		  this.transport.transport(message);
+	}
+	public abstract void handleMessage(Map<Object, Object> eventValues,
 			MQPoller context) throws Exception;
 
 	public abstract void setParams(Map<String, String> params);

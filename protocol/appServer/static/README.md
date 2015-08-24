@@ -1,4 +1,4 @@
-## Protocol Data Inputs v0.7b
+## Protocol Data Inputs v1.0
 
 ## Overview
 
@@ -109,7 +109,7 @@ Refer to http://vertx.io/manual.html#improving-connection-time
 
 By default data will be output to STDOUT in Modular Input Stream XML format.
 
-However you can bypass this if you wish and declare that data is output to a Splunk TCP port.
+However you can bypass this if you wish and declare that data is output to a Splunk TCP port or via Splunk's HTTP Event Collector.
 
 ## Dependencies
 

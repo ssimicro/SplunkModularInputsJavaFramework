@@ -5,8 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gson.Gson;
-import com.splunk.modinput.Stream;
-import com.splunk.modinput.StreamEvent;
+
 import com.splunk.modinput.mq.MQModularInput.MQPoller;
 
 /**
@@ -18,27 +17,12 @@ import com.splunk.modinput.mq.MQModularInput.MQPoller;
 public class DefaultEventHandler extends AbstractEventHandler {
 
 	@Override
-	public Stream handleMessage(Map<Object, Object> eventValues,
+	public void handleMessage(Map<Object, Object> eventValues,
 			MQPoller context) throws Exception {
 
 		String text = jsonify(eventValues);
 
-		Stream stream = new Stream();
-		ArrayList<StreamEvent> list = new ArrayList<StreamEvent>();
-		List<String> chunks = chunkData(text, 1024);
-
-		for (int i = 0; i < chunks.size(); i++) {
-			StreamEvent event = new StreamEvent();
-			event.setUnbroken("1");
-			event.setData(chunks.get(i));
-			event.setStanza(context.stanzaName);
-			// if we are seeing the last chunk, set the "done" element
-			if (i == chunks.size() - 1)
-				event.setDone(" ");
-			list.add(event);
-		}
-		stream.setEvents(list);
-		return stream;
+		transportMessage(text);
 
 	}
 

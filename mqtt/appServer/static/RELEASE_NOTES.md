@@ -1,3 +1,7 @@
+0.8
+---
+Added support to optional output to Splunk via a HEC (HTTP Event Collector) endpoint
+
 0.7
 ---
 Added a message handler (BodyOnlyMessageHandler) that just outputs the mqtt body

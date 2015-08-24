@@ -8,14 +8,13 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 
 import com.splunk.modinput.SplunkLogEvent;
-import com.splunk.modinput.Stream;
-import com.splunk.modinput.StreamEvent;
+
 import com.splunk.modinput.mqtt.MQTTModularInput.MessageReceiver; 
 
 public class DefaultMessageHandler extends AbstractMessageHandler {
 
 	@Override
-	public Stream handleMessage(String topic, MqttMessage message,MessageReceiver context)
+	public void handleMessage(String topic, MqttMessage message,MessageReceiver context)
 			throws Exception {
 
 		SplunkLogEvent splunkEvent = buildCommonEventMessagePart(context);
@@ -25,22 +24,7 @@ public class DefaultMessageHandler extends AbstractMessageHandler {
 		
 		
 		String text = splunkEvent.toString();
-		Stream stream = new Stream();
-		ArrayList<StreamEvent> list = new ArrayList<StreamEvent>();
-		List<String> chunks = chunkData(text, 1024);
-
-		for (int i = 0; i < chunks.size(); i++) {
-			StreamEvent event = new StreamEvent();
-			event.setUnbroken("1");
-			event.setData(chunks.get(i));
-			event.setStanza(context.stanzaName);
-			// if we are seeing the last chunk, set the "done" element
-			if (i == chunks.size() - 1)
-				event.setDone(" ");
-			list.add(event);
-		}
-		stream.setEvents(list);
-		return stream;
+		transportMessage(text);
 
 	}
 

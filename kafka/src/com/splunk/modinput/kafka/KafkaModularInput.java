@@ -23,15 +23,16 @@ import com.splunk.modinput.Param;
 import com.splunk.modinput.Scheme;
 
 import com.splunk.modinput.Stanza;
-import com.splunk.modinput.Stream;
+
 import com.splunk.modinput.Validation;
 import com.splunk.modinput.ValidationError;
 import com.splunk.modinput.Scheme.StreamingMode;
+import com.splunk.modinput.transport.Transport;
 
 public class KafkaModularInput extends ModularInput {
 
 	private static final String DEFAULT_MESSAGE_HANDLER = "com.splunk.modinput.kafka.DefaultMessageHandler";
-
+	
 	public static void main(String[] args) {
 
 		KafkaModularInput instance = new KafkaModularInput();
@@ -49,6 +50,7 @@ public class KafkaModularInput extends ModularInput {
 			for (Stanza stanza : input.getStanzas()) {
 
 				String name = stanza.getName();
+			
 
 				if (name != null && name.startsWith("kafka://")) {
 
@@ -87,6 +89,8 @@ public class KafkaModularInput extends ModularInput {
 		String messageHandlerImpl = DEFAULT_MESSAGE_HANDLER;
 		String messageHandlerParams = "";
 
+		Transport transport = getTransportInstance(params,stanzaName);
+		
 		for (Param param : params) {
 			String value = param.getValue();
 			if (value == null) {
@@ -147,7 +151,7 @@ public class KafkaModularInput extends ModularInput {
 					zkhost, zkport, zkchroot, zkconnectRawString, groupID,
 					zkSessionTimeout, zkSyncTime, autoCommitInterval,
 					additionalConnectionProps, messageHandlerImpl,
-					messageHandlerParams);
+					messageHandlerParams,transport);
 			if (validationConnectionMode)
 				mr.testConnectOnly();
 			else
@@ -171,7 +175,7 @@ public class KafkaModularInput extends ModularInput {
 				String zkconnectRawString, String groupID,
 				int zkSessionTimeout, int zkSyncTime, int autoCommitInterval,
 				String additionalConnectionProps, String messageHandlerImpl,
-				String messageHandlerParams) {
+				String messageHandlerParams,Transport transport) {
 
 			this.stanzaName = stanzaName;
 
@@ -209,6 +213,7 @@ public class KafkaModularInput extends ModularInput {
 				messageHandler = (AbstractMessageHandler) Class.forName(
 						messageHandlerImpl).newInstance();
 				messageHandler.setParams(getParamMap(messageHandlerParams));
+				messageHandler.setTransport(transport);
 			} catch (Exception e) {
 				logger.error("Stanza " + stanzaName + " : "
 						+ "Can't instantiate message handler : "
@@ -321,8 +326,8 @@ public class KafkaModularInput extends ModularInput {
 
 		private void streamMessageEvent(byte[] message) {
 			try {
-				Stream stream = messageHandler.handleMessage(message, this);
-				marshallObjectToXML(stream);
+				messageHandler.handleMessage(message, this);
+			
 			} catch (Exception e) {
 				logger.error("Stanza " + stanzaName + " : "
 						+ "Error handling message : "
@@ -502,6 +507,42 @@ public class KafkaModularInput extends ModularInput {
 		arg.setDescription("Parameter string in format 'key1=value1,key2=value2,key3=value3'. This gets passed to the implementation class to process.");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
+		
+		arg = new Arg();
+		arg.setName("output_type");
+		arg.setTitle("Output Type");
+		arg.setDescription("");
+		arg.setRequired_on_create(true);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("hec_port");
+		arg.setTitle("HEC Port");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("hec_token");
+		arg.setTitle("HEC Token");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("hec_poolsize");
+		arg.setTitle("HEC Pool Size");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("hec_https");
+		arg.setTitle("Use HTTPs");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+		
 
 		scheme.setEndpoint(endpoint);
 

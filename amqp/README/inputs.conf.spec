@@ -33,3 +33,16 @@ index_message_propertys = <value>
 #additional startup settings
 
 additional_jvm_propertys = <value>
+
+# data output
+
+# One of [stdout | hec ]. Defaults to stdout.
+output_type = <value>
+
+# For hec(HTTP Event Collector) output
+hec_port = <value>
+# Defaults to 1
+hec_poolsize = <value>
+hec_token = <value>
+# 1 | 0
+hec_https = <value>

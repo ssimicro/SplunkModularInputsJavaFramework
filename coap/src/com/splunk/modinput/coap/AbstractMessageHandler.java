@@ -5,12 +5,26 @@ import java.util.Map;
 
 
 import com.splunk.modinput.SplunkLogEvent;
-import com.splunk.modinput.Stream;
+
 import com.splunk.modinput.coap.COAPModularInput.MessageReceiver;
+import com.splunk.modinput.transport.Transport;
 
 public abstract class AbstractMessageHandler {
 
-	public abstract Stream handleMessage(byte [] message,MessageReceiver context) throws Exception;
+	private Transport transport;
+
+    public void setTransport(Transport transport){
+		
+		this.transport = transport;
+	}
+	
+	public void transportMessage(String message){
+		
+		if(transport != null)
+		  this.transport.transport(message);
+	}
+	
+	public abstract void handleMessage(byte [] message,MessageReceiver context) throws Exception;
 
 	public abstract void setParams(Map<String, String> params);
 

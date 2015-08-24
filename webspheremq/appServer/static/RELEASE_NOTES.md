@@ -1,3 +1,7 @@
+0.7
+---
+Added support to optional output to Splunk via a HEC (HTTP Event Collector) endpoint
+
 0.6
 ----
 Enabled TLS1.2 support by default.

@@ -1,3 +1,8 @@
+0.9
+---
+Added support to optional output to Splunk via a HEC (HTTP Event Collector) endpoint
+
+
 0.8.1
 ---
 Added support for raw connection string format so that multiple zookeeper hosts

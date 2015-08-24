@@ -6,12 +6,26 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 
 import com.splunk.modinput.SplunkLogEvent;
-import com.splunk.modinput.Stream;
+
 import com.splunk.modinput.mqtt.MQTTModularInput.MessageReceiver;
+import com.splunk.modinput.transport.Transport;
 
 public abstract class AbstractMessageHandler {
 
-	public abstract Stream handleMessage(String topic,MqttMessage message,MessageReceiver context) throws Exception;
+	private Transport transport;
+
+    public void setTransport(Transport transport){
+		
+		this.transport = transport;
+	}
+	
+	public void transportMessage(String message){
+		
+		if(transport != null)
+		  this.transport.transport(message);
+	}
+	
+	public abstract void handleMessage(String topic,MqttMessage message,MessageReceiver context) throws Exception;
 
 	public abstract void setParams(Map<String, String> params);
 

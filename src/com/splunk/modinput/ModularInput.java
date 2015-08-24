@@ -22,7 +22,8 @@ import com.splunk.Args;
 import com.splunk.InputCollection;
 import com.splunk.InputKind;
 import com.splunk.Service;
-
+import com.splunk.modinput.transport.HECTransportConfig;
+import com.splunk.modinput.transport.Transport;
 
 public abstract class ModularInput {
 
@@ -31,7 +32,83 @@ public abstract class ModularInput {
 	protected static Map<String, Boolean> inputStates = new HashMap<String, Boolean>();
 
 	protected boolean connectedToSplunk = false;
+	
+	
 
+	private static Map<String, String> transports = new HashMap<String, String>();
+	static {
+
+		transports.put("stdout",
+				"com.splunk.modinput.transport.STDOUTTransport");
+		transports.put("hec", "com.splunk.modinput.transport.HECTransport");
+
+	}
+	
+	protected Transport getTransportInstance(List<Param> params,String stanzaName) {
+		Transport instance = null;
+		String key = "stdout"; // default
+		HECTransportConfig hec = new HECTransportConfig();
+
+		for (Param param : params) {
+			String value = param.getValue();
+			if (value == null) {
+				continue;
+			}
+
+			if (param.getName().equals("output_type")) {
+				key = param.getValue();
+			} else if (param.getName().equals("hec_port")) {
+				try {
+					hec.setPort(Integer.parseInt(param.getValue()));
+				} catch (NumberFormatException e) {
+					logger.error("Can't determine hec port value, will revert to default value.");
+				}
+			}
+
+			else if (param.getName().equals("hec_poolsize")) {
+				try {
+					hec.setPoolsize(Integer.parseInt(param.getValue()));
+				} catch (NumberFormatException e) {
+					logger.error("Can't determine hec poolsize value, will revert to default value.");
+				}
+
+			} else if (param.getName().equals("hec_token")) {
+				hec.setToken(param.getValue());
+
+			} else if (param.getName().equals("hec_https")) {
+				try {
+					hec.setHttps(Boolean.parseBoolean(param.getValue().equals(
+							"1") ? "true" : "false"));
+				} catch (Exception e) {
+					logger.error("Can't determine hec https value, will revert to default value.");
+				}
+
+			} else if (param.getName().equals("source")) {
+				hec.setSource(param.getValue());
+
+			} else if (param.getName().equals("sourcetype")) {
+				hec.setSourcetype(param.getValue());
+
+			} else if (param.getName().equals("index")) {
+				hec.setIndex(param.getValue());
+
+			}
+		}
+		try {
+			instance = (Transport) Class.forName(transports.get(key))
+					.newInstance();
+			instance.setStanzaName(stanzaName);
+			if (key.equalsIgnoreCase("hec"))
+				instance.init(hec);
+
+		} catch (Exception e) {
+			logger.error("Error instantiating transport : " + e.getMessage());
+		}
+		return instance;
+
+	}
+
+	
 	public static void marshallObjectToXML(Object obj) {
 		try {
 			JAXBContext context = JAXBContext.newInstance(obj.getClass());
@@ -42,15 +119,15 @@ public abstract class ModularInput {
 			StringWriter sw = new StringWriter();
 			marshaller.marshal(obj, sw);
 			String xml = sw.toString();
-			logger.info("Data sent to Splunk:"+xml);
-			logger.info("Size of data sent to Splunk:"+xml.length());
+			logger.info("Data sent to Splunk:" + xml);
+			logger.info("Size of data sent to Splunk:" + xml.length());
 			System.out.println(xml.trim());
 
 		} catch (Exception e) {
 			logger.error("Error writing XML : " + e.getMessage());
 		}
 	}
-	
+
 	public static String marshallObjectToXMLString(Object obj) {
 		String xml = "";
 		try {
@@ -62,7 +139,6 @@ public abstract class ModularInput {
 			StringWriter sw = new StringWriter();
 			marshaller.marshal(obj, sw);
 			xml = sw.toString();
-			
 
 		} catch (Exception e) {
 			logger.error("Error getting XML String : " + e.getMessage());
@@ -70,6 +146,7 @@ public abstract class ModularInput {
 		return xml.trim();
 	}
 
+	
 	protected static Object unmarshallXMLToObject(Class clazz, String xml) {
 		try {
 			JAXBContext context = JAXBContext.newInstance(clazz);
@@ -121,7 +198,8 @@ public abstract class ModularInput {
 
 	protected void init(String[] args) {
 
-		String loggingLevel = System.getProperty("splunk.logging.level", "ERROR");
+		String loggingLevel = System.getProperty("splunk.logging.level",
+				"ERROR");
 		logger.setLevel(Level.toLevel(loggingLevel));
 		logger.info("Initialising Modular Input");
 		try {
@@ -157,7 +235,7 @@ public abstract class ModularInput {
 	}
 
 	protected void createTCPInput(Input input, int tcpPort, String index,
-			String sourcetype,String source) {
+			String sourcetype, String source) {
 
 		String host = input.getServer_host();
 		String uri = input.getServer_uri();
@@ -172,7 +250,7 @@ public abstract class ModularInput {
 		Service service = new Service("localhost", port);
 		service.setToken("Splunk " + token);
 		service.version = service.getInfo().getVersion();
-		
+
 		InputCollection inputs = service.getInputs();
 
 		if (!inputs.containsKey(String.valueOf(tcpPort))) {
@@ -180,10 +258,34 @@ public abstract class ModularInput {
 			args.add("index", index);
 			args.add("sourcetype", sourcetype);
 			args.add("source", sourcetype);
-			
-			service.getInputs().create(
-					String.valueOf(tcpPort), InputKind.Tcp, args);
+
+			service.getInputs().create(String.valueOf(tcpPort), InputKind.Tcp,
+					args);
 		}
+	}
+
+	protected String createHECInput(Input input, int hecPort, String index,
+			String sourcetype, String source, boolean https) {
+
+		String host = input.getServer_host();
+		String uri = input.getServer_uri();
+		int port = 8089;
+		String token = input.getSession_key();
+		try {
+			int portOffset = uri.indexOf(":", 8);
+			port = Integer.parseInt(uri.substring(portOffset + 1));
+		} catch (Exception e) {
+
+		}
+		Service service = new Service("localhost", port);
+		service.setToken("Splunk " + token);
+		service.version = service.getInfo().getVersion();
+
+		// TODO
+		// if hec input does not exist , create it.
+		// if hec input does exist , get the token
+		String hecToken = "";
+		return hecToken;
 	}
 
 	// polls splunkd via REST API to check whether input is enabled/disabled
@@ -218,7 +320,7 @@ public abstract class ModularInput {
 		}
 		Service service = new Service("localhost", port);
 		service.setToken("Splunk " + token);
-		
+
 		service.version = service.getInfo().getVersion();
 
 		StateCheckerThread checker = new StateCheckerThread(service);
@@ -226,7 +328,6 @@ public abstract class ModularInput {
 
 	}
 
-	
 	class StateCheckerThread extends Thread {
 
 		Service service;
@@ -235,8 +336,6 @@ public abstract class ModularInput {
 			this.service = service;
 		}
 
-		
-		
 		public void run() {
 
 			logger.info("Running state checker");

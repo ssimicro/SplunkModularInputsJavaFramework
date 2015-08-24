@@ -61,6 +61,10 @@ public class ProtocolModularInput extends ModularInput {
 		outputVerticles
 				.put("tcp",
 						"com.splunk.modinput.protocol.outputverticle.TCPOutputVerticle");
+		outputVerticles
+				.put("hec",
+						"com.splunk.modinput.protocol.outputverticle.HECOutputVerticle");
+
 	}
 
 	public static void main(String[] args) {
@@ -119,13 +123,54 @@ public class ProtocolModularInput extends ModularInput {
 					handlerConfig.putString("output_type", outputType);
 					handlerConfig.putString("output_address", outputAddress);
 
+					String index = "main";
+					String source = "pdi";
+					String sourcetype = "pdi";
+
+					if (outputType.equalsIgnoreCase("hec")) {
+
+						int hecPort = 8088;
+						String hecToken = "";
+						boolean useHTTPs = false;
+						int hecPoolSize = 1;
+						if (config.containsField("hec_port"))
+							hecPort = config.getNumber("hec_port").intValue();
+						if (config.containsField("hec_poolsize"))
+							hecPoolSize = config.getNumber("hec_poolsize")
+									.intValue();
+						if (config.containsField("hec_token"))
+							hecToken = config.getString("hec_token");
+						if (config.containsField("hec_https"))
+							useHTTPs = Boolean
+									.parseBoolean(config.getString("hec_https")
+											.equals("1") ? "true" : "false");
+
+						if (config.containsField("index"))
+							index = config.getString("index");
+						if (config.containsField("source"))
+							source = config.getString("source");
+						if (config.containsField("sourcetype"))
+							sourcetype = config.getString("sourcetype");
+
+						// TODO when Java SDK supports
+						// hecToken = createHECInput(input, hecPort, index,
+						// sourcetype,source,useHTTPs);
+
+						handlerConfig.putString("index", index);
+						handlerConfig.putString("source", source);
+						handlerConfig.putString("sourcetype", sourcetype);
+
+						handlerConfig.putNumber("hec_port", hecPort);
+						handlerConfig.putNumber("hec_poolsize", hecPoolSize);
+						handlerConfig.putString("hec_token", hecToken);
+						handlerConfig.putBoolean("hec_https", useHTTPs);
+
+					}
+
 					if (outputType.equalsIgnoreCase("tcp")) {
 
 						// defaults
 						int outputPort = 9999;
-						String index = "main";
-						String source = "pdi";
-						String sourcetype = "pdi";
 
 						if (config.containsField("output_port"))
 							outputPort = config.getNumber("output_port")
@@ -396,6 +441,34 @@ public class ProtocolModularInput extends ModularInput {
 		arg = new Arg();
 		arg.setName("output_port");
 		arg.setTitle("Output Port");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("hec_port");
+		arg.setTitle("HEC Port");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("hec_token");
+		arg.setTitle("HEC Token");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("hec_poolsize");
+		arg.setTitle("HEC Pool Size");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("hec_https");
+		arg.setTitle("Use HTTPs");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);

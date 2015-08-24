@@ -36,6 +36,7 @@ import com.splunk.modinput.StreamEvent;
 import com.splunk.modinput.Validation;
 import com.splunk.modinput.ValidationError;
 import com.splunk.modinput.Scheme.StreamingMode;
+import com.splunk.modinput.transport.Transport;
 
 public class JMSModularInput extends ModularInput {
 
@@ -133,6 +134,8 @@ public class JMSModularInput extends ModularInput {
 		String messageHandlerImpl = DEFAULT_MESSAGE_HANDLER;
 		String messageHandlerParams = "";
 
+		Transport transport = getTransportInstance(params,stanzaName);
+		
 		for (Param param : params) {
 			String value = param.getValue();
 			if (value == null) {
@@ -240,7 +243,7 @@ public class JMSModularInput extends ModularInput {
 					localResourceFactoryParams, messageHandlerImpl,
 					messageHandlerParams, userJNDIProperties, clientID,
 					destinationUser, destinationPass, stripNewlines,
-					browseQueueOnly, browseFrequency, browseMode);
+					browseQueueOnly, browseFrequency, browseMode,transport);
 			if (validationConnectionMode)
 				mr.testConnectOnly();
 			else
@@ -297,7 +300,7 @@ public class JMSModularInput extends ModularInput {
 				String clientID, String destinationUser,
 				String destinationPass, boolean stripNewlines,
 				boolean browseQueueOnly, int browseFrequency,
-				BrowseMode browseMode) {
+				BrowseMode browseMode,Transport transport) {
 
 			int instanceTokenIndex = destination.indexOf(':');
 			if (instanceTokenIndex > -1) {
@@ -354,6 +357,7 @@ public class JMSModularInput extends ModularInput {
 				messageHandler = (AbstractMessageHandler) Class.forName(
 						messageHandlerImpl).newInstance();
 				messageHandler.setParams(getParamMap(messageHandlerParams));
+				messageHandler.setTransport(transport);
 				logger.info("messageHandler:"+messageHandlerImpl);
 			} catch (Exception e) {
 				logger.error("Stanza "+stanzaName+" : "+"Can't instantiate message handler : "
@@ -555,9 +559,8 @@ public class JMSModularInput extends ModularInput {
 			try {
 				
 				logger.info("Processing received message with handler");
-				Stream stream = messageHandler.handleMessage(message, this);
-				logger.info("Streaming message to Splunk for indexing");
-				marshallObjectToXML(stream);
+				messageHandler.handleMessage(message, this);
+				
 			} catch (Exception e) {
 				logger.error("Stanza "+stanzaName+" : "+"Error handling message : " + ModularInput.getStackTrace(e));
 			}
@@ -899,6 +902,41 @@ public class JMSModularInput extends ModularInput {
 		arg.setTitle("Browse frequency(secs)");
 		arg.setRequired_on_create(false);
 		arg.setDescription("If in queue browsing mode, specify the frequency at which to poll.Enter '-1' for constant browsing.");
+		endpoint.addArg(arg);
+		
+		arg = new Arg();
+		arg.setName("output_type");
+		arg.setTitle("Output Type");
+		arg.setDescription("");
+		arg.setRequired_on_create(true);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("hec_port");
+		arg.setTitle("HEC Port");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("hec_token");
+		arg.setTitle("HEC Token");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("hec_poolsize");
+		arg.setTitle("HEC Pool Size");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("hec_https");
+		arg.setTitle("Use HTTPs");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
 
 		scheme.setEndpoint(endpoint);

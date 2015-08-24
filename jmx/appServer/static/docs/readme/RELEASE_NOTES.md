@@ -1,3 +1,7 @@
+2.3
+---
+Added support to optional output to Splunk via a HEC (HTTP Event Collector) endpoint
+
 2.2.2
 -----
 Fixed docs link in nav menu

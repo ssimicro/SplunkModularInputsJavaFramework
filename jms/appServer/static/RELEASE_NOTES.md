@@ -1,3 +1,7 @@
+1.4
+---
+Added support to optional output to Splunk via a HEC (HTTP Event Collector) endpoint
+
 1.3.9
 -----
 Added more verbose INFO level logging

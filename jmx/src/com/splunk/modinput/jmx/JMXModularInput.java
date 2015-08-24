@@ -3,7 +3,7 @@ package com.splunk.modinput.jmx;
 import java.io.File;
 import java.io.FileReader;
 import java.net.URL;
-import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -51,19 +51,21 @@ import com.splunk.modinput.ModularInput;
 import com.splunk.modinput.Param;
 import com.splunk.modinput.Scheme;
 import com.splunk.modinput.SplunkLogEvent;
-import com.splunk.modinput.Stream;
-import com.splunk.modinput.StreamEvent;
+
 
 import com.splunk.modinput.Stanza;
 
 import com.splunk.modinput.Validation;
 import com.splunk.modinput.ValidationError;
 import com.splunk.modinput.Scheme.StreamingMode;
+import com.splunk.modinput.transport.Transport;
 
 import com.sun.tools.attach.VirtualMachine;
 
 public class JMXModularInput extends ModularInput {
 
+	
+	
 	public static void main(String[] args) {
 
 		JMXModularInput instance = new JMXModularInput();
@@ -71,18 +73,7 @@ public class JMXModularInput extends ModularInput {
 
 	}
 
-	private void streamEvent(String text, String stanzaName) {
 
-		Stream stream = new Stream();
-		StreamEvent event = new StreamEvent();
-		event.setData(text);
-		event.setStanza(stanzaName);
-		ArrayList<StreamEvent> list = new ArrayList<StreamEvent>();
-		list.add(event);
-		stream.setEvents(list);
-		marshallObjectToXML(stream);
-
-	}
 
 	@Override
 	protected void doRun(Input input) throws Exception {
@@ -97,7 +88,12 @@ public class JMXModularInput extends ModularInput {
 
 				if (name != null) {
 
+					
+					
 					List<Param> params = stanza.getParams();
+					
+					Transport transport = getTransportInstance(params,name);
+					
 					for (Param param : params) {
 						String value = param.getValue();
 						if (value == null || value.length() == 0) {
@@ -130,7 +126,7 @@ public class JMXModularInput extends ModularInput {
 						}
 
 					}
-					new JMXExecutionThread(configFile, frequency, name).start();
+					new JMXExecutionThread(configFile, frequency, name,transport).start();
 
 				}
 
@@ -152,17 +148,19 @@ public class JMXModularInput extends ModularInput {
 		String configFile;// default
 		int frequency; // default seconds
 		String stanzaName;
+		Transport transport;
 
-		JMXExecutionThread(String configFile, int frequency, String stanzaName) {
+		JMXExecutionThread(String configFile, int frequency, String stanzaName,Transport transport) {
 
 			this.configFile = configFile;
 			this.frequency = frequency;
 			this.stanzaName = stanzaName;
+			this.transport = transport;
 		}
 
 		public void run() {
 
-			JMXMBeanPoller poller = new JMXMBeanPoller(stanzaName, configFile);
+			JMXMBeanPoller poller = new JMXMBeanPoller(stanzaName, configFile,transport);
 			while (!isDisabled(stanzaName)) {
 
 				// reload the file if it has changed
@@ -291,6 +289,42 @@ public class JMXModularInput extends ModularInput {
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
 		
+		arg = new Arg();
+		arg.setName("output_type");
+		arg.setTitle("Output Type");
+		arg.setDescription("");
+		arg.setRequired_on_create(true);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("hec_port");
+		arg.setTitle("HEC Port");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("hec_token");
+		arg.setTitle("HEC Token");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("hec_poolsize");
+		arg.setTitle("HEC Pool Size");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("hec_https");
+		arg.setTitle("Use HTTPs");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+		
+		
 		scheme.setEndpoint(endpoint);
 
 		return scheme;
@@ -307,11 +341,13 @@ public class JMXModularInput extends ModularInput {
 		long configFileModifiedTime = 0;
 		//if config file uses pidfile or pidcommand
 		boolean hasDynamicPIDSettings = false;
+		Transport transport;
 
-		public JMXMBeanPoller(String stanzaName, String configFile) {
+		public JMXMBeanPoller(String stanzaName, String configFile,Transport transport) {
 
 			this.configFileName = configFile;
 			this.stanzaName = stanzaName;
+			this.transport = transport;
 		}
 
 		/**
@@ -386,7 +422,7 @@ public class JMXModularInput extends ModularInput {
 						for (JMXServer server : servers) {
 							new ProcessServerThread(server,
 									this.formatter.getFormatterInstance(),
-									this.registerNotifications, stanzaName)
+									this.registerNotifications, stanzaName,transport)
 									.start();
 						}
 						// we only want to register a notification listener on
@@ -463,6 +499,8 @@ public class JMXModularInput extends ModularInput {
 		private boolean registerNotificationListeners;
 
 		private String stanzaName;
+		
+		private Transport transport;
 
 		/**
 		 * Thread to run each JMX Server connection in
@@ -476,12 +514,13 @@ public class JMXModularInput extends ModularInput {
 		 */
 		public ProcessServerThread(JMXServer serverConfig,
 				com.dtdsoftware.splunk.formatter.Formatter formatter,
-				boolean registerNotificationListeners, String stanzaName) {
+				boolean registerNotificationListeners, String stanzaName,Transport transport) {
 
 			this.serverConfig = serverConfig;
 			this.formatter = formatter;
 			this.registerNotificationListeners = registerNotificationListeners;
 			this.stanzaName = stanzaName;
+			this.transport = transport;
 			// set up the formatter
 			Map<String, String> meta = new HashMap<String, String>();
 
@@ -551,7 +590,7 @@ public class JMXModularInput extends ModularInput {
 												.newInstance();
 									}
 									SplunkNotificationListener listener = new SplunkNotificationListener(
-											mBeanName, stanzaName);
+											mBeanName, stanzaName,transport);
 									serverConnection.addNotificationListener(
 											on, listener, filter, null);
 									notificationsRegistered = true;
@@ -691,7 +730,7 @@ public class JMXModularInput extends ModularInput {
 									.format(mBeanName, mBeanAttributes,
 											System.currentTimeMillis());
 
-							streamEvent(payload, stanzaName);
+							transport.transport(payload);
 						}
 
 					}
@@ -1034,10 +1073,12 @@ public class JMXModularInput extends ModularInput {
 
 		private String mBeanName;
 		private String stanzaName;
+		private Transport transport;
 
-		public SplunkNotificationListener(String mBeanName, String stanzaName) {
+		public SplunkNotificationListener(String mBeanName, String stanzaName,Transport transport) {
 			this.mBeanName = mBeanName;
 			this.stanzaName = stanzaName;
+			this.transport = transport;
 		}
 
 		@Override
@@ -1068,7 +1109,7 @@ public class JMXModularInput extends ModularInput {
 					event.addPair("source", notification.getSource().toString());
 					event.addPair("class", notification.getClass()
 							.getCanonicalName());
-					streamEvent(event.toString(), stanzaName);
+					transport.transport(event.toString());
 				}
 			} catch (Exception e) {
 				logger.error("Error executing JMX stanza " + stanzaName + " : "

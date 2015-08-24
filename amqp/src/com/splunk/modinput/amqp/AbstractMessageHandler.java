@@ -5,12 +5,26 @@ import java.util.Map;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Envelope;
 import com.splunk.modinput.SplunkLogEvent;
-import com.splunk.modinput.Stream;
+
 import com.splunk.modinput.amqp.AMQPModularInput.MessageReceiver;
+import com.splunk.modinput.transport.Transport;
 
 public abstract class AbstractMessageHandler {
 
-	public abstract Stream handleMessage(byte[] messageContents,
+	private Transport transport;
+
+    public void setTransport(Transport transport){
+		
+		this.transport = transport;
+	}
+	
+	public void transportMessage(String message){
+		
+		if(transport != null)
+		  this.transport.transport(message);
+	}
+	
+	public abstract void handleMessage(byte[] messageContents,
 			Envelope envelope, AMQP.BasicProperties messageProperties,
 			MessageReceiver context) throws Exception;
 

@@ -72,9 +72,10 @@
 						<key name="stdout">NONE</key>
 						<group_set>
 							<group name="tcp_output_settings" />
-							
+							<group name="hec_output_settings" />
 						</group_set>
 						<key name="tcp">tcp_output_settings</key>
+						<key name="hec">hec_output_settings</key>
 												
 					</onChange>
 					 <view name="list"/>
@@ -84,10 +85,47 @@
           <options>
               <opt value="stdout" label="STDOUT"/>
             <opt value="tcp" label="TCP"/> 
-                                      
+              <opt value="hec" label="HTTP Event Collector"/>                        
           </options>
 				</element>
-				  
+				
+<element name="hec_output_settings" type="fieldset">
+			<key name="legend">HTTP Event Collector Output</key>		
+					<view name="edit" />
+					<view name="create" />
+					<elements>
+					        
+    
+        <element name="hec_port" type="textfield" label="HTTP(s) Port">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">HTTP(s) Port that you have setup in Splunk</key>
+        </element>
+        <element name="hec_token" type="textfield" label="Authorisation Token">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Authorisation Token that you have setup in Splunk</key>
+        </element>
+        <element name="hec_poolsize" type="textfield" label="HTTP Client Pool Size">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">You can setup a pool of HTTP client connections.Defaults to 1</key>
+        </element>
+        <element name="hec_https" type="checkbox" label="Use HTTPs ?">
+          
+          <view name="edit"/>
+          <view name="create"/>
+          <key name="exampleText">Note : Plain HTTP performs better</key>
+        </element>
+        
+        
+        
+</elements>
+</element>
+			  
 <element name="tcp_output_settings" type="fieldset">
 			<key name="legend">TCP Output</key>		
 					<view name="edit" />

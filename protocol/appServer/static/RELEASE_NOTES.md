@@ -1,3 +1,7 @@
+1.0
+---
+Added support for output to be sent via the HTTP Event Collector
+
 0.7
 ----
 Enabled TLS1.2 support by default.

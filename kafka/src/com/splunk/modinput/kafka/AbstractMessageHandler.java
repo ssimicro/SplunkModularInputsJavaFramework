@@ -4,12 +4,26 @@ import java.util.Map;
 
 
 import com.splunk.modinput.SplunkLogEvent;
-import com.splunk.modinput.Stream;
+
 import com.splunk.modinput.kafka.KafkaModularInput.MessageReceiver;
+import com.splunk.modinput.transport.Transport;
 
 public abstract class AbstractMessageHandler {
+	
+	private Transport transport;
 
-	public abstract Stream handleMessage(byte[] messageContents,MessageReceiver context) throws Exception;
+    public void setTransport(Transport transport){
+		
+		this.transport = transport;
+	}
+	
+	public void transportMessage(String message){
+		
+		if(transport != null)
+		  this.transport.transport(message);
+	}
+
+	public abstract void handleMessage(byte[] messageContents,MessageReceiver context) throws Exception;
 
 	public abstract void setParams(Map<String, String> params);
 
