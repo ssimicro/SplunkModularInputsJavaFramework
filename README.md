@@ -4,7 +4,7 @@
 
 This is a framework for building <a href="http://docs.splunk.com/Documentation/Splunk/latest/AdvancedDev/ModInputsIntro">Splunk Modular Inputs</a> in Java
 
-It contains an example Modular Input for JMS that you can use as a practical reference to follow.
+It contains several example Modular Inputs that you can use as a practical reference to follow.
 
 
 ## Contact

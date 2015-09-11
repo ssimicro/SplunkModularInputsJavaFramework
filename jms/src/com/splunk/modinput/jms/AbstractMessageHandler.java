@@ -38,7 +38,7 @@ public abstract class AbstractMessageHandler {
 	protected SplunkLogEvent buildCommonEventMessagePart(Message message,MessageReceiver context) throws Exception{
 	
 		SplunkLogEvent event = new SplunkLogEvent(context.type + "_msg_received",
-				message.getJMSMessageID(), true, true);
+				message.getJMSMessageID(), true, false);
 
 		event.addPair("msg_dest", context.destination);
 

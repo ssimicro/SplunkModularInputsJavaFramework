@@ -133,6 +133,11 @@ public class ProtocolModularInput extends ModularInput {
 						String hecToken = "";
 						boolean useHTTPs = false;
 						int hecPoolSize = 1;
+						boolean hecBatchMode = false;
+						long hecMaxBatchSizeBytes = 1024 * 1024; // 1MB
+						long hecMaxBatchSizeEvents = 100; // 100 events
+						long hecMaxInactiveTimeBeforeBatchFlush = 5000;// 5 secs
+
 						if (config.containsField("hec_port"))
 							hecPort = config.getNumber("hec_port").intValue();
 						if (config.containsField("hec_poolsize"))
@@ -141,9 +146,9 @@ public class ProtocolModularInput extends ModularInput {
 						if (config.containsField("hec_token"))
 							hecToken = config.getString("hec_token");
 						if (config.containsField("hec_https"))
-							useHTTPs = Boolean
-									.parseBoolean(config.getString("hec_https")
-											.equals("1") ? "true" : "false");
+							useHTTPs = Boolean.parseBoolean(config.getNumber(
+									"hec_https").intValue() == 1 ? "true"
+									: "false");
 
 						if (config.containsField("index"))
 							index = config.getString("index");
@@ -151,6 +156,24 @@ public class ProtocolModularInput extends ModularInput {
 							source = config.getString("source");
 						if (config.containsField("sourcetype"))
 							sourcetype = config.getString("sourcetype");
+
+						if (config.containsField("hec_batch_mode"))
+							hecBatchMode = Boolean
+									.parseBoolean(config.getNumber(
+											"hec_batch_mode").intValue() == 1 ? "true"
+											: "false");
+						if (config.containsField("hec_max_batch_size_bytes"))
+							hecMaxBatchSizeBytes = config.getNumber(
+									"hec_max_batch_size_bytes").longValue();
+						if (config.containsField("hec_max_batch_size_events"))
+							hecMaxBatchSizeEvents = config.getNumber(
+									"hec_max_batch_size_events").longValue();
+						if (config
+								.containsField("hec_max_inactive_time_before_batch_flush"))
+							hecMaxInactiveTimeBeforeBatchFlush = config
+									.getNumber(
+											"hec_max_inactive_time_before_batch_flush")
+									.longValue();
 
 						// TODO when Java SDK supports
 						// hecToken = createHECInput(input, hecPort, index,
@@ -164,6 +187,16 @@ public class ProtocolModularInput extends ModularInput {
 						handlerConfig.putNumber("hec_poolsize", hecPoolSize);
 						handlerConfig.putString("hec_token", hecToken);
 						handlerConfig.putBoolean("hec_https", useHTTPs);
+
+						handlerConfig
+								.putBoolean("hec_batch_mode", hecBatchMode);
+						handlerConfig.putNumber("hec_max_batch_size_bytes",
+								hecMaxBatchSizeBytes);
+						handlerConfig.putNumber("hec_max_batch_size_events",
+								hecMaxBatchSizeEvents);
+						handlerConfig.putNumber(
+								"hec_max_inactive_time_before_batch_flush",
+								hecMaxInactiveTimeBeforeBatchFlush);
 
 					}
 
@@ -469,6 +502,34 @@ public class ProtocolModularInput extends ModularInput {
 		arg = new Arg();
 		arg.setName("hec_https");
 		arg.setTitle("Use HTTPs");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("hec_batch_mode");
+		arg.setTitle("Use batch mode");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("hec_max_batch_size_bytes");
+		arg.setTitle("Max batch size in bytes");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("hec_max_batch_size_events");
+		arg.setTitle("Max batch size in events");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+
+		arg = new Arg();
+		arg.setName("hec_max_inactive_time_before_batch_flush");
+		arg.setTitle("Max inactive time before batch flush");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);

@@ -31,7 +31,7 @@ public abstract class AbstractMessageHandler {
 			throws Exception {
 
 		SplunkLogEvent event = new SplunkLogEvent("kafka_msg_received",
-				 "", true, true);
+				 "", true, false);
 
 		
 		return event;

@@ -49,7 +49,7 @@ public class TokenizedMBeanNameQuotesStrippedFormatter extends SplunkFormatter
 
 		for (String key : mBeanNameKeys) {
 
-			output.append(buildPair(key, mbeanNameParts.get(key)));
+			output.append(buildPair(key, mbeanNameParts.get(key),false));
 		}
 
 		// add mbean attributes
@@ -59,7 +59,7 @@ public class TokenizedMBeanNameQuotesStrippedFormatter extends SplunkFormatter
 			String value = attributes.get(key);
 			value = FormatterUtils.stripNewlines(value);
 			value= stripPatterns(value);
-			output.append(buildPair(key, value));
+			output.append(buildPair(key, value,false));
 		}
 
 		String result = output.toString();

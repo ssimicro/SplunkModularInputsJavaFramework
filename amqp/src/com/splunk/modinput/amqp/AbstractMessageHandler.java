@@ -36,7 +36,7 @@ public abstract class AbstractMessageHandler {
 
 		SplunkLogEvent event = new SplunkLogEvent("amqp_msg_received",
 				messageProperties != null ? messageProperties.getMessageId()
-						: "", true, true);
+						: "", true, false);
 
 		event.addPair("msg_queue", context.queueName);
 		event.addPair("msg_exchange", context.exchangeName);

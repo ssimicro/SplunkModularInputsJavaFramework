@@ -32,7 +32,7 @@ public abstract class AbstractMessageHandler {
 			throws Exception {
 
 		SplunkLogEvent event = new SplunkLogEvent("coap_msg_received",
-				 "", true, true);
+				 "", true, false);
 
 		
 		return event;

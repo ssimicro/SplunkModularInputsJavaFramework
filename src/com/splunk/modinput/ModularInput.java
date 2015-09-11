@@ -32,8 +32,6 @@ public abstract class ModularInput {
 	protected static Map<String, Boolean> inputStates = new HashMap<String, Boolean>();
 
 	protected boolean connectedToSplunk = false;
-	
-	
 
 	private static Map<String, String> transports = new HashMap<String, String>();
 	static {
@@ -43,8 +41,9 @@ public abstract class ModularInput {
 		transports.put("hec", "com.splunk.modinput.transport.HECTransport");
 
 	}
-	
-	protected Transport getTransportInstance(List<Param> params,String stanzaName) {
+
+	protected Transport getTransportInstance(List<Param> params,
+			String stanzaName) {
 		Transport instance = null;
 		String key = "stdout"; // default
 		HECTransportConfig hec = new HECTransportConfig();
@@ -92,6 +91,36 @@ public abstract class ModularInput {
 			} else if (param.getName().equals("index")) {
 				hec.setIndex(param.getValue());
 
+			} else if (param.getName().equals("hec_batch_mode")) {
+				try {
+					hec.setBatchMode(Boolean.parseBoolean(param.getValue()
+							.equals("1") ? "true" : "false"));
+				} catch (Exception e) {
+					logger.error("Can't determine batch_mode value, will revert to default value.");
+				}
+
+			} else if (param.getName().equals("hec_max_batch_size_bytes")) {
+				try {
+					hec.setMaxBatchSizeBytes(Long.parseLong(param.getValue()));
+				} catch (NumberFormatException e) {
+					logger.error("Can't determine max_batch_size_bytes value, will revert to default value.");
+				}
+
+			} else if (param.getName().equals("hec_max_batch_size_events")) {
+				try {
+					hec.setMaxBatchSizeEvents(Long.parseLong(param.getValue()));
+				} catch (NumberFormatException e) {
+					logger.error("Can't determine max_batch_size_events value, will revert to default value.");
+				}
+
+			} else if (param.getName().equals(
+					"hec_max_inactive_time_before_batch_flush")) {
+				try {
+					hec.setMaxInactiveTimeBeforeBatchFlush(Long.parseLong(param
+							.getValue()));
+				} catch (NumberFormatException e) {
+					logger.error("Can't determine max_inactive_time_before_batch_flush value, will revert to default value.");
+				}
 			}
 		}
 		try {
@@ -108,7 +137,6 @@ public abstract class ModularInput {
 
 	}
 
-	
 	public static void marshallObjectToXML(Object obj) {
 		try {
 			JAXBContext context = JAXBContext.newInstance(obj.getClass());
@@ -146,7 +174,6 @@ public abstract class ModularInput {
 		return xml.trim();
 	}
 
-	
 	protected static Object unmarshallXMLToObject(Class clazz, String xml) {
 		try {
 			JAXBContext context = JAXBContext.newInstance(clazz);

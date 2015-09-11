@@ -34,3 +34,11 @@ hec_poolsize = <value>
 hec_token = <value>
 # 1 | 0
 hec_https = <value>
+# 1 | 0
+hec_batch_mode = <value>
+# numeric value
+hec_max_batch_size_bytes = <value>
+# numeric value
+hec_max_batch_size_events = <value>
+#in milliseconds
+hec_max_inactive_time_before_batch_flush = <value>

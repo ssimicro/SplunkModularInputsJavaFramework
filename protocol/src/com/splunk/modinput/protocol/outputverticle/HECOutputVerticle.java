@@ -1,5 +1,14 @@
 package com.splunk.modinput.protocol.outputverticle;
 
+import java.security.cert.X509Certificate;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 import org.apache.log4j.Logger;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.buffer.Buffer;
@@ -22,6 +31,15 @@ public class HECOutputVerticle extends Verticle {
 	String index;
 	String source;
 	String sourcetype;
+	boolean hecBatchMode;
+	long hecMaxBatchSizeBytes;
+	long hecMaxBatchSizeEvents;
+	long hecMaxInactiveTimeBeforeBatchFlush;
+
+	// batch buffer
+	private List<String> batchBuffer;
+	private long currentBatchSizeBytes = 0;
+	private long lastEventReceivedTime;
 
 	public void start() {
 
@@ -30,11 +48,24 @@ public class HECOutputVerticle extends Verticle {
 
 		int port = config.getNumber("hec_port").intValue();
 		int poolsize = config.getNumber("hec_poolsize").intValue();
-		token = config.getString("hec_token");
-		index = config.getString("index");
-		source = config.getString("source");
-		sourcetype = config.getString("sourcetype");
+		this.token = config.getString("hec_token");
+		this.index = config.getString("index");
+		this.source = config.getString("source");
+		this.sourcetype = config.getString("sourcetype");
 		boolean useHTTPs = config.getBoolean("hec_https");
+
+		this.hecBatchMode = config.getBoolean("hec_batch_mode");
+		this.hecMaxBatchSizeBytes = config
+				.getNumber("hec_max_batch_size_bytes").longValue();
+		this.hecMaxBatchSizeEvents = config.getNumber(
+				"hec_max_batch_size_events").longValue();
+		this.hecMaxInactiveTimeBeforeBatchFlush = config.getNumber(
+				"hec_max_inactive_time_before_batch_flush").longValue();
+
+		this.batchBuffer = Collections
+				.synchronizedList(new LinkedList<String>());
+		this.lastEventReceivedTime = System.currentTimeMillis();
+
 		// Event Bus (so we can receive the data)
 		String eventBusAddress = config.getString("output_address");
 		EventBus eb = vertx.eventBus();
@@ -42,6 +73,8 @@ public class HECOutputVerticle extends Verticle {
 		client = vertx.createHttpClient().setPort(port).setHost("localhost")
 				.setMaxPoolSize(poolsize);
 		if (useHTTPs) {
+			client.setSSLContext(getSSLContext());
+			client.setVerifyHost(false);
 			client.setSSL(true);
 			client.setTrustAll(true);
 		}
@@ -60,28 +93,33 @@ public class HECOutputVerticle extends Verticle {
 									.endsWith("\"")))
 						messageContent = wrapMessageInQuotes(messageContent);
 
-					JsonObject obj = new JsonObject();
-					obj.putString("event", messageContent);
-					obj.putString("index", index);
-					obj.putString("source", source);
-					obj.putString("sourcetype", sourcetype);
+					StringBuffer json = new StringBuffer();
+					json.append("{\"").append("event\":")
+							.append(messageContent).append(",\"");
 
-					Buffer buff = new Buffer();
-					buff.appendString(obj.toString());
+					if (!index.equalsIgnoreCase("default"))
+						json.append("index\":\"").append(index).append("\",\"");
 
-					HttpClientRequest request = client.post(
-							"/services/collector",
-							new Handler<HttpClientResponse>() {
-								public void handle(HttpClientResponse resp) {
-									if (resp.statusCode() != 200)
-										logger.error("Got a response: "
-												+ resp.statusCode());
-								}
-							});
-					request.headers().set("Authorization", "Splunk " + token);
+					json.append("source\":\"").append(source).append("\",\"")
+							.append("sourcetype\":\"").append(sourcetype)
+							.append("\"").append("}");
 
-					request.write(buff);
-					request.end();
+					String bodyContent = json.toString();
+
+					if (hecBatchMode) {
+						lastEventReceivedTime = System.currentTimeMillis();
+						currentBatchSizeBytes += bodyContent.length();
+						batchBuffer.add(bodyContent);
+						if (flushBuffer()) {
+							bodyContent = rollOutBatchBuffer();
+							batchBuffer.clear();
+							currentBatchSizeBytes = 0;
+							hecPost(bodyContent);
+						}
+					} else {
+						hecPost(bodyContent);
+					}
+
 				} catch (Exception e) {
 					logger.error("Error writing received data: "
 							+ ModularInput.getStackTrace(e));
@@ -90,8 +128,105 @@ public class HECOutputVerticle extends Verticle {
 			}
 		};
 
+		if (hecBatchMode) {
+			new BatchBufferActivityCheckerThread().start();
+		}
 		// start listening for data
 		eb.registerHandler(eventBusAddress, myHandler);
+
+	}
+
+	class BatchBufferActivityCheckerThread extends Thread {
+
+		BatchBufferActivityCheckerThread() {
+
+		}
+
+		public void run() {
+
+			while (true) {
+				String currentMessage = "";
+				try {
+					long currentTime = System.currentTimeMillis();
+					if ((currentTime - lastEventReceivedTime) >= hecMaxInactiveTimeBeforeBatchFlush) {
+						if (batchBuffer.size() > 0) {
+							currentMessage = rollOutBatchBuffer();
+							batchBuffer.clear();
+							currentBatchSizeBytes = 0;
+							hecPost(currentMessage);
+						}
+					}
+
+					Thread.sleep(1000);
+				} catch (Exception e) {
+				}
+
+			}
+		}
+	}
+
+	private void hecPost(String bodyContent) throws Exception {
+
+		Buffer buff = new Buffer();
+		buff.appendString(bodyContent);
+
+		HttpClientRequest request = client.post("/services/collector",
+				new Handler<HttpClientResponse>() {
+					public void handle(HttpClientResponse resp) {
+						if (resp.statusCode() != 200)
+							logger.error("Got a response: " + resp.statusCode());
+					}
+				});
+		request.headers().set("Authorization", "Splunk " + token);
+		request.headers().set("Content-Length",
+				String.valueOf(bodyContent.length()));
+		request.write(buff);
+
+		request.end();
+
+	}
+
+	private boolean flushBuffer() {
+
+		return (currentBatchSizeBytes >= hecMaxBatchSizeBytes)
+				|| (batchBuffer.size() >= hecMaxBatchSizeEvents);
+
+	}
+
+	private String rollOutBatchBuffer() {
+
+		StringBuffer sb = new StringBuffer();
+
+		for (String event : batchBuffer) {
+			sb.append(event);
+		}
+
+		return sb.toString();
+	}
+
+	private SSLContext getSSLContext() {
+		TrustManager[] trustAll = new TrustManager[] { new X509TrustManager() {
+			public X509Certificate[] getAcceptedIssuers() {
+				return null;
+			}
+
+			public void checkClientTrusted(X509Certificate[] certs,
+					String authType) {
+			}
+
+			public void checkServerTrusted(X509Certificate[] certs,
+					String authType) {
+			}
+		} };
+		SSLContext context = null;
+		try {
+			context = SSLContext.getInstance("TLSv1.2");
+			context.init(null, trustAll, new java.security.SecureRandom());
+			return context;
+		} catch (Exception e) {
+			logger.error("Error setting up SSL context: " + e, e);
+		}
+		return context;
 
 	}
 

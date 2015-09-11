@@ -523,6 +523,34 @@ public class COAPModularInput extends ModularInput {
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
 		
+		arg = new Arg();
+		arg.setName("hec_batch_mode");
+		arg.setTitle("Use batch mode");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+		
+		arg = new Arg();
+		arg.setName("hec_max_batch_size_bytes");
+		arg.setTitle("Max batch size in bytes");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+		
+		arg = new Arg();
+		arg.setName("hec_max_batch_size_events");
+		arg.setTitle("Max batch size in events");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+		
+		arg = new Arg();
+		arg.setName("hec_max_inactive_time_before_batch_flush");
+		arg.setTitle("Max inactive time before batch flush");
+		arg.setDescription("");
+		arg.setRequired_on_create(false);
+		endpoint.addArg(arg);
+		
 		scheme.setEndpoint(endpoint);
 
 		return scheme;

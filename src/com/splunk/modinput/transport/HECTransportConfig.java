@@ -8,25 +8,21 @@ public class HECTransportConfig {
 	private boolean https = false;
 	private int poolsize = 1;
 	
-	private String index;
+	private String index = "main";
 	private String source = "modular_input_hec";
-	private String sourcetype;
+	private String sourcetype = "modular_input_hec";
+	
+	// data size multipliers
+	private static final int KB = 1024;
+	private static final int MB = KB * 1024;
+	private static final int GB = MB * 1024;
+
+	private boolean batchMode = false;
+	private long maxBatchSizeBytes = 1 * MB; // 1MB
+	private long maxBatchSizeEvents = 100; // 100 events
+	private long maxInactiveTimeBeforeBatchFlush = 5000;// 5 secs
 	
 	public HECTransportConfig(){}
-
-	
-	public HECTransportConfig(String token, String host, int port,boolean https,int poolsize,String index, String source,
-			String sourcetype) {
-		super();
-		this.token = token;
-		this.host = host;
-		this.port = port;
-		this.https=https;
-		this.poolsize=poolsize;
-		this.index = index;
-		this.source = source;
-		this.sourcetype = sourcetype;
-	}
 
 
 	public String getToken() {
@@ -97,7 +93,70 @@ public class HECTransportConfig {
 		this.sourcetype = sourcetype;
 	}
 
-	
+	public boolean isBatchMode() {
+		return batchMode;
+	}
+
+	public void setBatchMode(boolean batchMode) {
+		this.batchMode = batchMode;
+	}
+
+	public long getMaxBatchSizeBytes() {
+		return maxBatchSizeBytes;
+	}
+
+	public void setMaxBatchSizeBytes(long maxBatchSizeBytes) {
+		this.maxBatchSizeBytes = maxBatchSizeBytes;
+	}
+
+	/**
+	 * Set the bacth size from the configured property String value. If parsing
+	 * fails , the default of 500KB will be used.
+	 * 
+	 * @param rawProperty
+	 *            in format [<integer>|<integer>[KB|MB|GB]]
+	 */
+	public void setMaxBatchSizeBytes(String rawProperty) {
+
+		int multiplier;
+		int factor;
+
+		if (rawProperty.endsWith("KB")) {
+			multiplier = KB;
+		} else if (rawProperty.endsWith("MB")) {
+			multiplier = MB;
+		} else if (rawProperty.endsWith("GB")) {
+			multiplier = GB;
+		} else {
+			return;
+		}
+		try {
+			factor = Integer.parseInt(rawProperty.substring(0,
+					rawProperty.length() - 2));
+		} catch (NumberFormatException e) {
+			return;
+		}
+		setMaxBatchSizeBytes(factor * multiplier);
+
+	}
+
+	public long getMaxBatchSizeEvents() {
+		return maxBatchSizeEvents;
+	}
+
+	public void setMaxBatchSizeEvents(long maxBatchSizeEvents) {
+		this.maxBatchSizeEvents = maxBatchSizeEvents;
+	}
+
+	public long getMaxInactiveTimeBeforeBatchFlush() {
+		return maxInactiveTimeBeforeBatchFlush;
+	}
+
+	public void setMaxInactiveTimeBeforeBatchFlush(
+			long maxInactiveTimeBeforeBatchFlush) {
+		this.maxInactiveTimeBeforeBatchFlush = maxInactiveTimeBeforeBatchFlush;
+	}
+
 	
 	
 	
