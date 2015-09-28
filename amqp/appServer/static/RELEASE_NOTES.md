@@ -1,3 +1,8 @@
+0.9
+---
+
+Adjusted pre fetch logic
+
 0.8
 ---
 Added support to optional output to Splunk via a HEC (HTTP Event Collector) endpoint

@@ -336,9 +336,9 @@ public class AMQPModularInput extends ModularInput {
 							routingKeyPattern);
 
 					QueueingConsumer consumer = new QueueingConsumer(channel);
-					channel.basicConsume(queueName, consumer);
 					channel.basicQos(basicQos);
-
+					channel.basicConsume(queueName,consumer);
+					
 					while (true) {
 						QueueingConsumer.Delivery delivery = consumer
 								.nextDelivery();
