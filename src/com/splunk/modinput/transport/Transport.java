@@ -7,5 +7,7 @@ public interface Transport {
 	public void setStanzaName(String name);
 	
 	public void transport(String message);
+	
+	public void transport(String message,String time);
 
 }

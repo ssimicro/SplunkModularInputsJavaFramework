@@ -17,10 +17,10 @@ public abstract class AbstractMessageHandler {
 		this.transport = transport;
 	}
 	
-	public void transportMessage(String message){
+	public void transportMessage(String message,String time){
 		
 		if(transport != null)
-		  this.transport.transport(message);
+		  this.transport.transport(message,time);
 	}
 
 	public abstract void handleMessage(byte[] messageContents,MessageReceiver context) throws Exception;

@@ -156,9 +156,7 @@ public class HECTransport implements Transport {
 
 	}
 
-	@Override
-	public void transport(String message) {
-
+	private void createAndSendHECEvent(String message, String time) {
 		String currentMessage = "";
 		try {
 
@@ -176,8 +174,13 @@ public class HECTransport implements Transport {
 						.append("\",\"");
 
 			json.append("source\":\"").append(config.getSource())
-					.append("\",\"").append("sourcetype\":\"")
-					.append(config.getSourcetype()).append("\"").append("}");
+					.append("\",\"");
+
+			if (time != null && time.length() > 0)
+				json.append("time\":\"").append(time).append("\",\"");
+
+			json.append("sourcetype\":\"").append(config.getSourcetype())
+					.append("\"").append("}");
 
 			currentMessage = json.toString();
 
@@ -199,6 +202,19 @@ public class HECTransport implements Transport {
 			logger.error("Error writing received data via HEC: "
 					+ ModularInput.getStackTrace(e));
 		}
+
+	}
+
+	@Override
+	public void transport(String message, String time) {
+
+		createAndSendHECEvent(message, time);
+	}
+
+	@Override
+	public void transport(String message) {
+
+		createAndSendHECEvent(message, "");
 	}
 
 	private boolean flushBuffer() {
@@ -230,8 +246,11 @@ public class HECTransport implements Transport {
 		post.setEntity(requestEntity);
 		Future<HttpResponse> future = httpClient.execute(post, null);
 		HttpResponse response = future.get();
-		// System.out.println(response.getStatusLine());
-		// System.out.println(EntityUtils.toString(response.getEntity()));
+		int code = response.getStatusLine().getStatusCode();
+		if (code != 200) {
+			logger.error("Error sending HEC event , "
+					+ response.getStatusLine() + " , " + response.getEntity());
+		}
 
 	}
 

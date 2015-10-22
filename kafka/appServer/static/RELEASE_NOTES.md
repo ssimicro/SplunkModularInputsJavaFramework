@@ -1,3 +1,9 @@
+0.9.1
+-----
+Better logging around HEC success/failure
+Can now add custom timestamp into HEC payload
+New custom handler (JSONBodyWithTimeExtraction) for pulling out timestamp from JSON messages from Kafka and adding this into HEC payload
+
 0.9
 ---
 Added support to optional output to Splunk via a HEC (HTTP Event Collector) endpoint
