@@ -16,7 +16,7 @@ public class BodyOnlyMessageHandler extends AbstractMessageHandler {
 			throws Exception {
 
 		String text = getMessageBody(messageContents,charset);
-		transportMessage(text,"");
+		transportMessage(text,"","");
 		
 	}
 

@@ -156,7 +156,7 @@ public class HECTransport implements Transport {
 
 	}
 
-	private void createAndSendHECEvent(String message, String time) {
+	private void createAndSendHECEvent(String message, String time,String host) {
 		String currentMessage = "";
 		try {
 
@@ -178,6 +178,9 @@ public class HECTransport implements Transport {
 
 			if (time != null && time.length() > 0)
 				json.append("time\":\"").append(time).append("\",\"");
+			
+			if (host != null && host.length() > 0)
+				json.append("host\":\"").append(host).append("\",\"");
 
 			json.append("sourcetype\":\"").append(config.getSourcetype())
 					.append("\"").append("}");
@@ -206,15 +209,15 @@ public class HECTransport implements Transport {
 	}
 
 	@Override
-	public void transport(String message, String time) {
+	public void transport(String message, String time,String host) {
 
-		createAndSendHECEvent(message, time);
+		createAndSendHECEvent(message, time,host);
 	}
 
 	@Override
 	public void transport(String message) {
 
-		createAndSendHECEvent(message, "");
+		createAndSendHECEvent(message, "","");
 	}
 
 	private boolean flushBuffer() {

@@ -8,10 +8,11 @@ import org.json.JSONObject;
 
 import com.splunk.modinput.kafka.KafkaModularInput.MessageReceiver;
 
-public class JSONBodyWithTimeExtraction extends AbstractMessageHandler {
+public class JSONBodyWithTimeAndHostExtraction extends AbstractMessageHandler {
 
 	String charset = Charset.defaultCharset().name();
 	String timefield = "";
+	String hostfield = "";
 
 	@Override
 	public void handleMessage(byte[] messageContents, MessageReceiver context)
@@ -21,12 +22,18 @@ public class JSONBodyWithTimeExtraction extends AbstractMessageHandler {
 
 		JSONObject json = new JSONObject(text);
 
+		String time = "";
+		String host = "";
+		
 		if (timefield.length() > 0) {
-			String time = json.getString(timefield);
-			transportMessage(text, time,"");
-		} else {
-			transportMessage(text, "","");
+			time = json.getString(timefield);
+
 		}
+		if (hostfield.length() > 0) {
+			host = json.getString(hostfield);
+
+		}
+		transportMessage(text, time, host);
 
 	}
 
@@ -37,6 +44,8 @@ public class JSONBodyWithTimeExtraction extends AbstractMessageHandler {
 			this.charset = params.get("charset");
 		if (params.containsKey("timefield"))
 			this.timefield = params.get("timefield");
+		if (params.containsKey("hostfield"))
+			this.hostfield = params.get("hostfield");
 
 	}
 

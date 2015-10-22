@@ -8,6 +8,6 @@ public interface Transport {
 	
 	public void transport(String message);
 	
-	public void transport(String message,String time);
+	public void transport(String message,String time,String host);
 
 }
