@@ -1,3 +1,7 @@
+0.9.2
+-----
+Better JSON handling for HEC output (hat tip to Tivo)
+
 0.9.1
 -----
 Better logging around HEC success/failure

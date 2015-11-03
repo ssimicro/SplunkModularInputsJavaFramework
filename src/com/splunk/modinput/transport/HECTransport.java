@@ -156,13 +156,34 @@ public class HECTransport implements Transport {
 
 	}
 
-	private void createAndSendHECEvent(String message, String time,String host) {
+	/**
+	 * from Tivo
+	 * 
+	 * @param message
+	 * @return
+	 */
+	private String escapeMessageIfNeeded(String message) {
+		String trimmedMessage = message.trim();
+		if (trimmedMessage.startsWith("{") && trimmedMessage.endsWith("}")) {
+			// this is *probably* JSON.
+			return trimmedMessage;
+		} else if (trimmedMessage.startsWith("\"")
+				&& trimmedMessage.endsWith("\"")
+				&& !message.substring(1, message.length() - 1).contains("\"")) {
+			// this appears to be a quoted string with no internal quotes
+			return trimmedMessage;
+		} else {
+			// don't know what this thing is, so need to escape all quotes, and
+			// then wrap the result in quotes
+			return "\"" + message.replace("\"", "\\\"") + "\"";
+		}
+	}
+
+	private void createAndSendHECEvent(String message, String time, String host) {
 		String currentMessage = "";
 		try {
 
-			if (!(message.startsWith("{") && message.endsWith("}"))
-					&& !(message.startsWith("\"") && message.endsWith("\"")))
-				message = wrapMessageInQuotes(message);
+			message = escapeMessageIfNeeded(message);
 
 			// could use a JSON Object , but the JSON is so trivial , just
 			// building it with a StringBuffer
@@ -178,7 +199,7 @@ public class HECTransport implements Transport {
 
 			if (time != null && time.length() > 0)
 				json.append("time\":\"").append(time).append("\",\"");
-			
+
 			if (host != null && host.length() > 0)
 				json.append("host\":\"").append(host).append("\",\"");
 
@@ -209,15 +230,15 @@ public class HECTransport implements Transport {
 	}
 
 	@Override
-	public void transport(String message, String time,String host) {
+	public void transport(String message, String time, String host) {
 
-		createAndSendHECEvent(message, time,host);
+		createAndSendHECEvent(message, time, host);
 	}
 
 	@Override
 	public void transport(String message) {
 
-		createAndSendHECEvent(message, "","");
+		createAndSendHECEvent(message, "", "");
 	}
 
 	private boolean flushBuffer() {
@@ -257,9 +278,5 @@ public class HECTransport implements Transport {
 
 	}
 
-	private String wrapMessageInQuotes(String message) {
-
-		return "\"" + message + "\"";
-	}
 
 }

@@ -21,12 +21,17 @@ public class JSONBodyWithTimeExtraction extends AbstractMessageHandler {
 
 		JSONObject json = new JSONObject(text);
 
+		String time = "";
+
+
 		if (timefield.length() > 0) {
-			String time = json.getString(timefield);
-			transportMessage(text, time,"");
+			time = json.getString(timefield);
+
 		} else {
-			transportMessage(text, "","");
+			time = String.valueOf(System.currentTimeMillis());
 		}
+		
+		transportMessage(text, time,"");
 
 	}
 
