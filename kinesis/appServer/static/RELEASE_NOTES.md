@@ -1,3 +1,13 @@
+0.9
+---
+Tweaked the HEC transport.
+
+Added a new custom handler that allows you to declare the fieldnames in the JSON that hold the time and host values of the event.
+
+message_handler_impl = com.splunk.modinput.kinesis.JSONBodyWithFieldExtraction
+message_handler_params = timefield=foo,hostfield=goo
+
+
 0.8
 ---
 Added support to optional output to Splunk via a HEC (HTTP Event Collector) endpoint

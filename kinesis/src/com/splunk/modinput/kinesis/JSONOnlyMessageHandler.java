@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
 import com.splunk.modinput.kinesis.KinesisModularInput.MessageReceiver;
 
 public class JSONOnlyMessageHandler extends AbstractMessageHandler {
@@ -15,7 +14,7 @@ public class JSONOnlyMessageHandler extends AbstractMessageHandler {
 
 		String text = stripNewlines(record);
 
-		transportMessage(text);
+		transportMessage(text, String.valueOf(System.currentTimeMillis()), "");
 
 	}
 

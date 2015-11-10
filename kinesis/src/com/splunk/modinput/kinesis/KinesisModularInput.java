@@ -105,8 +105,8 @@ public class KinesisModularInput extends ModularInput {
 		String messageHandlerImpl = DEFAULT_MESSAGE_HANDLER;
 		String messageHandlerParams = "";
 
-		Transport transport = getTransportInstance(params,stanzaName);
-		
+		Transport transport = getTransportInstance(params, stanzaName);
+
 		for (Param param : params) {
 			String value = param.getValue();
 			if (value == null) {
@@ -159,7 +159,7 @@ public class KinesisModularInput extends ModularInput {
 			MessageReceiver mr = new MessageReceiver(stanzaName, appName,
 					streamName, endpoint, streamPosition, awsKey, awsSecret,
 					backoffTime, numRetries, checkpointInterval,
-					messageHandlerImpl, messageHandlerParams,transport);
+					messageHandlerImpl, messageHandlerParams, transport);
 			if (validationConnectionMode)
 				mr.testConnectOnly();
 			else
@@ -188,7 +188,8 @@ public class KinesisModularInput extends ModularInput {
 				String streamName, String endpoint, String streamPosition,
 				String awsKey, String awsSecret, long backoffTime,
 				int numRetries, long checkpointInterval,
-				String messageHandlerImpl, String messageHandlerParams,Transport transport) {
+				String messageHandlerImpl, String messageHandlerParams,
+				Transport transport) {
 
 			this.stanzaName = stanzaName;
 			this.backoffTime = backoffTime;
@@ -269,10 +270,12 @@ public class KinesisModularInput extends ModularInput {
 
 		}
 
-		public void streamMessageEvent(String record,String seqNumber,String partitionKey) {
+		public void streamMessageEvent(String record, String seqNumber,
+				String partitionKey) {
 			try {
-				messageHandler.handleMessage(record,seqNumber,partitionKey, this);
-				
+				messageHandler.handleMessage(record, seqNumber, partitionKey,
+						this);
+
 			} catch (Exception e) {
 				logger.error("Stanza " + stanzaName + " : "
 						+ "Error handling message : "
@@ -513,7 +516,7 @@ public class KinesisModularInput extends ModularInput {
 		arg.setDescription("Parameter string in format 'key1=value1,key2=value2,key3=value3'. This gets passed to the implementation class to process.");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("output_type");
 		arg.setTitle("Output Type");
@@ -548,35 +551,34 @@ public class KinesisModularInput extends ModularInput {
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("hec_batch_mode");
 		arg.setTitle("Use batch mode");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("hec_max_batch_size_bytes");
 		arg.setTitle("Max batch size in bytes");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("hec_max_batch_size_events");
 		arg.setTitle("Max batch size in events");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("hec_max_inactive_time_before_batch_flush");
 		arg.setTitle("Max inactive time before batch flush");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
 
 		scheme.setEndpoint(endpoint);
 
@@ -653,9 +655,11 @@ public class KinesisModularInput extends ModularInput {
 				String data = null;
 				for (int i = 0; i < numRetries; i++) {
 					try {
-						
+
 						data = decoder.decode(record.getData()).toString();
-						context.streamMessageEvent(data,record.getSequenceNumber(),record.getPartitionKey());
+						context.streamMessageEvent(data,
+								record.getSequenceNumber(),
+								record.getPartitionKey());
 						processedSuccessfully = true;
 						break;
 					} catch (CharacterCodingException e) {
