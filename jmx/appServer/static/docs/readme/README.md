@@ -1,7 +1,7 @@
 ## Monitoring of Java Virtual Machines with JMX
 
-* Version : 2.3
-* Date : September 2015
+* Version : 2.4
+* Date : November 2015
 * Author : Damien Dallimore, ddallimore@splunk.com
 
 ## Overview

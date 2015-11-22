@@ -24,7 +24,7 @@ public class DefaultMessageHandler extends AbstractMessageHandler {
 				context.stripNewlines ? stripNewlines(body) : body);
 
 		String text = splunkEvent.toString();
-		transportMessage(text);
+		transportMessage(text,String.valueOf(System.currentTimeMillis()),"");
 
 	}
 

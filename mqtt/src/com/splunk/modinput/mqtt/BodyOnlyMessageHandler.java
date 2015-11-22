@@ -18,7 +18,7 @@ public class BodyOnlyMessageHandler extends AbstractMessageHandler {
 		
 		long timestamp = System.currentTimeMillis();
 		String text = timestamp +" "+getMessageBody(message);
-		transportMessage(text);
+		transportMessage(text,String.valueOf(System.currentTimeMillis()),"");
 
 	}
 

@@ -1,3 +1,7 @@
+1.1
+---
+Minor HEC tweaks
+
 1.0
 ---
 Added support for output to be sent via the HTTP Event Collector

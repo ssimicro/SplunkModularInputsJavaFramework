@@ -20,7 +20,7 @@ public class JSONMessageHandler extends AbstractMessageHandler {
 		String jsonBody = getMessageBody(messageContents);
 		
 		String text = jsonBody.toString();
-		transportMessage(text);
+		transportMessage(text,String.valueOf(System.currentTimeMillis()),"");
 
 	}
 

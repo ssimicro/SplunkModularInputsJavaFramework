@@ -81,17 +81,13 @@ public class HECOutputVerticle extends Verticle {
 
 		// data handler that will process our received data
 		Handler<Message<String>> myHandler = new Handler<Message<String>>() {
+
 			public void handle(Message<String> message) {
 
 				try {
 
-					String messageContent = message.body();
-
-					if (!(messageContent.startsWith("{") && messageContent
-							.endsWith("}"))
-							&& !(messageContent.startsWith("\"") && messageContent
-									.endsWith("\"")))
-						messageContent = wrapMessageInQuotes(messageContent);
+					String messageContent = escapeMessageIfNeeded(message
+							.body());
 
 					StringBuffer json = new StringBuffer();
 					json.append("{\"").append("event\":")
@@ -126,6 +122,34 @@ public class HECOutputVerticle extends Verticle {
 				}
 
 			}
+
+			/**
+			 * from Tivo
+			 * 
+			 * @param message
+			 * @return
+			 */
+			private String escapeMessageIfNeeded(String message) {
+				String trimmedMessage = message.trim();
+				if (trimmedMessage.startsWith("{")
+						&& trimmedMessage.endsWith("}")) {
+					// this is *probably* JSON.
+					return trimmedMessage;
+				} else if (trimmedMessage.startsWith("\"")
+						&& trimmedMessage.endsWith("\"")
+						&& !message.substring(1, message.length() - 1)
+								.contains("\"")) {
+					// this appears to be a quoted string with no internal
+					// quotes
+					return trimmedMessage;
+				} else {
+					// don't know what this thing is, so need to escape all
+					// quotes, and
+					// then wrap the result in quotes
+					return "\"" + message.replace("\"", "\\\"") + "\"";
+				}
+			}
+
 		};
 
 		if (hecBatchMode) {

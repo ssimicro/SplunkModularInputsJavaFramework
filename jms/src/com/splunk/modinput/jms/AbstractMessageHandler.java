@@ -32,6 +32,13 @@ public abstract class AbstractMessageHandler {
 		  this.transport.transport(message);
 	}
 	
+    public void transportMessage(String message,String time,String host){
+		
+		if(transport != null)
+		  this.transport.transport(message,time,host);
+	}
+
+	
 	public abstract void handleMessage(Message message,MessageReceiver context) throws Exception;
 	public abstract void setParams(Map<String, String> params);
 

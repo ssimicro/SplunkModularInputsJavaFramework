@@ -22,7 +22,7 @@ public class SplitBodyMessageHandler extends AbstractMessageHandler {
 
 		String bodyContent = getMessageBody(message);
 
-		transportMessage(bodyContent);
+		transportMessage(bodyContent,String.valueOf(System.currentTimeMillis()),"");
 	}
 
 	@Override

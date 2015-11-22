@@ -1,3 +1,7 @@
+1.5
+---
+Minor HEC tweaks
+
 1.4
 ---
 Added support to optional output to Splunk via a HEC (HTTP Event Collector) endpoint

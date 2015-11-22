@@ -24,6 +24,12 @@ public abstract class AbstractMessageHandler {
 		  this.transport.transport(message);
 	}
 	
+    public void transportMessage(String message,String time,String host){
+		
+		if(transport != null)
+		  this.transport.transport(message,time,host);
+	}
+	
 	public abstract void handleMessage(byte[] messageContents,
 			Envelope envelope, AMQP.BasicProperties messageProperties,
 			MessageReceiver context) throws Exception;

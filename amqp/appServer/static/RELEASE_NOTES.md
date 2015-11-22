@@ -1,3 +1,7 @@
+1.0
+---
+Minor HEC tweaks
+
 0.9
 ---
 
