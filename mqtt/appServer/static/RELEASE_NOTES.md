@@ -1,3 +1,7 @@
+0.9.1
+---
+Fixed subscription loop
+
 0.9
 ---
 Minor HEC tweaks

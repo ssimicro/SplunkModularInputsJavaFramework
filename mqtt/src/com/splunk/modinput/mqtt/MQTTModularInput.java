@@ -57,8 +57,7 @@ public class MQTTModularInput extends ModularInput {
 
 				if (name != null && name.startsWith("mqtt://")) {
 
-					startMessageReceiverThread(name, stanza.getParams(),
-							validateConnectionMode);
+					startMessageReceiverThread(name, stanza.getParams(), validateConnectionMode);
 
 				}
 
@@ -75,8 +74,7 @@ public class MQTTModularInput extends ModularInput {
 
 	}
 
-	private void startMessageReceiverThread(String stanzaName,
-			List<Param> params, boolean validationConnectionMode)
+	private void startMessageReceiverThread(String stanzaName, List<Param> params, boolean validationConnectionMode)
 			throws Exception {
 
 		final int DEFAULT_TCP_PORT = 1883;
@@ -91,8 +89,9 @@ public class MQTTModularInput extends ModularInput {
 		String brokerProtocol = TCP_PROTOCOL;
 
 		String seperator = System.getProperty("file.separator");
-		String reliableDeliveryDirectory = System.getenv("SPLUNK_HOME")+seperator+"etc"+seperator+"apps"+seperator+"mqtt_ta";
-		
+		String reliableDeliveryDirectory = System.getenv("SPLUNK_HOME") + seperator + "etc" + seperator + "apps"
+				+ seperator + "mqtt_ta";
+
 		boolean useSSL = false;
 
 		String username = "";
@@ -107,8 +106,8 @@ public class MQTTModularInput extends ModularInput {
 		String messageHandlerImpl = DEFAULT_MESSAGE_HANDLER;
 		String messageHandlerParams = "";
 
-		Transport transport = getTransportInstance(params,stanzaName);
-		
+		Transport transport = getTransportInstance(params, stanzaName);
+
 		for (Param param : params) {
 			String value = param.getValue();
 			if (value == null) {
@@ -121,9 +120,7 @@ public class MQTTModularInput extends ModularInput {
 				brokerHost = param.getValue();
 			} else if (param.getName().equals("use_ssl")) {
 				try {
-					useSSL = Boolean
-							.parseBoolean(param.getValue().equals("1") ? "true"
-									: "false");
+					useSSL = Boolean.parseBoolean(param.getValue().equals("1") ? "true" : "false");
 					if (useSSL) {
 						brokerPort = DEFAULT_SSL_PORT;
 						brokerProtocol = SSL_PROTOCOL;
@@ -151,13 +148,12 @@ public class MQTTModularInput extends ModularInput {
 				}
 			} else if (param.getName().equals("reliable_delivery_dir")) {
 				String val = param.getValue();
-				if(val != null && val.length() > 0)
-				  reliableDeliveryDirectory = val;
-				
+				if (val != null && val.length() > 0)
+					reliableDeliveryDirectory = val;
+
 			} else if (param.getName().equals("clean_session")) {
 				try {
-					cleanSession = Boolean.parseBoolean(param.getValue()
-							.equals("1") ? "true" : "false");
+					cleanSession = Boolean.parseBoolean(param.getValue().equals("1") ? "true" : "false");
 				} catch (Exception e) {
 					logger.error("Can't determine clean session setting");
 				}
@@ -188,10 +184,9 @@ public class MQTTModularInput extends ModularInput {
 		String brokerURL = brokerProtocol + brokerHost + ":" + brokerPort;
 
 		if (!isDisabled(stanzaName)) {
-			MessageReceiver mr = new MessageReceiver(stanzaName, topicName,
-					brokerURL, username, password, clientID, qos, cleanSession,
-					connectionTimeout, keepAliveInterval, messageHandlerImpl,
-					messageHandlerParams, reliableDeliveryDirectory,transport);
+			MessageReceiver mr = new MessageReceiver(stanzaName, topicName, brokerURL, username, password, clientID,
+					qos, cleanSession, connectionTimeout, keepAliveInterval, messageHandlerImpl, messageHandlerParams,
+					reliableDeliveryDirectory, transport);
 			if (validationConnectionMode)
 				mr.testConnectOnly();
 			else
@@ -210,14 +205,13 @@ public class MQTTModularInput extends ModularInput {
 		MqttDefaultFilePersistence dataStore;
 
 		boolean connected = false;
+		boolean subscribed = false;
 		AbstractMessageHandler messageHandler;
 
-		public MessageReceiver(String stanzaName, String topicName,
-				String brokerURL, String userName, String password,
-				String clientID, int qos, boolean cleanSession,
-				int connectionTimeout, int keepAliveInterval,
-				String messageHandlerImpl, String messageHandlerParams,
-				String reliableDeliveryDirectory,Transport transport) {
+		public MessageReceiver(String stanzaName, String topicName, String brokerURL, String userName, String password,
+				String clientID, int qos, boolean cleanSession, int connectionTimeout, int keepAliveInterval,
+				String messageHandlerImpl, String messageHandlerParams, String reliableDeliveryDirectory,
+				Transport transport) {
 
 			this.stanzaName = stanzaName;
 
@@ -225,15 +219,12 @@ public class MQTTModularInput extends ModularInput {
 			this.qos = qos;
 
 			try {
-				messageHandler = (AbstractMessageHandler) Class.forName(
-						messageHandlerImpl).newInstance();
+				messageHandler = (AbstractMessageHandler) Class.forName(messageHandlerImpl).newInstance();
 				messageHandler.setParams(getParamMap(messageHandlerParams));
 				messageHandler.setTransport(transport);
 			} catch (Exception e) {
-				logger.error("Stanza " + stanzaName + " : "
-						+ "Can't instantiate message handler : "
-						+ messageHandlerImpl + " , "
-						+ ModularInput.getStackTrace(e));
+				logger.error("Stanza " + stanzaName + " : " + "Can't instantiate message handler : "
+						+ messageHandlerImpl + " , " + ModularInput.getStackTrace(e));
 				System.exit(2);
 			}
 
@@ -252,9 +243,8 @@ public class MQTTModularInput extends ModularInput {
 				if (userName != null && userName.length() > 0) {
 					conOpt.setUserName(userName);
 				}
-				
-				this.dataStore = new MqttDefaultFilePersistence(
-						reliableDeliveryDirectory);
+
+				this.dataStore = new MqttDefaultFilePersistence(reliableDeliveryDirectory);
 				// Construct an MQTT blocking mode client
 				client = new MqttClient(brokerURL, clientID, dataStore);
 
@@ -262,25 +252,21 @@ public class MQTTModularInput extends ModularInput {
 				client.setCallback(this);
 
 			} catch (MqttException e) {
-				logger.error("Stanza " + stanzaName + " : "
-						+ "Can't instantiate MQTT client : "
+				logger.error("Stanza " + stanzaName + " : " + "Can't instantiate MQTT client : "
 						+ ModularInput.getStackTrace(e));
 				System.exit(2);
 			}
 
 		}
 
-		private Map<String, String> getParamMap(
-				String localResourceFactoryParams) {
+		private Map<String, String> getParamMap(String localResourceFactoryParams) {
 
 			Map<String, String> map = new HashMap<String, String>();
 
 			try {
-				StringTokenizer st = new StringTokenizer(
-						localResourceFactoryParams, ",");
+				StringTokenizer st = new StringTokenizer(localResourceFactoryParams, ",");
 				while (st.hasMoreTokens()) {
-					StringTokenizer st2 = new StringTokenizer(st.nextToken(),
-							"=");
+					StringTokenizer st2 = new StringTokenizer(st.nextToken(), "=");
 					while (st2.hasMoreTokens()) {
 						map.put(st2.nextToken(), st2.nextToken());
 					}
@@ -295,13 +281,11 @@ public class MQTTModularInput extends ModularInput {
 
 		public void streamMessageEvent(String topic, MqttMessage message) {
 			try {
-				messageHandler.handleMessage(topic, message,
-						this);
-			
+				messageHandler.handleMessage(topic, message, this);
+
 			} catch (Exception e) {
-				logger.error("Stanza " + stanzaName + " : "
-						+ "Error handling message : "
-						+ ModularInput.getStackTrace(e));
+				logger.error(
+						"Stanza " + stanzaName + " : " + "Error handling message : " + ModularInput.getStackTrace(e));
 			}
 		}
 
@@ -317,9 +301,7 @@ public class MQTTModularInput extends ModularInput {
 			try {
 				client.disconnect();
 			} catch (Exception e) {
-				logger.error("Stanza " + stanzaName + " : "
-						+ "Error disconnecting : "
-						+ ModularInput.getStackTrace(e));
+				logger.error("Stanza " + stanzaName + " : " + "Error disconnecting : " + ModularInput.getStackTrace(e));
 			}
 			connected = false;
 
@@ -330,8 +312,7 @@ public class MQTTModularInput extends ModularInput {
 
 				connect();
 			} catch (Throwable t) {
-				logger.error("Stanza " + stanzaName + " : "
-						+ "Error connecting : " + ModularInput.getStackTrace(t));
+				logger.error("Stanza " + stanzaName + " : " + "Error connecting : " + ModularInput.getStackTrace(t));
 			} finally {
 				disconnect();
 			}
@@ -340,11 +321,10 @@ public class MQTTModularInput extends ModularInput {
 		/**
 		 * @see MqttCallback#messageArrived(String, MqttMessage)
 		 */
-		public void messageArrived(String topic, MqttMessage message)
-				throws MqttException {
+		public void messageArrived(String topic, MqttMessage message) throws MqttException {
 			// Called when a message arrives from the server that matches any
 			// subscription made by the client
-			
+
 			streamMessageEvent(topic, message);
 
 		}
@@ -353,8 +333,9 @@ public class MQTTModularInput extends ModularInput {
 		 * @see MqttCallback#connectionLost(Throwable)
 		 */
 		public void connectionLost(Throwable cause) {
-			logger.error("Stanza " + stanzaName + " : "
-					+ "Connection lost : " + ModularInput.getStackTrace(cause));
+			disconnect();
+			subscribed = false;
+			logger.error("Stanza " + stanzaName + " : " + "Connection lost : " + ModularInput.getStackTrace(cause));
 		}
 
 		/**
@@ -371,9 +352,8 @@ public class MQTTModularInput extends ModularInput {
 						connect();
 
 					} catch (Throwable t) {
-						logger.error("Stanza " + stanzaName + " : "
-								+ "Error connecting : "
-								+ ModularInput.getStackTrace(t));
+						logger.error(
+								"Stanza " + stanzaName + " : " + "Error connecting : " + ModularInput.getStackTrace(t));
 						try {
 							// sleep 10 secs then try to reconnect
 							Thread.sleep(10000);
@@ -385,15 +365,23 @@ public class MQTTModularInput extends ModularInput {
 
 				try {
 
-					client.subscribe(topicName, qos);
+					if (!subscribed) {
+						client.subscribe(topicName, qos);
+						subscribed = true;
+					}
 
 				} catch (Throwable e) {
-					logger.error("Stanza " + stanzaName + " : "
-							+ "Error running message receiver : "
+					subscribed = false;
+					logger.error("Stanza " + stanzaName + " : " + "Error running message receiver : "
 							+ ModularInput.getStackTrace(e));
 					disconnect();
 
 				} finally {
+
+				}
+				try {
+					Thread.sleep(10000);
+				} catch (Exception exception) {
 
 				}
 			}
@@ -423,8 +411,7 @@ public class MQTTModularInput extends ModularInput {
 			System.exit(0);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			ValidationError error = new ValidationError("Validation Failed : "
-					+ e.getMessage());
+			ValidationError error = new ValidationError("Validation Failed : " + e.getMessage());
 			sendValidationError(error);
 			System.exit(2);
 		}
@@ -456,8 +443,7 @@ public class MQTTModularInput extends ModularInput {
 
 		} catch (Throwable t) {
 			throw new Exception(
-					"A MQTT connection can not be establised with the supplied propertys.Reason : "
-							+ t.getMessage());
+					"A MQTT connection can not be establised with the supplied propertys.Reason : " + t.getMessage());
 		}
 
 	}
@@ -575,17 +561,19 @@ public class MQTTModularInput extends ModularInput {
 		arg = new Arg();
 		arg.setName("message_handler_impl");
 		arg.setTitle("Implementation class for a custom message handler");
-		arg.setDescription("An implementation of the com.splunk.modinput.mqtt.AbstractMessageHandler class.You would provide this if you required some custom handling/formatting of the messages you consume.Ensure that the necessary jars are in the $SPLUNK_HOME/etc/apps/mqtt_ta/bin/lib directory");
+		arg.setDescription(
+				"An implementation of the com.splunk.modinput.mqtt.AbstractMessageHandler class.You would provide this if you required some custom handling/formatting of the messages you consume.Ensure that the necessary jars are in the $SPLUNK_HOME/etc/apps/mqtt_ta/bin/lib directory");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
 
 		arg = new Arg();
 		arg.setName("message_handler_params");
 		arg.setTitle("Implementation parameter string for the custom message handler");
-		arg.setDescription("Parameter string in format 'key1=value1,key2=value2,key3=value3'. This gets passed to the implementation class to process.");
+		arg.setDescription(
+				"Parameter string in format 'key1=value1,key2=value2,key3=value3'. This gets passed to the implementation class to process.");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("output_type");
 		arg.setTitle("Output Type");
@@ -620,28 +608,28 @@ public class MQTTModularInput extends ModularInput {
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("hec_batch_mode");
 		arg.setTitle("Use batch mode");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("hec_max_batch_size_bytes");
 		arg.setTitle("Max batch size in bytes");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("hec_max_batch_size_events");
 		arg.setTitle("Max batch size in events");
 		arg.setDescription("");
 		arg.setRequired_on_create(false);
 		endpoint.addArg(arg);
-		
+
 		arg = new Arg();
 		arg.setName("hec_max_inactive_time_before_batch_flush");
 		arg.setTitle("Max inactive time before batch flush");
