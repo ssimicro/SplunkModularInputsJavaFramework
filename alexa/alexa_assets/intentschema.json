@@ -1,0 +1,32 @@
+{
+  "intents": [
+    {
+      "intent": "ServerCPUIntent",
+      "slots": [
+        {
+          "name": "servername",
+          "type": "SERVER_NAME"
+        },
+        {
+          "name": "timeperiod",
+          "type": "TIME_PERIOD"
+        }
+      ]
+    },
+    {
+      "intent": "SearchCommandIntent",
+      "slots": [
+        {
+          "name": "searchcommandname",
+          "type": "SEARCH_COMMAND_NAME"
+        }
+      ]
+    },
+    {
+      "intent": "AppsInfoIntent"
+    },
+    {
+      "intent": "BuyDrinksIntent"
+    }
+  ]
+}
