@@ -1,8 +1,475 @@
-MaxCPUIntent (what is/what's) (/the) (max/maximum) cpu (usage/use) (/of/on) (/{my system|server}) (/in/over) {TimePeriod}
-AvgCPUIntent (what is/what's) (/the) average cpu (usage/use) (/of/on) (/{my system|server}) (/in/over) {TimePeriod}
-SearchDocsIntent (what is/what's) (/the) {searchcommandname} (/search/Splunk) (/command)
-BuyDrinksIntent (who is/who's) buying (/a round of/us) drinks (/tonight)
+MaxCPUIntent what is max cpu usage in {TimePeriod}
+MaxCPUIntent what is max cpu usage of in {TimePeriod}
+MaxCPUIntent what is max cpu usage of over {TimePeriod}
+MaxCPUIntent what is max cpu usage of {TimePeriod}
+MaxCPUIntent what is max cpu usage of {my system|server} in {TimePeriod}
+MaxCPUIntent what is max cpu usage of {my system|server} over {TimePeriod}
+MaxCPUIntent what is max cpu usage of {my system|server} {TimePeriod}
+MaxCPUIntent what is max cpu usage on in {TimePeriod}
+MaxCPUIntent what is max cpu usage on over {TimePeriod}
+MaxCPUIntent what is max cpu usage on {TimePeriod}
+MaxCPUIntent what is max cpu usage on {my system|server} in {TimePeriod}
+MaxCPUIntent what is max cpu usage on {my system|server} over {TimePeriod}
+MaxCPUIntent what is max cpu usage on {my system|server} {TimePeriod}
+MaxCPUIntent what is max cpu usage over {TimePeriod}
+MaxCPUIntent what is max cpu usage {TimePeriod}
+MaxCPUIntent what is max cpu usage {my system|server} in {TimePeriod}
+MaxCPUIntent what is max cpu usage {my system|server} over {TimePeriod}
+MaxCPUIntent what is max cpu usage {my system|server} {TimePeriod}
+MaxCPUIntent what is max cpu use in {TimePeriod}
+MaxCPUIntent what is max cpu use of in {TimePeriod}
+MaxCPUIntent what is max cpu use of over {TimePeriod}
+MaxCPUIntent what is max cpu use of {TimePeriod}
+MaxCPUIntent what is max cpu use of {my system|server} in {TimePeriod}
+MaxCPUIntent what is max cpu use of {my system|server} over {TimePeriod}
+MaxCPUIntent what is max cpu use of {my system|server} {TimePeriod}
+MaxCPUIntent what is max cpu use on in {TimePeriod}
+MaxCPUIntent what is max cpu use on over {TimePeriod}
+MaxCPUIntent what is max cpu use on {TimePeriod}
+MaxCPUIntent what is max cpu use on {my system|server} in {TimePeriod}
+MaxCPUIntent what is max cpu use on {my system|server} over {TimePeriod}
+MaxCPUIntent what is max cpu use on {my system|server} {TimePeriod}
+MaxCPUIntent what is max cpu use over {TimePeriod}
+MaxCPUIntent what is max cpu use {TimePeriod}
+MaxCPUIntent what is max cpu use {my system|server} in {TimePeriod}
+MaxCPUIntent what is max cpu use {my system|server} over {TimePeriod}
+MaxCPUIntent what is max cpu use {my system|server} {TimePeriod}
+MaxCPUIntent what is maximum cpu usage in {TimePeriod}
+MaxCPUIntent what is maximum cpu usage of in {TimePeriod}
+MaxCPUIntent what is maximum cpu usage of over {TimePeriod}
+MaxCPUIntent what is maximum cpu usage of {TimePeriod}
+MaxCPUIntent what is maximum cpu usage of {my system|server} in {TimePeriod}
+MaxCPUIntent what is maximum cpu usage of {my system|server} over {TimePeriod}
+MaxCPUIntent what is maximum cpu usage of {my system|server} {TimePeriod}
+MaxCPUIntent what is maximum cpu usage on in {TimePeriod}
+MaxCPUIntent what is maximum cpu usage on over {TimePeriod}
+MaxCPUIntent what is maximum cpu usage on {TimePeriod}
+MaxCPUIntent what is maximum cpu usage on {my system|server} in {TimePeriod}
+MaxCPUIntent what is maximum cpu usage on {my system|server} over {TimePeriod}
+MaxCPUIntent what is maximum cpu usage on {my system|server} {TimePeriod}
+MaxCPUIntent what is maximum cpu usage over {TimePeriod}
+MaxCPUIntent what is maximum cpu usage {TimePeriod}
+MaxCPUIntent what is maximum cpu usage {my system|server} in {TimePeriod}
+MaxCPUIntent what is maximum cpu usage {my system|server} over {TimePeriod}
+MaxCPUIntent what is maximum cpu usage {my system|server} {TimePeriod}
+MaxCPUIntent what is maximum cpu use in {TimePeriod}
+MaxCPUIntent what is maximum cpu use of in {TimePeriod}
+MaxCPUIntent what is maximum cpu use of over {TimePeriod}
+MaxCPUIntent what is maximum cpu use of {TimePeriod}
+MaxCPUIntent what is maximum cpu use of {my system|server} in {TimePeriod}
+MaxCPUIntent what is maximum cpu use of {my system|server} over {TimePeriod}
+MaxCPUIntent what is maximum cpu use of {my system|server} {TimePeriod}
+MaxCPUIntent what is maximum cpu use on in {TimePeriod}
+MaxCPUIntent what is maximum cpu use on over {TimePeriod}
+MaxCPUIntent what is maximum cpu use on {TimePeriod}
+MaxCPUIntent what is maximum cpu use on {my system|server} in {TimePeriod}
+MaxCPUIntent what is maximum cpu use on {my system|server} over {TimePeriod}
+MaxCPUIntent what is maximum cpu use on {my system|server} {TimePeriod}
+MaxCPUIntent what is maximum cpu use over {TimePeriod}
+MaxCPUIntent what is maximum cpu use {TimePeriod}
+MaxCPUIntent what is maximum cpu use {my system|server} in {TimePeriod}
+MaxCPUIntent what is maximum cpu use {my system|server} over {TimePeriod}
+MaxCPUIntent what is maximum cpu use {my system|server} {TimePeriod}
+MaxCPUIntent what is the max cpu usage in {TimePeriod}
+MaxCPUIntent what is the max cpu usage of in {TimePeriod}
+MaxCPUIntent what is the max cpu usage of over {TimePeriod}
+MaxCPUIntent what is the max cpu usage of {TimePeriod}
+MaxCPUIntent what is the max cpu usage of {my system|server} in {TimePeriod}
+MaxCPUIntent what is the max cpu usage of {my system|server} over {TimePeriod}
+MaxCPUIntent what is the max cpu usage of {my system|server} {TimePeriod}
+MaxCPUIntent what is the max cpu usage on in {TimePeriod}
+MaxCPUIntent what is the max cpu usage on over {TimePeriod}
+MaxCPUIntent what is the max cpu usage on {TimePeriod}
+MaxCPUIntent what is the max cpu usage on {my system|server} in {TimePeriod}
+MaxCPUIntent what is the max cpu usage on {my system|server} over {TimePeriod}
+MaxCPUIntent what is the max cpu usage on {my system|server} {TimePeriod}
+MaxCPUIntent what is the max cpu usage over {TimePeriod}
+MaxCPUIntent what is the max cpu usage {TimePeriod}
+MaxCPUIntent what is the max cpu usage {my system|server} in {TimePeriod}
+MaxCPUIntent what is the max cpu usage {my system|server} over {TimePeriod}
+MaxCPUIntent what is the max cpu usage {my system|server} {TimePeriod}
+MaxCPUIntent what is the max cpu use in {TimePeriod}
+MaxCPUIntent what is the max cpu use of in {TimePeriod}
+MaxCPUIntent what is the max cpu use of over {TimePeriod}
+MaxCPUIntent what is the max cpu use of {TimePeriod}
+MaxCPUIntent what is the max cpu use of {my system|server} in {TimePeriod}
+MaxCPUIntent what is the max cpu use of {my system|server} over {TimePeriod}
+MaxCPUIntent what is the max cpu use of {my system|server} {TimePeriod}
+MaxCPUIntent what is the max cpu use on in {TimePeriod}
+MaxCPUIntent what is the max cpu use on over {TimePeriod}
+MaxCPUIntent what is the max cpu use on {TimePeriod}
+MaxCPUIntent what is the max cpu use on {my system|server} in {TimePeriod}
+MaxCPUIntent what is the max cpu use on {my system|server} over {TimePeriod}
+MaxCPUIntent what is the max cpu use on {my system|server} {TimePeriod}
+MaxCPUIntent what is the max cpu use over {TimePeriod}
+MaxCPUIntent what is the max cpu use {TimePeriod}
+MaxCPUIntent what is the max cpu use {my system|server} in {TimePeriod}
+MaxCPUIntent what is the max cpu use {my system|server} over {TimePeriod}
+MaxCPUIntent what is the max cpu use {my system|server} {TimePeriod}
+MaxCPUIntent what is the maximum cpu usage in {TimePeriod}
+MaxCPUIntent what is the maximum cpu usage of in {TimePeriod}
+MaxCPUIntent what is the maximum cpu usage of over {TimePeriod}
+MaxCPUIntent what is the maximum cpu usage of {TimePeriod}
+MaxCPUIntent what is the maximum cpu usage of {my system|server} in {TimePeriod}
+MaxCPUIntent what is the maximum cpu usage of {my system|server} over {TimePeriod}
+MaxCPUIntent what is the maximum cpu usage of {my system|server} {TimePeriod}
+MaxCPUIntent what is the maximum cpu usage on in {TimePeriod}
+MaxCPUIntent what is the maximum cpu usage on over {TimePeriod}
+MaxCPUIntent what is the maximum cpu usage on {TimePeriod}
+MaxCPUIntent what is the maximum cpu usage on {my system|server} in {TimePeriod}
+MaxCPUIntent what is the maximum cpu usage on {my system|server} over {TimePeriod}
+MaxCPUIntent what is the maximum cpu usage on {my system|server} {TimePeriod}
+MaxCPUIntent what is the maximum cpu usage over {TimePeriod}
+MaxCPUIntent what is the maximum cpu usage {TimePeriod}
+MaxCPUIntent what is the maximum cpu usage {my system|server} in {TimePeriod}
+MaxCPUIntent what is the maximum cpu usage {my system|server} over {TimePeriod}
+MaxCPUIntent what is the maximum cpu usage {my system|server} {TimePeriod}
+MaxCPUIntent what is the maximum cpu use in {TimePeriod}
+MaxCPUIntent what is the maximum cpu use of in {TimePeriod}
+MaxCPUIntent what is the maximum cpu use of over {TimePeriod}
+MaxCPUIntent what is the maximum cpu use of {TimePeriod}
+MaxCPUIntent what is the maximum cpu use of {my system|server} in {TimePeriod}
+MaxCPUIntent what is the maximum cpu use of {my system|server} over {TimePeriod}
+MaxCPUIntent what is the maximum cpu use of {my system|server} {TimePeriod}
+MaxCPUIntent what is the maximum cpu use on in {TimePeriod}
+MaxCPUIntent what is the maximum cpu use on over {TimePeriod}
+MaxCPUIntent what is the maximum cpu use on {TimePeriod}
+MaxCPUIntent what is the maximum cpu use on {my system|server} in {TimePeriod}
+MaxCPUIntent what is the maximum cpu use on {my system|server} over {TimePeriod}
+MaxCPUIntent what is the maximum cpu use on {my system|server} {TimePeriod}
+MaxCPUIntent what is the maximum cpu use over {TimePeriod}
+MaxCPUIntent what is the maximum cpu use {TimePeriod}
+MaxCPUIntent what is the maximum cpu use {my system|server} in {TimePeriod}
+MaxCPUIntent what is the maximum cpu use {my system|server} over {TimePeriod}
+MaxCPUIntent what is the maximum cpu use {my system|server} {TimePeriod}
+MaxCPUIntent what's max cpu usage in {TimePeriod}
+MaxCPUIntent what's max cpu usage of in {TimePeriod}
+MaxCPUIntent what's max cpu usage of over {TimePeriod}
+MaxCPUIntent what's max cpu usage of {TimePeriod}
+MaxCPUIntent what's max cpu usage of {my system|server} in {TimePeriod}
+MaxCPUIntent what's max cpu usage of {my system|server} over {TimePeriod}
+MaxCPUIntent what's max cpu usage of {my system|server} {TimePeriod}
+MaxCPUIntent what's max cpu usage on in {TimePeriod}
+MaxCPUIntent what's max cpu usage on over {TimePeriod}
+MaxCPUIntent what's max cpu usage on {TimePeriod}
+MaxCPUIntent what's max cpu usage on {my system|server} in {TimePeriod}
+MaxCPUIntent what's max cpu usage on {my system|server} over {TimePeriod}
+MaxCPUIntent what's max cpu usage on {my system|server} {TimePeriod}
+MaxCPUIntent what's max cpu usage over {TimePeriod}
+MaxCPUIntent what's max cpu usage {TimePeriod}
+MaxCPUIntent what's max cpu usage {my system|server} in {TimePeriod}
+MaxCPUIntent what's max cpu usage {my system|server} over {TimePeriod}
+MaxCPUIntent what's max cpu usage {my system|server} {TimePeriod}
+MaxCPUIntent what's max cpu use in {TimePeriod}
+MaxCPUIntent what's max cpu use of in {TimePeriod}
+MaxCPUIntent what's max cpu use of over {TimePeriod}
+MaxCPUIntent what's max cpu use of {TimePeriod}
+MaxCPUIntent what's max cpu use of {my system|server} in {TimePeriod}
+MaxCPUIntent what's max cpu use of {my system|server} over {TimePeriod}
+MaxCPUIntent what's max cpu use of {my system|server} {TimePeriod}
+MaxCPUIntent what's max cpu use on in {TimePeriod}
+MaxCPUIntent what's max cpu use on over {TimePeriod}
+MaxCPUIntent what's max cpu use on {TimePeriod}
+MaxCPUIntent what's max cpu use on {my system|server} in {TimePeriod}
+MaxCPUIntent what's max cpu use on {my system|server} over {TimePeriod}
+MaxCPUIntent what's max cpu use on {my system|server} {TimePeriod}
+MaxCPUIntent what's max cpu use over {TimePeriod}
+MaxCPUIntent what's max cpu use {TimePeriod}
+MaxCPUIntent what's max cpu use {my system|server} in {TimePeriod}
+MaxCPUIntent what's max cpu use {my system|server} over {TimePeriod}
+MaxCPUIntent what's max cpu use {my system|server} {TimePeriod}
+MaxCPUIntent what's maximum cpu usage in {TimePeriod}
+MaxCPUIntent what's maximum cpu usage of in {TimePeriod}
+MaxCPUIntent what's maximum cpu usage of over {TimePeriod}
+MaxCPUIntent what's maximum cpu usage of {TimePeriod}
+MaxCPUIntent what's maximum cpu usage of {my system|server} in {TimePeriod}
+MaxCPUIntent what's maximum cpu usage of {my system|server} over {TimePeriod}
+MaxCPUIntent what's maximum cpu usage of {my system|server} {TimePeriod}
+MaxCPUIntent what's maximum cpu usage on in {TimePeriod}
+MaxCPUIntent what's maximum cpu usage on over {TimePeriod}
+MaxCPUIntent what's maximum cpu usage on {TimePeriod}
+MaxCPUIntent what's maximum cpu usage on {my system|server} in {TimePeriod}
+MaxCPUIntent what's maximum cpu usage on {my system|server} over {TimePeriod}
+MaxCPUIntent what's maximum cpu usage on {my system|server} {TimePeriod}
+MaxCPUIntent what's maximum cpu usage over {TimePeriod}
+MaxCPUIntent what's maximum cpu usage {TimePeriod}
+MaxCPUIntent what's maximum cpu usage {my system|server} in {TimePeriod}
+MaxCPUIntent what's maximum cpu usage {my system|server} over {TimePeriod}
+MaxCPUIntent what's maximum cpu usage {my system|server} {TimePeriod}
+MaxCPUIntent what's maximum cpu use in {TimePeriod}
+MaxCPUIntent what's maximum cpu use of in {TimePeriod}
+MaxCPUIntent what's maximum cpu use of over {TimePeriod}
+MaxCPUIntent what's maximum cpu use of {TimePeriod}
+MaxCPUIntent what's maximum cpu use of {my system|server} in {TimePeriod}
+MaxCPUIntent what's maximum cpu use of {my system|server} over {TimePeriod}
+MaxCPUIntent what's maximum cpu use of {my system|server} {TimePeriod}
+MaxCPUIntent what's maximum cpu use on in {TimePeriod}
+MaxCPUIntent what's maximum cpu use on over {TimePeriod}
+MaxCPUIntent what's maximum cpu use on {TimePeriod}
+MaxCPUIntent what's maximum cpu use on {my system|server} in {TimePeriod}
+MaxCPUIntent what's maximum cpu use on {my system|server} over {TimePeriod}
+MaxCPUIntent what's maximum cpu use on {my system|server} {TimePeriod}
+MaxCPUIntent what's maximum cpu use over {TimePeriod}
+MaxCPUIntent what's maximum cpu use {TimePeriod}
+MaxCPUIntent what's maximum cpu use {my system|server} in {TimePeriod}
+MaxCPUIntent what's maximum cpu use {my system|server} over {TimePeriod}
+MaxCPUIntent what's maximum cpu use {my system|server} {TimePeriod}
+MaxCPUIntent what's the max cpu usage in {TimePeriod}
+MaxCPUIntent what's the max cpu usage of in {TimePeriod}
+MaxCPUIntent what's the max cpu usage of over {TimePeriod}
+MaxCPUIntent what's the max cpu usage of {TimePeriod}
+MaxCPUIntent what's the max cpu usage of {my system|server} in {TimePeriod}
+MaxCPUIntent what's the max cpu usage of {my system|server} over {TimePeriod}
+MaxCPUIntent what's the max cpu usage of {my system|server} {TimePeriod}
+MaxCPUIntent what's the max cpu usage on in {TimePeriod}
+MaxCPUIntent what's the max cpu usage on over {TimePeriod}
+MaxCPUIntent what's the max cpu usage on {TimePeriod}
+MaxCPUIntent what's the max cpu usage on {my system|server} in {TimePeriod}
+MaxCPUIntent what's the max cpu usage on {my system|server} over {TimePeriod}
+MaxCPUIntent what's the max cpu usage on {my system|server} {TimePeriod}
+MaxCPUIntent what's the max cpu usage over {TimePeriod}
+MaxCPUIntent what's the max cpu usage {TimePeriod}
+MaxCPUIntent what's the max cpu usage {my system|server} in {TimePeriod}
+MaxCPUIntent what's the max cpu usage {my system|server} over {TimePeriod}
+MaxCPUIntent what's the max cpu usage {my system|server} {TimePeriod}
+MaxCPUIntent what's the max cpu use in {TimePeriod}
+MaxCPUIntent what's the max cpu use of in {TimePeriod}
+MaxCPUIntent what's the max cpu use of over {TimePeriod}
+MaxCPUIntent what's the max cpu use of {TimePeriod}
+MaxCPUIntent what's the max cpu use of {my system|server} in {TimePeriod}
+MaxCPUIntent what's the max cpu use of {my system|server} over {TimePeriod}
+MaxCPUIntent what's the max cpu use of {my system|server} {TimePeriod}
+MaxCPUIntent what's the max cpu use on in {TimePeriod}
+MaxCPUIntent what's the max cpu use on over {TimePeriod}
+MaxCPUIntent what's the max cpu use on {TimePeriod}
+MaxCPUIntent what's the max cpu use on {my system|server} in {TimePeriod}
+MaxCPUIntent what's the max cpu use on {my system|server} over {TimePeriod}
+MaxCPUIntent what's the max cpu use on {my system|server} {TimePeriod}
+MaxCPUIntent what's the max cpu use over {TimePeriod}
+MaxCPUIntent what's the max cpu use {TimePeriod}
+MaxCPUIntent what's the max cpu use {my system|server} in {TimePeriod}
+MaxCPUIntent what's the max cpu use {my system|server} over {TimePeriod}
+MaxCPUIntent what's the max cpu use {my system|server} {TimePeriod}
+MaxCPUIntent what's the maximum cpu usage in {TimePeriod}
+MaxCPUIntent what's the maximum cpu usage of in {TimePeriod}
+MaxCPUIntent what's the maximum cpu usage of over {TimePeriod}
+MaxCPUIntent what's the maximum cpu usage of {TimePeriod}
+MaxCPUIntent what's the maximum cpu usage of {my system|server} in {TimePeriod}
+MaxCPUIntent what's the maximum cpu usage of {my system|server} over {TimePeriod}
+MaxCPUIntent what's the maximum cpu usage of {my system|server} {TimePeriod}
+MaxCPUIntent what's the maximum cpu usage on in {TimePeriod}
+MaxCPUIntent what's the maximum cpu usage on over {TimePeriod}
+MaxCPUIntent what's the maximum cpu usage on {TimePeriod}
+MaxCPUIntent what's the maximum cpu usage on {my system|server} in {TimePeriod}
+MaxCPUIntent what's the maximum cpu usage on {my system|server} over {TimePeriod}
+MaxCPUIntent what's the maximum cpu usage on {my system|server} {TimePeriod}
+MaxCPUIntent what's the maximum cpu usage over {TimePeriod}
+MaxCPUIntent what's the maximum cpu usage {TimePeriod}
+MaxCPUIntent what's the maximum cpu usage {my system|server} in {TimePeriod}
+MaxCPUIntent what's the maximum cpu usage {my system|server} over {TimePeriod}
+MaxCPUIntent what's the maximum cpu usage {my system|server} {TimePeriod}
+MaxCPUIntent what's the maximum cpu use in {TimePeriod}
+MaxCPUIntent what's the maximum cpu use of in {TimePeriod}
+MaxCPUIntent what's the maximum cpu use of over {TimePeriod}
+MaxCPUIntent what's the maximum cpu use of {TimePeriod}
+MaxCPUIntent what's the maximum cpu use of {my system|server} in {TimePeriod}
+MaxCPUIntent what's the maximum cpu use of {my system|server} over {TimePeriod}
+MaxCPUIntent what's the maximum cpu use of {my system|server} {TimePeriod}
+MaxCPUIntent what's the maximum cpu use on in {TimePeriod}
+MaxCPUIntent what's the maximum cpu use on over {TimePeriod}
+MaxCPUIntent what's the maximum cpu use on {TimePeriod}
+MaxCPUIntent what's the maximum cpu use on {my system|server} in {TimePeriod}
+MaxCPUIntent what's the maximum cpu use on {my system|server} over {TimePeriod}
+MaxCPUIntent what's the maximum cpu use on {my system|server} {TimePeriod}
+MaxCPUIntent what's the maximum cpu use over {TimePeriod}
+MaxCPUIntent what's the maximum cpu use {TimePeriod}
+MaxCPUIntent what's the maximum cpu use {my system|server} in {TimePeriod}
+MaxCPUIntent what's the maximum cpu use {my system|server} over {TimePeriod}
+MaxCPUIntent what's the maximum cpu use {my system|server} {TimePeriod}
+AvgCPUIntent what is average cpu usage in {TimePeriod}
+AvgCPUIntent what is average cpu usage of in {TimePeriod}
+AvgCPUIntent what is average cpu usage of over {TimePeriod}
+AvgCPUIntent what is average cpu usage of {TimePeriod}
+AvgCPUIntent what is average cpu usage of {my system|server} in {TimePeriod}
+AvgCPUIntent what is average cpu usage of {my system|server} over {TimePeriod}
+AvgCPUIntent what is average cpu usage of {my system|server} {TimePeriod}
+AvgCPUIntent what is average cpu usage on in {TimePeriod}
+AvgCPUIntent what is average cpu usage on over {TimePeriod}
+AvgCPUIntent what is average cpu usage on {TimePeriod}
+AvgCPUIntent what is average cpu usage on {my system|server} in {TimePeriod}
+AvgCPUIntent what is average cpu usage on {my system|server} over {TimePeriod}
+AvgCPUIntent what is average cpu usage on {my system|server} {TimePeriod}
+AvgCPUIntent what is average cpu usage over {TimePeriod}
+AvgCPUIntent what is average cpu usage {TimePeriod}
+AvgCPUIntent what is average cpu usage {my system|server} in {TimePeriod}
+AvgCPUIntent what is average cpu usage {my system|server} over {TimePeriod}
+AvgCPUIntent what is average cpu usage {my system|server} {TimePeriod}
+AvgCPUIntent what is average cpu use in {TimePeriod}
+AvgCPUIntent what is average cpu use of in {TimePeriod}
+AvgCPUIntent what is average cpu use of over {TimePeriod}
+AvgCPUIntent what is average cpu use of {TimePeriod}
+AvgCPUIntent what is average cpu use of {my system|server} in {TimePeriod}
+AvgCPUIntent what is average cpu use of {my system|server} over {TimePeriod}
+AvgCPUIntent what is average cpu use of {my system|server} {TimePeriod}
+AvgCPUIntent what is average cpu use on in {TimePeriod}
+AvgCPUIntent what is average cpu use on over {TimePeriod}
+AvgCPUIntent what is average cpu use on {TimePeriod}
+AvgCPUIntent what is average cpu use on {my system|server} in {TimePeriod}
+AvgCPUIntent what is average cpu use on {my system|server} over {TimePeriod}
+AvgCPUIntent what is average cpu use on {my system|server} {TimePeriod}
+AvgCPUIntent what is average cpu use over {TimePeriod}
+AvgCPUIntent what is average cpu use {TimePeriod}
+AvgCPUIntent what is average cpu use {my system|server} in {TimePeriod}
+AvgCPUIntent what is average cpu use {my system|server} over {TimePeriod}
+AvgCPUIntent what is average cpu use {my system|server} {TimePeriod}
+AvgCPUIntent what is the average cpu usage in {TimePeriod}
+AvgCPUIntent what is the average cpu usage of in {TimePeriod}
+AvgCPUIntent what is the average cpu usage of over {TimePeriod}
+AvgCPUIntent what is the average cpu usage of {TimePeriod}
+AvgCPUIntent what is the average cpu usage of {my system|server} in {TimePeriod}
+AvgCPUIntent what is the average cpu usage of {my system|server} over {TimePeriod}
+AvgCPUIntent what is the average cpu usage of {my system|server} {TimePeriod}
+AvgCPUIntent what is the average cpu usage on in {TimePeriod}
+AvgCPUIntent what is the average cpu usage on over {TimePeriod}
+AvgCPUIntent what is the average cpu usage on {TimePeriod}
+AvgCPUIntent what is the average cpu usage on {my system|server} in {TimePeriod}
+AvgCPUIntent what is the average cpu usage on {my system|server} over {TimePeriod}
+AvgCPUIntent what is the average cpu usage on {my system|server} {TimePeriod}
+AvgCPUIntent what is the average cpu usage over {TimePeriod}
+AvgCPUIntent what is the average cpu usage {TimePeriod}
+AvgCPUIntent what is the average cpu usage {my system|server} in {TimePeriod}
+AvgCPUIntent what is the average cpu usage {my system|server} over {TimePeriod}
+AvgCPUIntent what is the average cpu usage {my system|server} {TimePeriod}
+AvgCPUIntent what is the average cpu use in {TimePeriod}
+AvgCPUIntent what is the average cpu use of in {TimePeriod}
+AvgCPUIntent what is the average cpu use of over {TimePeriod}
+AvgCPUIntent what is the average cpu use of {TimePeriod}
+AvgCPUIntent what is the average cpu use of {my system|server} in {TimePeriod}
+AvgCPUIntent what is the average cpu use of {my system|server} over {TimePeriod}
+AvgCPUIntent what is the average cpu use of {my system|server} {TimePeriod}
+AvgCPUIntent what is the average cpu use on in {TimePeriod}
+AvgCPUIntent what is the average cpu use on over {TimePeriod}
+AvgCPUIntent what is the average cpu use on {TimePeriod}
+AvgCPUIntent what is the average cpu use on {my system|server} in {TimePeriod}
+AvgCPUIntent what is the average cpu use on {my system|server} over {TimePeriod}
+AvgCPUIntent what is the average cpu use on {my system|server} {TimePeriod}
+AvgCPUIntent what is the average cpu use over {TimePeriod}
+AvgCPUIntent what is the average cpu use {TimePeriod}
+AvgCPUIntent what is the average cpu use {my system|server} in {TimePeriod}
+AvgCPUIntent what is the average cpu use {my system|server} over {TimePeriod}
+AvgCPUIntent what is the average cpu use {my system|server} {TimePeriod}
+AvgCPUIntent what's average cpu usage in {TimePeriod}
+AvgCPUIntent what's average cpu usage of in {TimePeriod}
+AvgCPUIntent what's average cpu usage of over {TimePeriod}
+AvgCPUIntent what's average cpu usage of {TimePeriod}
+AvgCPUIntent what's average cpu usage of {my system|server} in {TimePeriod}
+AvgCPUIntent what's average cpu usage of {my system|server} over {TimePeriod}
+AvgCPUIntent what's average cpu usage of {my system|server} {TimePeriod}
+AvgCPUIntent what's average cpu usage on in {TimePeriod}
+AvgCPUIntent what's average cpu usage on over {TimePeriod}
+AvgCPUIntent what's average cpu usage on {TimePeriod}
+AvgCPUIntent what's average cpu usage on {my system|server} in {TimePeriod}
+AvgCPUIntent what's average cpu usage on {my system|server} over {TimePeriod}
+AvgCPUIntent what's average cpu usage on {my system|server} {TimePeriod}
+AvgCPUIntent what's average cpu usage over {TimePeriod}
+AvgCPUIntent what's average cpu usage {TimePeriod}
+AvgCPUIntent what's average cpu usage {my system|server} in {TimePeriod}
+AvgCPUIntent what's average cpu usage {my system|server} over {TimePeriod}
+AvgCPUIntent what's average cpu usage {my system|server} {TimePeriod}
+AvgCPUIntent what's average cpu use in {TimePeriod}
+AvgCPUIntent what's average cpu use of in {TimePeriod}
+AvgCPUIntent what's average cpu use of over {TimePeriod}
+AvgCPUIntent what's average cpu use of {TimePeriod}
+AvgCPUIntent what's average cpu use of {my system|server} in {TimePeriod}
+AvgCPUIntent what's average cpu use of {my system|server} over {TimePeriod}
+AvgCPUIntent what's average cpu use of {my system|server} {TimePeriod}
+AvgCPUIntent what's average cpu use on in {TimePeriod}
+AvgCPUIntent what's average cpu use on over {TimePeriod}
+AvgCPUIntent what's average cpu use on {TimePeriod}
+AvgCPUIntent what's average cpu use on {my system|server} in {TimePeriod}
+AvgCPUIntent what's average cpu use on {my system|server} over {TimePeriod}
+AvgCPUIntent what's average cpu use on {my system|server} {TimePeriod}
+AvgCPUIntent what's average cpu use over {TimePeriod}
+AvgCPUIntent what's average cpu use {TimePeriod}
+AvgCPUIntent what's average cpu use {my system|server} in {TimePeriod}
+AvgCPUIntent what's average cpu use {my system|server} over {TimePeriod}
+AvgCPUIntent what's average cpu use {my system|server} {TimePeriod}
+AvgCPUIntent what's the average cpu usage in {TimePeriod}
+AvgCPUIntent what's the average cpu usage of in {TimePeriod}
+AvgCPUIntent what's the average cpu usage of over {TimePeriod}
+AvgCPUIntent what's the average cpu usage of {TimePeriod}
+AvgCPUIntent what's the average cpu usage of {my system|server} in {TimePeriod}
+AvgCPUIntent what's the average cpu usage of {my system|server} over {TimePeriod}
+AvgCPUIntent what's the average cpu usage of {my system|server} {TimePeriod}
+AvgCPUIntent what's the average cpu usage on in {TimePeriod}
+AvgCPUIntent what's the average cpu usage on over {TimePeriod}
+AvgCPUIntent what's the average cpu usage on {TimePeriod}
+AvgCPUIntent what's the average cpu usage on {my system|server} in {TimePeriod}
+AvgCPUIntent what's the average cpu usage on {my system|server} over {TimePeriod}
+AvgCPUIntent what's the average cpu usage on {my system|server} {TimePeriod}
+AvgCPUIntent what's the average cpu usage over {TimePeriod}
+AvgCPUIntent what's the average cpu usage {TimePeriod}
+AvgCPUIntent what's the average cpu usage {my system|server} in {TimePeriod}
+AvgCPUIntent what's the average cpu usage {my system|server} over {TimePeriod}
+AvgCPUIntent what's the average cpu usage {my system|server} {TimePeriod}
+AvgCPUIntent what's the average cpu use in {TimePeriod}
+AvgCPUIntent what's the average cpu use of in {TimePeriod}
+AvgCPUIntent what's the average cpu use of over {TimePeriod}
+AvgCPUIntent what's the average cpu use of {TimePeriod}
+AvgCPUIntent what's the average cpu use of {my system|server} in {TimePeriod}
+AvgCPUIntent what's the average cpu use of {my system|server} over {TimePeriod}
+AvgCPUIntent what's the average cpu use of {my system|server} {TimePeriod}
+AvgCPUIntent what's the average cpu use on in {TimePeriod}
+AvgCPUIntent what's the average cpu use on over {TimePeriod}
+AvgCPUIntent what's the average cpu use on {TimePeriod}
+AvgCPUIntent what's the average cpu use on {my system|server} in {TimePeriod}
+AvgCPUIntent what's the average cpu use on {my system|server} over {TimePeriod}
+AvgCPUIntent what's the average cpu use on {my system|server} {TimePeriod}
+AvgCPUIntent what's the average cpu use over {TimePeriod}
+AvgCPUIntent what's the average cpu use {TimePeriod}
+AvgCPUIntent what's the average cpu use {my system|server} in {TimePeriod}
+AvgCPUIntent what's the average cpu use {my system|server} over {TimePeriod}
+AvgCPUIntent what's the average cpu use {my system|server} {TimePeriod}
+SearchDocsIntent what is the {searchcommandname}
+SearchDocsIntent what is the {searchcommandname} Splunk
+SearchDocsIntent what is the {searchcommandname} Splunk command
+SearchDocsIntent what is the {searchcommandname} command
+SearchDocsIntent what is the {searchcommandname} search
+SearchDocsIntent what is the {searchcommandname} search command
+SearchDocsIntent what is {searchcommandname}
+SearchDocsIntent what is {searchcommandname} Splunk
+SearchDocsIntent what is {searchcommandname} Splunk command
+SearchDocsIntent what is {searchcommandname} command
+SearchDocsIntent what is {searchcommandname} search
+SearchDocsIntent what is {searchcommandname} search command
+SearchDocsIntent what's the {searchcommandname}
+SearchDocsIntent what's the {searchcommandname} Splunk
+SearchDocsIntent what's the {searchcommandname} Splunk command
+SearchDocsIntent what's the {searchcommandname} command
+SearchDocsIntent what's the {searchcommandname} search
+SearchDocsIntent what's the {searchcommandname} search command
+SearchDocsIntent what's {searchcommandname}
+SearchDocsIntent what's {searchcommandname} Splunk
+SearchDocsIntent what's {searchcommandname} Splunk command
+SearchDocsIntent what's {searchcommandname} command
+SearchDocsIntent what's {searchcommandname} search
+SearchDocsIntent what's {searchcommandname} search command
+BuyDrinksIntent who is buying a round of drinks
+BuyDrinksIntent who is buying a round of drinks tonight
+BuyDrinksIntent who is buying drinks
+BuyDrinksIntent who is buying drinks tonight
+BuyDrinksIntent who is buying us drinks
+BuyDrinksIntent who is buying us drinks tonight
+BuyDrinksIntent who's buying a round of drinks
+BuyDrinksIntent who's buying a round of drinks tonight
+BuyDrinksIntent who's buying drinks
+BuyDrinksIntent who's buying drinks tonight
+BuyDrinksIntent who's buying us drinks
+BuyDrinksIntent who's buying us drinks tonight
 BuyDrinksIntent who will buy drinks tonight
-WhatIsSplunkIntent (what is/what's) Splunk
-WhatIsSplunkIntent (/please) tell me about Splunk
+BuyDrinksIntent who will buy us drinks tonight
+WhatIsSplunkIntent what is Splunk
+WhatIsSplunkIntent what's Splunk
+WhatIsSplunkIntent please tell me about Splunk
+WhatIsSplunkIntent tell me about Splunk
 AppsInfoIntent Where can I find information about Splunk apps
