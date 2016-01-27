@@ -1,9 +1,0 @@
-BuyDrinksIntent who's buying drinks tonight
-BuyDrinksIntent who will buy drinks tonight
-
-SearchCommandIntent what is the {searchcommandname} search command
-
-AppsInfoIntent where do I find more info about developing Splunk apps
-
-ServerCPUIntent what is the max cpu usage of server {servername} {timeperiod}
-ServerCPUIntent what's max cpu usage of server {servername} {timeperiod}

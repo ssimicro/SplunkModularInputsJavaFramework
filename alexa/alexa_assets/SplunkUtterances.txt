@@ -1,0 +1,8 @@
+MaxCPUIntent (what is/what's) (/the) (max/maximum) cpu (usage/use) (/of/on) (/{my system|server}) (/in/over) {TimePeriod}
+AvgCPUIntent (what is/what's) (/the) average cpu (usage/use) (/of/on) (/{my system|server}) (/in/over) {TimePeriod}
+SearchDocsIntent (what is/what's) (/the) {searchcommandname} (/search/Splunk) (/command)
+BuyDrinksIntent (who is/who's) buying (/a round of/us) drinks (/tonight)
+BuyDrinksIntent who will buy drinks tonight
+WhatIsSplunkIntent (what is/what's) Splunk
+WhatIsSplunkIntent (/please) tell me about Splunk
+AppsInfoIntent Where can I find information about Splunk apps

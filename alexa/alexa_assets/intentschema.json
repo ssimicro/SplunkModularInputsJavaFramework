@@ -1,32 +1,40 @@
 {
   "intents": [
     {
-      "intent": "ServerCPUIntent",
+      "intent": "MaxCPUIntent",
       "slots": [
         {
-          "name": "servername",
-          "type": "SERVER_NAME"
-        },
-        {
-          "name": "timeperiod",
-          "type": "TIME_PERIOD"
+          "name": "TimePeriod",
+          "type": "LIST_OF_TIME_PERIODS"
         }
       ]
     },
     {
-      "intent": "SearchCommandIntent",
+      "intent": "AvgCPUIntent",
+      "slots": [
+        {
+          "name": "TimePeriod",
+          "type": "LIST_OF_TIME_PERIODS"
+        }
+      ]
+    },
+    {
+      "intent": "SearchDocsIntent",
       "slots": [
         {
           "name": "searchcommandname",
-          "type": "SEARCH_COMMAND_NAME"
+          "type": "LIST_OF_SEARCH_COMMANDS"
         }
       ]
+    },
+    {
+      "intent": "WhatIsSplunkIntent"
     },
     {
       "intent": "AppsInfoIntent"
     },
     {
       "intent": "BuyDrinksIntent"
-    }
+    }	
   ]
 }
