@@ -1,9 +1,45 @@
+MaxCPUIntent what is the maximum cpu usage of server {servername} {timeperiod}
+AvgCPUIntent what is the average cpu usage of server {servername} {timeperiod}
+SearchDocsIntent what is the {searchcommandname}
+SearchDocsIntent what is the {searchcommandname} Splunk
+SearchDocsIntent what is the {searchcommandname} Splunk command
+SearchDocsIntent what is the {searchcommandname} command
+SearchDocsIntent what is the {searchcommandname} search
+SearchDocsIntent what is the {searchcommandname} search command
+SearchDocsIntent what is {searchcommandname}
+SearchDocsIntent what is {searchcommandname} Splunk
+SearchDocsIntent what is {searchcommandname} Splunk command
+SearchDocsIntent what is {searchcommandname} command
+SearchDocsIntent what is {searchcommandname} search
+SearchDocsIntent what is {searchcommandname} search command
+SearchDocsIntent what's the {searchcommandname}
+SearchDocsIntent what's the {searchcommandname} Splunk
+SearchDocsIntent what's the {searchcommandname} Splunk command
+SearchDocsIntent what's the {searchcommandname} command
+SearchDocsIntent what's the {searchcommandname} search
+SearchDocsIntent what's the {searchcommandname} search command
+SearchDocsIntent what's {searchcommandname}
+SearchDocsIntent what's {searchcommandname} Splunk
+SearchDocsIntent what's {searchcommandname} Splunk command
+SearchDocsIntent what's {searchcommandname} command
+SearchDocsIntent what's {searchcommandname} search
+SearchDocsIntent what's {searchcommandname} search command
+BuyDrinksIntent who is buying a round of drinks
+BuyDrinksIntent who is buying a round of drinks tonight
+BuyDrinksIntent who is buying drinks
+BuyDrinksIntent who is buying drinks tonight
+BuyDrinksIntent who is buying us drinks
+BuyDrinksIntent who is buying us drinks tonight
+BuyDrinksIntent who's buying a round of drinks
+BuyDrinksIntent who's buying a round of drinks tonight
+BuyDrinksIntent who's buying drinks
 BuyDrinksIntent who's buying drinks tonight
+BuyDrinksIntent who's buying us drinks
+BuyDrinksIntent who's buying us drinks tonight
 BuyDrinksIntent who will buy drinks tonight
-
-SearchCommandIntent what is the {searchcommandname} search command
-
-AppsInfoIntent where do I find more info about developing Splunk apps
-
-ServerCPUIntent what is the max cpu usage of server {servername} {timeperiod}
-ServerCPUIntent what's max cpu usage of server {servername} {timeperiod}
+BuyDrinksIntent who will buy us drinks tonight
+WhatIsSplunkIntent what is Splunk
+WhatIsSplunkIntent what's Splunk
+WhatIsSplunkIntent please tell me about Splunk
+WhatIsSplunkIntent tell me about Splunk
+AppsInfoIntent Where can I find information about Splunk apps

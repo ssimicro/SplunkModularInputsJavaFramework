@@ -9,7 +9,7 @@ https_scheme = <value>
 #www.splunkcowboy.com/alexa
 endpoint = <value>
 
-#crypto/java-keystore.jks
+#/foo/splunk/etc/apps/alexa/crypto/java-keystore.jks
 keystore = <value>
 
 #appsummit

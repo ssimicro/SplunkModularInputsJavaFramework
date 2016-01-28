@@ -1,8 +1,12 @@
 package com.splunk.modinput.alexa;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
-
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -14,11 +18,13 @@ import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.amazon.speech.Sdk;
 import com.amazon.speech.speechlet.Speechlet;
 import com.amazon.speech.speechlet.servlet.SpeechletServlet;
-
+import com.splunk.Service;
 import com.splunk.modinput.Arg;
 import com.splunk.modinput.Endpoint;
 import com.splunk.modinput.Input;
@@ -32,7 +38,7 @@ import com.splunk.modinput.Stanza;
 import com.splunk.modinput.Validation;
 import com.splunk.modinput.ValidationError;
 import com.splunk.modinput.Scheme.StreamingMode;
-import com.splunk.modinput.transport.Transport;
+
 
 public class AlexaWebService extends ModularInput {
 
@@ -44,6 +50,7 @@ public class AlexaWebService extends ModularInput {
 	}
 
 	boolean validateMode = false;
+	String modinputHome = "";
 
 	@Override
 	protected void doRun(Input input) throws Exception {
@@ -56,6 +63,9 @@ public class AlexaWebService extends ModularInput {
 
 				if (name != null && name.startsWith("alexa://")) {
 
+					this.modinputHome = System.getProperty("modinputhome");
+					loadMappingJSON();
+					setupSplunkService(input);
 					startWebServer(name, stanza.getParams(), validateMode);
 
 				}
@@ -73,18 +83,71 @@ public class AlexaWebService extends ModularInput {
 
 	}
 
+	private void setupSplunkService(Input input) {
+		String host = input.getServer_host();
+		String uri = input.getServer_uri();
+		int port = 8089;
+		String token = input.getSession_key();
+		try {
+			int portOffset = uri.indexOf(":", 8);
+			port = Integer.parseInt(uri.substring(portOffset + 1));
+		} catch (Exception e) {
+
+		}
+		Service service = new Service("localhost", port);
+		service.setToken("Splunk " + token);
+		service.version = service.getInfo().getVersion();
+		AlexaSessionManager.setService(service);
+
+	}
+
+	private void loadMappingJSON() throws Exception {
+
+		String jsonMapping = this.modinputHome + File.separator + "intents" + File.separator + "mapping.json";
+		JSONObject mappingJSON = new JSONObject(readFile(jsonMapping));
+
+		JSONArray mappings = mappingJSON.getJSONArray("mappings");
+		Map<String, IntentMapping> intentMappings = new HashMap<String, IntentMapping>();
+		for (int i = 0; i < mappings.length(); i++) {
+			JSONObject item = mappings.getJSONObject(i);
+			IntentMapping im = new IntentMapping();
+			try{im.setIntent(item.getString("intent"));}catch(Exception e){}
+			try{im.setResponse(item.getString("search"));}catch(Exception e){}
+			try{im.setSearch(item.getString("response"));}catch(Exception e){}
+			try{im.setSearch(item.getString("action_class"));}catch(Exception e){}
+			intentMappings.put(im.getIntent(), im);
+		}
+		AlexaSessionManager.setIntentMappings(intentMappings);
+
+	}
+
+	private String readFile(String fileName) throws Exception {
+		BufferedReader br = new BufferedReader(new FileReader(fileName));
+		try {
+			StringBuilder sb = new StringBuilder();
+			String line = br.readLine();
+
+			while (line != null) {
+				sb.append(line);
+				sb.append("\n");
+				line = br.readLine();
+			}
+			return sb.toString();
+		} finally {
+			br.close();
+		}
+	}
+
 	private void startWebServer(String stanzaName, List<Param> params, boolean validationMode) throws Exception {
 
 		int httpsPort = 443;
 		String httpsScheme = "https";
-		String endpoint = "";
-		String keystore = "../crypto/java-keystore.jks";
+		String endpoint = "/alexa";
+		String keystore = this.modinputHome + File.separator + "crypto" + File.separator + "java-keystore.jks";
 		String keystorePass = "";
 		String disableRequestSignatureCheck = "false";
 		String supportedApplicationIds = "";
 		int timestampTolerance = 150;
-
-		Transport transport = getTransportInstance(params, stanzaName);
 
 		for (Param param : params) {
 			String value = param.getValue();
@@ -106,9 +169,11 @@ public class AlexaWebService extends ModularInput {
 
 			} else if (param.getName().equals("keystore")) {
 				keystore = param.getValue();
+				System.setProperty("javax.net.ssl.keyStore", keystore);
 
-			} else if (param.getName().equals("keystorePass")) {
+			} else if (param.getName().equals("keystore_pass")) {
 				keystorePass = param.getValue();
+				System.setProperty("javax.net.ssl.keyStorePassword", keystore);
 
 			} else if (param.getName().equals("supported_application_ids")) {
 				supportedApplicationIds = param.getValue();

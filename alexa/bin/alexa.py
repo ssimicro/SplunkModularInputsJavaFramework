@@ -87,7 +87,7 @@ def run_java():
     if RUNMODE == 3:
       checkForRunningProcess()
 
-    java_args = [ JAVA_EXECUTABLE, "-classpath",CLASSPATH,"-Xms256m","-Xmx256m","-Dsplunk.securetransport.protocol="+SECURE_TRANSPORT,JAVA_MAIN_CLASS]
+    java_args = [ JAVA_EXECUTABLE, "-classpath",CLASSPATH,"-Xms256m","-Xmx256m","-Dsplunk.securetransport.protocol="+SECURE_TRANSPORT,"-Dmodinputhome="+MODINPUT_HOME,JAVA_MAIN_CLASS]
     java_args.extend(sys.argv[1:])
 
     # Now we can run our command   

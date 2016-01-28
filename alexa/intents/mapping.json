@@ -1,9 +1,21 @@
 {
   "mappings": [
     {
-      "intent": "ServerCPUIntent",
-      "search": "index=main server=$servername$ $timeperiod$ | stats max(cpu) as $outputval$ by server",
-      "response": "the max cpu usage of server $servername$ is $outputval$ percent"
+      "intent": "MaxCPUIntent",
+      "search": "index=main server=$servername$ $timeperiod$ | stats max(cpu) as outputval by server",
+      "response": "the max cpu usage of server $servername$ $timeperiod$ is $resultfield_outputval$ percent"
+      
+    },
+    {
+      "intent": "AvgCPUIntent",
+      "search": "index=main server=$servername$ $timeperiod$ | stats avg(cpu) as outputval by server",
+      "response": "the max cpu usage of server $servername$ $timeperiod$ is $resultfield_outputval$ percent"
+      
+    },
+    {
+      "intent": "TestMultiValuesIntent",
+      "search": "index=main | table a,b,c",
+      "response": "the values of fields a  b and c are $resultfield_a$ $resultfield_b$ $resultfield_c$"
       
     },
     {
@@ -11,13 +23,20 @@
       "response": "Browse to dev.splunk.com"      
     },
     {
+      "intent": "WhatIsSplunkIntent",
+      "response": "Splunk rhymes with Drunk"      
+    },
+    {
       "intent": "SearchCommandIntent",
-      "intent_handler" : "eval",
-      "response": "$handleroutput$"      
+      "response": "The stats command enables you to calculate summary statistics on the results of a search or the events retrieved from an index"      
+    },
+    {
+      "intent": "BetterSearchCommandIntent",
+      "action_class": "com.foo.LookupSplunkDocsAction"      
     },
     {
       "intent": "BuyDrinksIntent",
-      "response": "Alex Raitz will tonight"      
+      "response": "Brian Bingham will tonight"      
     }
   ]
 }
