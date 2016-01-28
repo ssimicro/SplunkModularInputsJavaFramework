@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>Mappings</title>
+    <link rel="shortcut icon" href="{{SPLUNKWEB_URL_PREFIX}}/static/img/favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="/en-US/static/@aaff59bb082c/css/build/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="/en-US/static/@aaff59bb082c/css/build/pages/dashboard-simple-bootstrap.min.css"/>
+</head>
+<body class="simplexml preload locale-en">
+<!-- 
+BEGIN LAYOUT
+This section contains the layout for the dashboard. Splunk uses proprietary
+styles in <div> tags, similar to Bootstrap's grid system. 
+-->
+<a class="navSkip" href="#navSkip" tabindex="1">Screen reader users, click here to skip the navigation bar</a>
+<div class="header splunk-header">
+    <div id="placeholder-splunk-bar">
+        <a href="{{SPLUNKWEB_URL_PREFIX}}/app/launcher/home" class="brand" title="splunk &gt; listen to your data">splunk<strong>
+            &gt;</strong></a>
+    </div>
+    <div id="placeholder-app-bar"></div>
+</div>
+<a id="navSkip"></a>
+<div class="dashboard-body container-fluid main-section-body" data-role="main">
+    <div class="dashboard-header clearfix">
+        <h2>Mappings</h2>
+    </div>
+    <div id="row1" class="dashboard-row dashboard-row1">
+        <div id="panel1" class="dashboard-cell" style="width: 20%;">
+            <div id="mapping-list"
+                 style="overflow-y: scroll; height:400px;border-color: #000;border-width: 1px;border-style: solid;width: 300px;background: #fff;">
+                <ul>
+
+                </ul>
+            </div>
+            <div class="form-submit" id="new_btn">
+                <button class="btn btn-primary">New</button>
+            </div>
+        </div>
+        <div id="panel2" class="dashboard-cell" style="width: 80%;">
+            <div class="panel-element-row">
+                <div id="element0" class="dashboard-element event" style="width: 100%">
+                    <div class="panel-head">
+                    </div>
+                    <div class="panel-body">
+                        <label for="intent">Intent: </label><input id="intent" type="text">
+                        <label for="search">Search: </label><input id="search" type="text">
+                        <label for="response">Response: </label><input id="response" type="text">
+                        <div class="form-submit" id="save_btn">
+                            <button class="btn btn-primary">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="footer"></div>
+
+<!-- 
+END LAYOUT
+-->
+
+<script src="{{SPLUNKWEB_URL_PREFIX}}/config?autoload=1"></script>
+<script src="{{SPLUNKWEB_URL_PREFIX}}/static/js/i18n.js"></script>
+<script src="{{SPLUNKWEB_URL_PREFIX}}/i18ncatalog?autoload=1"></script>
+<script src="{{SPLUNKWEB_URL_PREFIX}}/static/js/build/simplexml.min/config.js"></script>
+<script type="text/javascript">
+    // <![CDATA[
+    require.config({
+        baseUrl: "{{SPLUNKWEB_URL_PREFIX}}/static/js",
+        waitSeconds: 0 // Disable require.js load timeout
+    });
+
+    //
+    // LIBRARY REQUIREMENTS
+    //
+    // In the require function, we include the necessary libraries and modules for
+    // the HTML dashboard. Then, we pass variable names for these libraries and
+    // modules as function parameters, in order.
+    //
+    // When you add libraries or modules, remember to retain this mapping order
+    // between the library or module and its function parameter. You can do this by
+    // adding to the end of these lists, as shown in the commented examples below.
+
+    require([
+                "splunkjs/mvc",
+                "splunkjs/mvc/utils",
+                "splunkjs/mvc/tokenutils",
+                "underscore",
+                "backbone",
+                "jquery",
+                "splunkjs/mvc/simplexml",
+                "splunkjs/mvc/headerview",
+                "splunkjs/mvc/footerview",
+                "splunkjs/mvc/simplexml/dashboardview",
+                "splunkjs/mvc/simplexml/dashboard/panelref",
+                "splunkjs/mvc/simplexml/element/chart",
+                "splunkjs/mvc/simplexml/element/event",
+                "splunkjs/mvc/simplexml/element/html",
+                "splunkjs/mvc/simplexml/element/list",
+                "splunkjs/mvc/simplexml/element/map",
+                "splunkjs/mvc/simplexml/element/single",
+                "splunkjs/mvc/simplexml/element/table",
+                "splunkjs/mvc/simpleform/formutils",
+                "splunkjs/mvc/simplexml/eventhandler",
+                "splunkjs/mvc/simplexml/searcheventhandler",
+                "splunkjs/mvc/simpleform/input/dropdown",
+                "splunkjs/mvc/simpleform/input/radiogroup",
+                "splunkjs/mvc/simpleform/input/linklist",
+                "splunkjs/mvc/simpleform/input/multiselect",
+                "splunkjs/mvc/simpleform/input/checkboxgroup",
+                "splunkjs/mvc/simpleform/input/text",
+                "splunkjs/mvc/simpleform/input/timerange",
+                "splunkjs/mvc/simpleform/input/submit",
+                "splunkjs/mvc/searchmanager",
+                "splunkjs/mvc/savedsearchmanager",
+                "splunkjs/mvc/postprocessmanager",
+                "splunkjs/mvc/simplexml/urltokenmodel"
+                // Add comma-separated libraries and modules manually here, for example:
+                // ..."splunkjs/mvc/simplexml/urltokenmodel",
+                // "splunkjs/mvc/checkboxview"
+            ],
+            function (mvc,
+                      utils,
+                      TokenUtils,
+                      _,
+                      Backbone,
+                      $,
+                      DashboardController,
+                      HeaderView,
+                      FooterView,
+                      Dashboard,
+                      PanelRef,
+                      ChartElement,
+                      EventElement,
+                      HtmlElement,
+                      ListElement,
+                      MapElement,
+                      SingleElement,
+                      TableElement,
+                      FormUtils,
+                      EventHandler,
+                      SearchEventHandler,
+                      DropdownInput,
+                      RadioGroupInput,
+                      LinkListInput,
+                      MultiSelectInput,
+                      CheckboxGroupInput,
+                      TextInput,
+                      TimeRangeInput,
+                      SubmitButton,
+                      SearchManager,
+                      SavedSearchManager,
+                      PostProcessManager,
+                      UrlTokenModel
+
+                      // Add comma-separated parameter names here, for example:
+                      // ...UrlTokenModel,
+                      // CheckboxView
+            ) {
+
+                var $input_intent = $('input#intent');
+                var $input_search= $('input#search');
+                var $input_response = $('input#response');
+                var currentModel = null;
+
+                var pageLoading = true;
+
+                var Mappings = Backbone.Collection.extend({
+                  url: '/en-US/custom/alexa/MainController/skills/'
+                });
+
+                var myMappings = new Mappings();
+
+                var MappingsItem = Backbone.View.extend({
+                    tagName:  'li',
+
+                    events: {
+                        'click': 'click',
+                    },
+
+                    initialize: function () {
+//                    this.listenTo(this.model, 'change', this.render);
+//                    this.listenTo(this.model, 'destroy', this.remove);
+//                    this.listenTo(this.model, 'visible', this.toggleVisible);
+		            },
+
+                    render: function () {
+                        this.$el.html(this.model.id);
+                        return this;
+                    },
+
+                    click: function() {
+                        currentModel = this.model;
+
+                        $input_intent.prop('disabled', 'true');
+                        $input_intent.val(this.model.id);
+                        $input_search.val(this.model.get('search'));
+                        $input_response.val(this.model.get('response'));
+                    }
+                });
+
+                var MappingsView = Backbone.View.extend({
+                    el: '#mapping-list',
+                    initialize: function () {
+                        this.$list = this.$el.find('ul');
+                        this.listenTo(myMappings, 'reset', this.reset);
+                        myMappings.fetch({reset: true});
+                    },
+                    addOne: function(mapping) {
+                        var view = new MappingsItem({ model: mapping });
+                        this.$list.append(view.render().el);
+                    },
+                    render: function() {
+                        var $ul = this.$('ul');
+                        myMappings.each(this.addOne, this);
+                    },
+                    reset: function() {
+                        console.log('reset');
+                        this.render();
+                    }
+                });
+                var myMappingsView = new MappingsView();
+
+                var $saveBtn = $('div#save_btn button');
+                $saveBtn.click(function(e) {
+                    e.preventDefault();
+
+                    if (currentModel === null) {
+                        // this probably means NEW;
+                        return;
+                    }
+
+                    currentModel.save();
+                });
+
+                //
+                // TOKENS
+                //
+
+                // Create token namespaces
+                var urlTokenModel = new UrlTokenModel();
+                mvc.Components.registerInstance('url', urlTokenModel);
+                var defaultTokenModel = mvc.Components.getInstance('default', {create: true});
+                var submittedTokenModel = mvc.Components.getInstance('submitted', {create: true});
+
+                urlTokenModel.on('url:navigate', function () {
+                    defaultTokenModel.set(urlTokenModel.toJSON());
+                    if (!_.isEmpty(urlTokenModel.toJSON()) && !_.all(urlTokenModel.toJSON(), _.isUndefined)) {
+                        submitTokens();
+                    } else {
+                        submittedTokenModel.clear();
+                    }
+                });
+
+                // Initialize tokens
+                defaultTokenModel.set(urlTokenModel.toJSON());
+
+                function submitTokens() {
+                    // Copy the contents of the defaultTokenModel to the submittedTokenModel and urlTokenModel
+                    FormUtils.submitForm({replaceState: pageLoading});
+                }
+
+                function setToken(name, value) {
+                    defaultTokenModel.set(name, value);
+                    submittedTokenModel.set(name, value);
+                }
+
+                function unsetToken(name) {
+                    defaultTokenModel.unset(name);
+                    submittedTokenModel.unset(name);
+                }
+
+
+                //
+                // SEARCH MANAGERS
+                //
+
+                var global = new SearchManager({
+                    "id": "global",
+                    "latest_time": "$latest$",
+                    "earliest_time": "$earliest$",
+                    "status_buckets": 300,
+                    "search": "index=sample \"$to$\"",
+                    "cancelOnUnload": true,
+                    "app": utils.getCurrentApp(),
+                    "auto_cancel": 90,
+                    "preview": true,
+                    "runWhenTimeIsUndefined": false
+                }, {tokens: true, tokenNamespace: "submitted"});
+
+                var search1 = new PostProcessManager({
+                    "search": "",
+                    "managerid": "global",
+                    "id": "search1"
+                }, {tokens: true, tokenNamespace: "submitted"});
+
+                new SearchManager({
+                    "id": "search2",
+                    "earliest_time": null,
+                    "latest_time": null,
+                    "status_buckets": 0,
+                    "search": "index=sample | stats count by to",
+                    "cancelOnUnload": true,
+                    "app": utils.getCurrentApp(),
+                    "auto_cancel": 90,
+                    "preview": true,
+                    "runWhenTimeIsUndefined": false
+                }, {tokens: true});
+
+
+                //
+                // SPLUNK HEADER AND FOOTER
+                //
+
+                new HeaderView({
+                    id: 'header',
+                    section: 'dashboards',
+                    el: $('.header'),
+                    acceleratedAppNav: true,
+                    useSessionStorageCache: true,
+                    splunkbar: true,
+                    appbar: true,
+                    litebar: false,
+                }, {tokens: true}).render();
+
+                new FooterView({
+                    id: 'footer',
+                    el: $('.footer')
+                }, {tokens: true}).render();
+
+
+                //
+                // DASHBOARD EDITOR
+                //
+
+                new Dashboard({
+                    id: 'dashboard',
+                    el: $('.dashboard-body'),
+                    showTitle: true,
+                    editable: true
+                }, {tokens: true}).render();
+
+
+                //
+                // VIEWS: VISUALIZATION ELEMENTS
+                //
+
+                var element1 = new EventElement({
+                    "id": "element1",
+                    "count": 50,
+                    "fields": [],
+                    "managerid": "search1",
+                    "el": $('#element1')
+                }, {tokens: true, tokenNamespace: "submitted"}).render();
+
+
+                //
+                // VIEWS: FORM INPUTS
+                //
+
+//        var input1 = new DropdownInput({
+//            "id": "input1",
+//            "choices": [
+//            ],
+//            "selectFirstChoice": true,
+//            "showClearButton": true,
+//            "valueField": "to",
+//            "labelField": "to",
+//            "value": "$form.to$",
+//            "managerid": "search2",
+//            "el": $('#input1')
+//        }, {tokens: true}).render();
+
+//                input1.on("change", function (newValue) {
+//            if (mappings !== null) {
+//                $input_intent.val(mappings[newValue].intent);
+//            }
+//                });
+
+                //
+                // SUBMIT FORM DATA
+                //
+
+                var submit = new SubmitButton({
+                    id: 'submit',
+                    el: $('#search_btn')
+                }, {tokens: true}).render();
+
+                submit.on("submit", function () {
+                    submitTokens();
+                });
+
+                // Initialize time tokens to default
+                if (!defaultTokenModel.has('earliest') && !defaultTokenModel.has('latest')) {
+                    defaultTokenModel.set({earliest: '0', latest: ''});
+                }
+
+                if (!_.isEmpty(urlTokenModel.toJSON())) {
+                    submitTokens();
+                }
+
+//                $.ajax({
+//                    type: "GET",
+//                    url: '/en-US/custom/alexa/MainController/read_skills/',
+//                    dataType: "json",
+//                    success: function (rsp) {
+//                        mappings = rsp;
+//
+//                        for (var i = 0; i < mappings.length; i++) {
+//                            var nameOfIntent = mappings[i].intent;
+//                            input1.options.choices.push({
+//                                label: nameOfIntent,
+//                                value: i
+//                            });
+//                        }
+//
+//                        //
+//                        // DASHBOARD READY
+//                        //
+//                        DashboardController.ready();
+//                        pageLoading = false;
+//                    }
+//                });
+
+
+                // DASHBOARD READY
+                //
+                DashboardController.ready();
+                pageLoading = false;
+            }
+    );
+    // ]]>
+</script>
+</body>
+</html>
