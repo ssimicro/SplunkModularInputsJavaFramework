@@ -12,6 +12,7 @@
         div#mapping-list ul {
             list-style-type: none;
             padding: 0;
+            margin-left: 0;
         }
 
         div#mapping-list ul li {
@@ -46,7 +47,7 @@ styles in <div> tags, similar to Bootstrap's grid system.
         <h2>Mappings</h2>
     </div>
     <div id="row1" class="dashboard-row dashboard-row1">
-        <div id="panel1" class="dashboard-cell" style="width: 20%;">
+        <div id="panel1" class="dashboard-cell" style="width: 30%;">
             <div id="mapping-list"
                  style="overflow-y: scroll; height:200px;border-color: #000;border-width: 1px;border-style: solid;width: 300px;background: #fff;">
                 <ul>
@@ -54,31 +55,45 @@ styles in <div> tags, similar to Bootstrap's grid system.
                 </ul>
             </div>
         </div>
-        <div id="panel2" class="dashboard-cell" style="width: 80%;">
+        <div id="panel2" class="dashboard-cell" style="width: 70%;">
             <div class="panel-element-row">
                 <div id="element0" class="dashboard-element event" style="width: 100%">
                     <div class="panel-head">
                     </div>
                     <div class="panel-body">
                         <label for="intent">Intent: </label><input id="intent" type="text">
-                        <label for="search">Search: </label><input id="search" type="text">
+                        <label for="search">Search: </label><input id="search" type="text" style="width: 85%; float: left; margin-right: 5px;">
                         <div class="form-submit" id="search_btn">
                             <button class="btn btn-primary">Search</button>
                         </div>
-                        <label for="response">Response: </label><input id="response" type="text">
-                        <div class="form-submit" id="save_btn">
+                        <div style="clear: both;"></div>
+                        <label for="response">Response: e.g. the values of fields a  b and c are $resultfield_a$ $resultfield_b$ $resultfield_c$</label><input id="response" type="text" style="width: 85%;">
+                        <div style="clear: both;"></div>
+                        <div class="form-submit" id="save_btn" style="float:left;">
                             <button class="btn btn-primary">Save</button>
                         </div>
-                        <div class="form-submit" id="new_btn">
+                        <div class="form-submit" id="new_btn" style="float:left; margin-left: 10px;">
                             <button class="btn btn-primary">New</button>
                         </div>
-
+                        <div style="clear: both;"></div>
                     </div>
                 </div>
             </div>
         </div>
-
-
+    </div>
+    <div class="dashboard-row dashboard-row1" style="margin-top: 10px;">
+        <div class="dashboard-cell" style="width: 100%;">
+            <div class="dashboard-panel clearfix">
+                <div class="panel-element-row">
+                    <div class="dashboard-element table" id="element1" style="width: 100%;">
+                        <div class="panel-head">
+                            <h3>Click on a cell in order to include a field to Response</h3>
+                        </div>
+                        <div class="panel-body"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <div class="footer"></div>
@@ -191,7 +206,25 @@ END LAYOUT
                 var $input_response = $('input#response');
                 var currentModel = null;
 
+                $input_intent.prop('disabled', true);
+                $input_search.prop('disabled', true);
+                $input_response.prop('disabled', true);
+
                 var pageLoading = true;
+
+                var search1 = new SearchManager({
+                    "id": "search1",
+                    "earliest_time": null,
+                    "latest_time": null,
+                    "status_buckets": 0,
+                    "search": "",
+                    "cancelOnUnload": true,
+                    "app": utils.getCurrentApp(),
+                    "auto_cancel": 90,
+                    "preview": true,
+                    "runWhenTimeIsUndefined": false
+                }, {tokens: true});
+                window.search1 = search1;
 
                 var Intent = Backbone.Model.extend({
                     idAttribute: "intent"
@@ -256,12 +289,14 @@ END LAYOUT
                         myMappings.each(this.addOne, this);
                     },
                     reset: function() {
-                        console.log('reset');
                         this.render();
                     },
                     active: function(eventTarget) {
+                        // the name of the functino is counter-intutive since what this function
+                        // does is actually deactivate selection but the name stands because
+                        // it is invoked during an "active" event
                         myMappings.each(function(mapping) {
-                            if(eventTarget !== mapping) {
+                            if(eventTarget === undefined || eventTarget !== mapping) {
                                 mapping.trigger('deactive');
                             }
                         }, this);
@@ -273,8 +308,13 @@ END LAYOUT
                 $newBtn.click(function(e) {
                     e.preventDefault();
 
+                    myMappingsView.active();
+
                     currentModel = null;
                     $input_intent.prop('disabled', false);
+                    $input_search.prop('disabled', false);
+                    $input_response.prop('disabled', false);
+
                     $input_intent.val('');
                     $input_search.val('');
                     $input_response.val('');
@@ -284,25 +324,46 @@ END LAYOUT
                 $saveBtn.click(function(e) {
                     e.preventDefault();
 
-                    $input_intent.prop('disabled', true);
+                    var search = $.trim($input_search.val());
+                    var response = $.trim($input_response.val());
 
-                    var search = $input_search.val();
-                    var response = $input_response.val();
+                    if (response === '') {
+                        alert('Response cannot be empty!');
+                        return;
+                    }
+
+                    $input_search.prop('disabled', false);
+                    $input_response.prop('disabled', false);
 
                     if (currentModel === null) {
+
                         // this means NEW;
                         var intent = $input_intent.val();
+                        if (intent === '') {
+                            alert('Intent cannot be empty!')
+                            return;
+                        }
+
                         currentModel = myMappings.create({
                             intent: intent,
                             search: search,
                             response: response
                         });
+
+                        $input_intent.prop('disabled', true);
                         return;
                     }
 
                     currentModel.set('search', search);
                     currentModel.set('response', response);
                     currentModel.save();
+                });
+
+                var $searchBtn = $('div#search_btn button');
+                $searchBtn.click(function(e) {
+                    var searchString = $input_search.val();
+                    search1.search.attributes.search = searchString;
+                    search1.startSearch();
                 });
 
                 //
@@ -347,38 +408,24 @@ END LAYOUT
                 // SEARCH MANAGERS
                 //
 
-                var global = new SearchManager({
-                    "id": "global",
-                    "latest_time": "$latest$",
-                    "earliest_time": "$earliest$",
-                    "status_buckets": 300,
-                    "search": "index=sample \"$to$\"",
-                    "cancelOnUnload": true,
-                    "app": utils.getCurrentApp(),
-                    "auto_cancel": 90,
-                    "preview": true,
-                    "runWhenTimeIsUndefined": false
-                }, {tokens: true, tokenNamespace: "submitted"});
-
-                var search1 = new PostProcessManager({
-                    "search": "",
-                    "managerid": "global",
-                    "id": "search1"
-                }, {tokens: true, tokenNamespace: "submitted"});
-
-                new SearchManager({
-                    "id": "search2",
-                    "earliest_time": null,
-                    "latest_time": null,
-                    "status_buckets": 0,
-                    "search": "index=sample | stats count by to",
-                    "cancelOnUnload": true,
-                    "app": utils.getCurrentApp(),
-                    "auto_cancel": 90,
-                    "preview": true,
-                    "runWhenTimeIsUndefined": false
-                }, {tokens: true});
-
+//                var global = new SearchManager({
+//                    "id": "global",
+//                    "latest_time": "$latest$",
+//                    "earliest_time": "$earliest$",
+//                    "status_buckets": 300,
+//                    "search": "index=sample \"$to$\"",
+//                    "cancelOnUnload": true,
+//                    "app": utils.getCurrentApp(),
+//                    "auto_cancel": 90,
+//                    "preview": true,
+//                    "runWhenTimeIsUndefined": false
+//                }, {tokens: true, tokenNamespace: "submitted"});
+//
+//                var search1 = new PostProcessManager({
+//                    "search": "",
+//                    "managerid": "global",
+//                    "id": "search1"
+//                }, {tokens: true, tokenNamespace: "submitted"});
 
                 //
                 // SPLUNK HEADER AND FOOTER
@@ -417,14 +464,19 @@ END LAYOUT
                 // VIEWS: VISUALIZATION ELEMENTS
                 //
 
-                var element1 = new EventElement({
+                var element1 = new TableElement({
                     "id": "element1",
-                    "count": 50,
-                    "fields": [],
+                    "showPager": true,
                     "managerid": "search1",
                     "el": $('#element1')
-                }, {tokens: true, tokenNamespace: "submitted"}).render();
+                }, {tokens: true}).render();
 
+                element1.on("click:cell", function (e) {
+                    e.preventDefault();
+
+                    var text = $input_response.val() + '$resultfield_' + e.key + '$';
+                    $input_response.val(text);
+                });
 
                 //
                 // VIEWS: FORM INPUTS
@@ -453,14 +505,14 @@ END LAYOUT
                 // SUBMIT FORM DATA
                 //
 
-                var submit = new SubmitButton({
-                    id: 'submit',
-                    el: $('#search_btn')
-                }, {tokens: true}).render();
+//                var submit = new SubmitButton({
+//                    id: 'submit',
+//                    el: $('#search_btn')
+//                }, {tokens: true}).render();
 
-                submit.on("submit", function () {
-                    submitTokens();
-                });
+//                submit.on("submit", function () {
+//                    submitTokens();
+//                });
 
                 // Initialize time tokens to default
                 if (!defaultTokenModel.has('earliest') && !defaultTokenModel.has('latest')) {
@@ -499,6 +551,10 @@ END LAYOUT
                 //
                 DashboardController.ready();
                 pageLoading = false;
+
+                // a shady and hacky way of overwriting what's being overwritten by some javascript;
+                $('div#panel1').css('width', '30%');
+                $('div#panel2').css('width', '70%');
             }
     );
     // ]]>
