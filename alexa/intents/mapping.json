@@ -1,22 +1,17 @@
 {
-  "mappings": [
-    {
-      "intent": "ServerCPUIntent",
+  "intents": [
+    "ServerCPUIntent": {
       "search": "index=main server=$servername$ $timeperiod$ | stats max(cpu) as $outputval$ by server",
       "response": "the max cpu usage of server $servername$ is $outputval$ percent"
-      
     },
-    {
-      "intent": "AppsInfoIntent",
+    "AppsInfoIntent": {
       "response": "Browse to dev.splunk.com"      
     },
-    {
-      "intent": "SearchCommandIntent",
+    "SearchCommandIntent": {
       "intent_handler" : "eval",
       "response": "$handleroutput$"      
     },
-    {
-      "intent": "BuyDrinksIntent",
+    "BuyDrinksIntent": {
       "response": "Alex Raitz will tonight"      
     }
   ]
