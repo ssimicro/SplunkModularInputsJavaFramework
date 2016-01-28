@@ -110,11 +110,12 @@ public class AlexaWebService extends ModularInput {
 		Map<String, IntentMapping> intentMappings = new HashMap<String, IntentMapping>();
 		for (int i = 0; i < mappings.length(); i++) {
 			JSONObject item = mappings.getJSONObject(i);
+			
 			IntentMapping im = new IntentMapping();
 			try{im.setIntent(item.getString("intent"));}catch(Exception e){}
-			try{im.setResponse(item.getString("search"));}catch(Exception e){}
-			try{im.setSearch(item.getString("response"));}catch(Exception e){}
-			try{im.setSearch(item.getString("action_class"));}catch(Exception e){}
+			try{im.setResponse(item.getString("response"));}catch(Exception e){}
+			try{im.setSearch(item.getString("search"));}catch(Exception e){}
+			try{im.setActionClass(item.getString("action_class"));}catch(Exception e){}
 			intentMappings.put(im.getIntent(), im);
 		}
 		AlexaSessionManager.setIntentMappings(intentMappings);

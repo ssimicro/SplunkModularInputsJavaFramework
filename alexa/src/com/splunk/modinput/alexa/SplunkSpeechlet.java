@@ -1,6 +1,8 @@
 package com.splunk.modinput.alexa;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -17,14 +19,15 @@ import com.amazon.speech.speechlet.SessionStartedRequest;
 import com.amazon.speech.speechlet.Speechlet;
 import com.amazon.speech.speechlet.SpeechletException;
 import com.amazon.speech.speechlet.SpeechletResponse;
+import com.amazon.speech.ui.OutputSpeech;
 import com.amazon.speech.ui.PlainTextOutputSpeech;
 import com.amazon.speech.ui.Reprompt;
 import com.amazon.speech.ui.SimpleCard;
+import com.amazon.speech.ui.SsmlOutputSpeech;
 import com.splunk.Job;
 import com.splunk.JobArgs;
 import com.splunk.ResultsReaderXml;
 import com.splunk.Service;
-
 
 public class SplunkSpeechlet implements Speechlet {
 	protected static Logger logger = Logger.getLogger(SplunkSpeechlet.class);
@@ -41,17 +44,16 @@ public class SplunkSpeechlet implements Speechlet {
 
 	@Override
 	public SpeechletResponse onIntent(final IntentRequest request, final Session session) throws SpeechletException {
-		
+
 		Intent intent = request.getIntent();
 		String intentName = (intent != null) ? intent.getName() : null;
 
-		IntentMapping mapping = AlexaSessionManager.getIntentMappings().get("intentName");
+		IntentMapping mapping = AlexaSessionManager.getIntentMappings().get(intentName);
 
-		if (mapping == null) {
-			throw new SpeechletException("Invalid Intent");
-		}
 		if ("AMAZON.HelpIntent".equals(intentName)) {
 			return getHelpResponse();
+		} else if (mapping == null) {
+			throw new SpeechletException("Invalid Intent");
 		} else {
 			return getIntentResponse(mapping, intent);
 		}
@@ -69,7 +71,7 @@ public class SplunkSpeechlet implements Speechlet {
 	 * @return SpeechletResponse spoken and visual response for the given intent
 	 */
 	private SpeechletResponse getWelcomeResponse() {
-		String speechText = "Welcome to Splunk";
+		String speechText = "Welcome to Splunk, ask me something";
 
 		// Create the Simple card content.
 		SimpleCard card = new SimpleCard();
@@ -105,67 +107,98 @@ public class SplunkSpeechlet implements Speechlet {
 		card.setTitle("Splunk");
 		card.setContent(response);
 
-		// Create the plain text output.
-		PlainTextOutputSpeech speech = new PlainTextOutputSpeech();
-		speech.setText(response);
+		OutputSpeech speech;
+		// ssml
+		if (response.startsWith("<speak>")) {
+			speech = new SsmlOutputSpeech();
+			((SsmlOutputSpeech) speech).setSsml(response);
+		} else {
+			speech = new PlainTextOutputSpeech();
+			((PlainTextOutputSpeech) speech).setText(response);
+		}
 
 		return SpeechletResponse.newTellResponse(speech, card);
 	}
 
 	private String executeSearch(String search, String response, Map<String, Slot> slots) {
 
+		logger.error("executing searching");
+		logger.error(search);
+		logger.error(response);
 		Set<String> slotKeys = slots.keySet();
 
 		for (String key : slotKeys) {
 
 			String value = slots.get(key).getValue();
+
+			logger.error("slot key : " + key);
+
+			logger.error("slot value : " + value);
 			if (!key.equalsIgnoreCase("timeperiod")) {
-				search.replaceAll("\\$" + key + "\\$", value);
-				response.replaceAll("\\$" + key + "\\$", value);
+				search = search.replaceAll("\\$" + key + "\\$", value);
+				response = response.replaceAll("\\$" + key + "\\$", value);
+				logger.error("1 : " + search);
+				logger.error("1 : " + response);
 			} else {
 
-				search.replaceAll("\\$timeperiod\\$", AlexaSessionManager.getTimeMappings().get(value));
-				response.replaceAll("\\$timeperiod\\$", value);
+				search = search.replaceAll("\\$timeperiod\\$", AlexaSessionManager.getTimeMappings().get(value));
+				response = response.replaceAll("\\$timeperiod\\$", value);
+				logger.error("2 : " + search);
+				logger.error("2 : " + response);
 			}
 
 		}
 
 		// execute search
-		HashMap<String, String> outputKeyVal = performSearch("search " + search + "| head 1");
-		for (String key : outputKeyVal.keySet())
-			response.replaceAll("\\$resultfield_" + key + "\\$", outputKeyVal.get(key));
+		HashMap<String, String> outputKeyVal = performSearch("search " + search + " | head 1");
 
+		if (outputKeyVal == null) {
+			response = "I'm sorry , I couldn't find any results";
+		} else {
+			for (String key : outputKeyVal.keySet()) {
+				logger.error("event key : " + key);
+				response = response.replaceAll("\\$resultfield_" + key + "\\$", outputKeyVal.get(key));
+				logger.error("3 : " + response);
+			}
+		}
 		return response;
 	}
 
 	private HashMap<String, String> performSearch(String search) {
 
-		Service splunkService = AlexaSessionManager.getService();
-		JobArgs jobargs = new JobArgs();
-
-		jobargs.setExecutionMode(JobArgs.ExecutionMode.NORMAL);
-		Job job = splunkService.search(search, jobargs);
-		while (!job.isReady()) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-
-			}
-		}
-
-		InputStream resultsNormalSearch = job.getResults();
-
-		ResultsReaderXml resultsReaderNormalSearch;
+		logger.error("performing searching");
 
 		try {
+			Service splunkService = AlexaSessionManager.getService();
+			JobArgs jobargs = new JobArgs();
+
+			jobargs.setExecutionMode(JobArgs.ExecutionMode.NORMAL);
+			logger.error("dispatch search : "+search);
+			Job job = splunkService.search(search, jobargs);
+			
+			while (!job.isReady()) {
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+
+				}
+			}
+			logger.error("search done");
+
+			InputStream resultsNormalSearch = job.getResults();
+			
+			ResultsReaderXml resultsReaderNormalSearch;
+
 			resultsReaderNormalSearch = new ResultsReaderXml(resultsNormalSearch);
 			HashMap<String, String> event;
+			logger.error("event loop");
 			while ((event = resultsReaderNormalSearch.getNextEvent()) != null) {
+				logger.error("returning event");
 				return event;
 			}
 
 		} catch (Exception e) {
-			logger.error("Error performing search : "+search+" , because "+e.getMessage());
+			logger.error("Error performing search : " + search + " , because " + e.getMessage());
 		}
 		return null;
 	}

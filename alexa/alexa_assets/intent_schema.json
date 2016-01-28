@@ -39,6 +39,9 @@
       "intent": "WhatIsSplunkIntent"
     },
     {
+      "intent": "PlayASound"
+    },
+    {
       "intent": "AppsInfoIntent"
     },
     {

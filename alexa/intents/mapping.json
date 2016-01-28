@@ -2,14 +2,14 @@
   "mappings": [
     {
       "intent": "MaxCPUIntent",
-      "search": "index=main server=$servername$ $timeperiod$ | stats max(cpu) as outputval by server",
-      "response": "the max cpu usage of server $servername$ $timeperiod$ is $resultfield_outputval$ percent"
+      "search": "index=_internal",
+      "response": "the max cpu usage of server $servername$ $timeperiod$ is 45 percent"
       
     },
     {
       "intent": "AvgCPUIntent",
-      "search": "index=main server=$servername$ $timeperiod$ | stats avg(cpu) as outputval by server",
-      "response": "the max cpu usage of server $servername$ $timeperiod$ is $resultfield_outputval$ percent"
+      "search": "index=_internal",
+      "response": "the average cpu usage of server $servername$ $timeperiod$ is 11 percent"
       
     },
     {
@@ -33,11 +33,14 @@
     {
       "intent": "BetterSearchCommandIntent",
       "action_class": "com.foo.LookupSplunkDocsAction"  
-    },    
+    },  
+    {
+      "intent": "PlayASound",
+      "response": "<speak><audio src=\"http://www.orangefreesounds.com/wp-content/uploads/2015/09/Horse-neighing.mp3\"/></speak>"      
+    },  
     {
       "intent": "BuyDrinksIntent",
       "response": "Brian Bingham will tonight"      
-
     }
   ]
 }
