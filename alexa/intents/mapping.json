@@ -32,8 +32,8 @@
     },
     {
       "intent": "BetterSearchCommandIntent",
-      "action_class": "com.foo.LookupSplunkDocsAction"      
-
+      "action_class": "com.foo.LookupSplunkDocsAction"  
+    },    
     {
       "intent": "BuyDrinksIntent",
       "response": "Brian Bingham will tonight"      

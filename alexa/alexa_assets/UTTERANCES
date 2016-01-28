@@ -1,29 +1,29 @@
 MaxCPUIntent what is the maximum cpu usage of server {servername} {timeperiod}
 AvgCPUIntent what is the average cpu usage of server {servername} {timeperiod}
-SearchDocsIntent what is the {searchcommandname}
-SearchDocsIntent what is the {searchcommandname} Splunk
-SearchDocsIntent what is the {searchcommandname} Splunk command
-SearchDocsIntent what is the {searchcommandname} command
-SearchDocsIntent what is the {searchcommandname} search
-SearchDocsIntent what is the {searchcommandname} search command
-SearchDocsIntent what is {searchcommandname}
-SearchDocsIntent what is {searchcommandname} Splunk
-SearchDocsIntent what is {searchcommandname} Splunk command
-SearchDocsIntent what is {searchcommandname} command
-SearchDocsIntent what is {searchcommandname} search
-SearchDocsIntent what is {searchcommandname} search command
-SearchDocsIntent what's the {searchcommandname}
-SearchDocsIntent what's the {searchcommandname} Splunk
-SearchDocsIntent what's the {searchcommandname} Splunk command
-SearchDocsIntent what's the {searchcommandname} command
-SearchDocsIntent what's the {searchcommandname} search
-SearchDocsIntent what's the {searchcommandname} search command
-SearchDocsIntent what's {searchcommandname}
-SearchDocsIntent what's {searchcommandname} Splunk
-SearchDocsIntent what's {searchcommandname} Splunk command
-SearchDocsIntent what's {searchcommandname} command
-SearchDocsIntent what's {searchcommandname} search
-SearchDocsIntent what's {searchcommandname} search command
+SearchCommandIntent what is the {searchcommandname}
+SearchCommandIntent what is the {searchcommandname} Splunk
+SearchCommandIntent what is the {searchcommandname} Splunk command
+SearchCommandIntent what is the {searchcommandname} command
+SearchCommandIntent what is the {searchcommandname} search
+SearchCommandIntent what is the {searchcommandname} search command
+SearchCommandIntent what is {searchcommandname}
+SearchCommandIntent what is {searchcommandname} Splunk
+SearchCommandIntent what is {searchcommandname} Splunk command
+SearchCommandIntent what is {searchcommandname} command
+SearchCommandIntent what is {searchcommandname} search
+SearchCommandIntent what is {searchcommandname} search command
+SearchCommandIntent what's the {searchcommandname}
+SearchCommandIntent what's the {searchcommandname} Splunk
+SearchCommandIntent what's the {searchcommandname} Splunk command
+SearchCommandIntent what's the {searchcommandname} command
+SearchCommandIntent what's the {searchcommandname} search
+SearchCommandIntent what's the {searchcommandname} search command
+SearchCommandIntent what's {searchcommandname}
+SearchCommandIntent what's {searchcommandname} Splunk
+SearchCommandIntent what's {searchcommandname} Splunk command
+SearchCommandIntent what's {searchcommandname} command
+SearchCommandIntent what's {searchcommandname} search
+SearchCommandIntent what's {searchcommandname} search command
 BuyDrinksIntent who is buying a round of drinks
 BuyDrinksIntent who is buying a round of drinks tonight
 BuyDrinksIntent who is buying drinks
