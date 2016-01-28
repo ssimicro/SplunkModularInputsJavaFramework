@@ -422,6 +422,95 @@
         <delete dir="${temp_build}" />
     </target>
 
+	<target
+	        name="build_alexa_input"
+	        description="build alexa input" >
+
+	        <antcall target="compile_addon" >
+
+	            <param
+	                name="addon"
+	                value="${alexa_dir}" />
+	        </antcall>
+
+	        <loadproperties srcFile="${alexa_dir}/default/app.conf" />
+
+	        <copy todir="${temp_build}/metadata" >
+
+	            <fileset dir="${alexa_dir}/metadata" />
+	        </copy>
+
+	        <copy todir="${temp_build}/bin" >
+
+	            <fileset dir="${alexa_dir}/bin" />
+	        </copy>
+
+	        <copy todir="${temp_build}/appserver" >
+
+	            <fileset dir="${alexa_dir}/appserver" />
+	        </copy>
+		
+		    <copy todir="${temp_build}/alexa_assets" >
+
+			     <fileset dir="${alexa_dir}/alexa_assets" />
+			</copy>
+	        <copy todir="${temp_build}/crypto" >
+
+		         <fileset dir="${alexa_dir}/crypto" />
+		    </copy>
+	        <copy todir="${temp_build}/docs" >
+
+		         <fileset dir="${alexa_dir}/docs" />
+		    </copy>
+	        <copy todir="${temp_build}/intents" >
+
+		        <fileset dir="${alexa_dir}/intents" />
+		    </copy>
+	        <copy todir="${temp_build}/default" >
+
+	            <fileset dir="${alexa_dir}/default" />
+	        </copy>
+	        
+	        <copy todir="${temp_build}/static" >
+
+	            <fileset dir="${alexa_dir}/static" />
+	        </copy>
+	        
+	        <copy todir="${temp_build}/README" >
+
+	            <fileset dir="${alexa_dir}/README" />
+	        </copy>
+
+	        <copy todir="${temp_build}/bin/${lib}" >
+
+	            <fileset dir="${lib}" />
+
+	            <fileset dir="${alexa_dir}/bin/${lib}" />
+	        </copy>
+
+	        <jar jarfile="${temp_build}/bin/${lib}/${alexa_jar}" >
+
+	            <fileset
+	                dir="${temp_build}/${classes}"
+	                includes="com/splunk/modinput/**" />
+
+	            <fileset file="${src}/log4j.xml" />
+	        </jar>
+
+	        <delete dir="${temp_build}/${classes}" />
+
+	        <tar
+	            compression="${compressionType}"
+	            destfile="${release}/${id}-${version}${suffix}" >
+
+	            <zipfileset
+	                dir="${temp_build}"
+	                prefix="${id}" />
+	        </tar>
+
+	        <delete dir="${temp_build}" />
+	    </target>
+	            	
 <target
         name="build_protocol_input"
         description="build Protocol modular input add on" >

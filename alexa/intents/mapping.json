@@ -16,7 +16,7 @@
       "intent": "TestMultiValuesIntent",
       "search": "index=main | table a,b,c",
       "response": "the values of fields a  b and c are $resultfield_a$ $resultfield_b$ $resultfield_c$"
-      
+
     },
     {
       "intent": "AppsInfoIntent",
@@ -33,10 +33,11 @@
     {
       "intent": "BetterSearchCommandIntent",
       "action_class": "com.foo.LookupSplunkDocsAction"      
-    },
+
     {
       "intent": "BuyDrinksIntent",
       "response": "Brian Bingham will tonight"      
+
     }
   ]
 }
