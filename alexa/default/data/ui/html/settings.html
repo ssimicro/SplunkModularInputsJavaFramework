@@ -300,6 +300,9 @@ END LAYOUT
                                 mapping.trigger('deactive');
                             }
                         }, this);
+
+                        $input_search.prop('disabled', false);
+                        $input_response.prop('disabled', false);
                     }
                 });
                 var myMappingsView = new MappingsView();
