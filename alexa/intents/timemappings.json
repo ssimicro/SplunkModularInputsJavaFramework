@@ -1,0 +1,30 @@
+{
+  "times": [
+    {
+      "utterance": "today",
+      "earliest": "@d",
+      "latest": "now"      
+    },
+    {
+      "utterance": "last business week",
+      "earliest": "-5d@w1",
+      "latest": "@w6"      
+    },
+    {
+      "utterance": "this week",
+      "earliest": "@w0",
+      "latest": "now"      
+    },
+    {
+      "utterance": "last week",
+      "earliest": "-7d@d",
+      "latest": "now"      
+    },
+    {
+      "utterance": "yesterday",
+      "earliest": "-1d@d",
+      "latest": "@d"
+      
+    }
+  ]
+}

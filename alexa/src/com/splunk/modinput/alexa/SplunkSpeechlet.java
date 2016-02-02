@@ -1,8 +1,6 @@
 package com.splunk.modinput.alexa;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -97,9 +95,22 @@ public class SplunkSpeechlet implements Speechlet {
 
 		String search = mapping.getSearch();
 		String response = mapping.getResponse();
+		String dynamicAction = mapping.getDynamicAction();
+		String dynamicActionArgs = mapping.getDynamicActionArgs();
 
 		if (search != null && search.length() > 0) {
-			response = executeSearch(search, response, intent.getSlots());
+			response = executeSearch(search, response, intent.getSlots(), mapping.getTimeSlot());
+		}
+		if (dynamicAction != null && dynamicAction.length() > 0) {
+			DynamicActionMapping dam = AlexaSessionManager.getDynamicActionMappings().get(dynamicAction);
+			try {
+				DynamicAction instance = (DynamicAction) (Class.forName(dam.getClassName()).newInstance());
+				instance.setArgs(dynamicActionArgs);
+				instance.setSlots(intent.getSlots());
+				instance.setResponseTemplate(response);
+				response = instance.executeAction();
+			} catch (Exception e) {
+			}
 		}
 
 		// Create the Simple card content.
@@ -111,6 +122,7 @@ public class SplunkSpeechlet implements Speechlet {
 		// ssml
 		if (response.startsWith("<speak>")) {
 			speech = new SsmlOutputSpeech();
+			response = response.replaceAll("\\\\", "");
 			((SsmlOutputSpeech) speech).setSsml(response);
 		} else {
 			speech = new PlainTextOutputSpeech();
@@ -120,80 +132,68 @@ public class SplunkSpeechlet implements Speechlet {
 		return SpeechletResponse.newTellResponse(speech, card);
 	}
 
-	private String executeSearch(String search, String response, Map<String, Slot> slots) {
+	private String executeSearch(String search, String response, Map<String, Slot> slots, String timeSlot) {
 
-		logger.error("executing searching");
-		logger.error(search);
-		logger.error(response);
+		String earliest = "";
+		String latest = "";
 		Set<String> slotKeys = slots.keySet();
 
 		for (String key : slotKeys) {
 
 			String value = slots.get(key).getValue();
 
-			logger.error("slot key : " + key);
-
-			logger.error("slot value : " + value);
-			if (!key.equalsIgnoreCase("timeperiod")) {
+			if (!key.equalsIgnoreCase(timeSlot)) {
 				search = search.replaceAll("\\$" + key + "\\$", value);
 				response = response.replaceAll("\\$" + key + "\\$", value);
-				logger.error("1 : " + search);
-				logger.error("1 : " + response);
-			} else {
 
-				search = search.replaceAll("\\$timeperiod\\$", AlexaSessionManager.getTimeMappings().get(value));
-				response = response.replaceAll("\\$timeperiod\\$", value);
-				logger.error("2 : " + search);
-				logger.error("2 : " + response);
+			} else {
+				TimeMapping tm = AlexaSessionManager.getTimeMappings().get(value);
+				earliest = tm.getEarliest();
+				latest = tm.getLatest();
+				search = search.replaceAll("\\$" + timeSlot + "\\$",
+						"earliest=" + tm.getEarliest() + " latest=" + tm.getLatest());
+				response = response.replaceAll("\\$" + timeSlot + "\\$", value);
+
 			}
 
 		}
 
 		// execute search
-		HashMap<String, String> outputKeyVal = performSearch("search " + search + " | head 1");
+		HashMap<String, String> outputKeyVal = performSearch("search " + search + " | head 1", earliest, latest);
 
 		if (outputKeyVal == null) {
 			response = "I'm sorry , I couldn't find any results";
 		} else {
 			for (String key : outputKeyVal.keySet()) {
-				logger.error("event key : " + key);
+
 				response = response.replaceAll("\\$resultfield_" + key + "\\$", outputKeyVal.get(key));
-				logger.error("3 : " + response);
+
 			}
 		}
 		return response;
 	}
 
-	private HashMap<String, String> performSearch(String search) {
-
-		logger.error("performing searching");
+	private HashMap<String, String> performSearch(String search, String earliestTime, String latestTime) {
 
 		try {
 			Service splunkService = AlexaSessionManager.getService();
 			JobArgs jobargs = new JobArgs();
 
-			jobargs.setExecutionMode(JobArgs.ExecutionMode.NORMAL);
-			logger.error("dispatch search : "+search);
-			Job job = splunkService.search(search, jobargs);
-			
-			while (!job.isReady()) {
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
+			jobargs.setExecutionMode(JobArgs.ExecutionMode.BLOCKING);
+			jobargs.setEarliestTime(earliestTime);
+			jobargs.setLatestTime(latestTime);
 
-				}
-			}
-			logger.error("search done");
+			Job job = splunkService.getJobs().create(search, jobargs);
 
 			InputStream resultsNormalSearch = job.getResults();
-			
+
 			ResultsReaderXml resultsReaderNormalSearch;
 
 			resultsReaderNormalSearch = new ResultsReaderXml(resultsNormalSearch);
 			HashMap<String, String> event;
-			logger.error("event loop");
+
 			while ((event = resultsReaderNormalSearch.getNextEvent()) != null) {
-				logger.error("returning event");
+
 				return event;
 			}
 

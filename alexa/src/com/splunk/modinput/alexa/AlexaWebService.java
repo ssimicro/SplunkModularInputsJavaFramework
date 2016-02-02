@@ -9,12 +9,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
@@ -41,7 +45,14 @@ import com.splunk.modinput.Scheme.StreamingMode;
 
 
 public class AlexaWebService extends ModularInput {
+	
+	private static final String JSON_MAPPING = "mapping.json";
+	private static final String JSON_TIMEMAPPING = "timemappings.json";
+	private static final String JSON_DYNAMIC_ACTIONS = "dynamicactions.json";
 
+	private static final String DIR_INTENTS = "intents";
+	private static final String DIR_DYNAMIC_ACTIONS = "dynamic_actions";
+	
 	public static void main(String[] args) {
 
 		AlexaWebService instance = new AlexaWebService();
@@ -65,7 +76,10 @@ public class AlexaWebService extends ModularInput {
 
 					this.modinputHome = System.getProperty("modinputhome");
 					loadMappingJSON();
+					loadTimeMappingJSON();
+					loadDynamicActionJSON();
 					setupSplunkService(input);
+					startJSONFileChangeMonitor();
 					startWebServer(name, stanza.getParams(), validateMode);
 
 				}
@@ -83,8 +97,89 @@ public class AlexaWebService extends ModularInput {
 
 	}
 
+	private void startJSONFileChangeMonitor() {
+		new FileChangeMonitor().start();
+		
+	}
+	
+	class FileChangeMonitor extends Thread {
+
+		private long lastModifiedMapping;
+		private long lastModifiedTimeMapping;
+		private long lastModifiedDynamicActionMapping;
+		
+		File mapping;
+		File timeMapping;
+		File dynamicActionMapping;
+		
+		FileChangeMonitor(){
+			
+			getFileHandles();
+			this.lastModifiedMapping = mapping.lastModified();
+			this.lastModifiedTimeMapping = timeMapping.lastModified();
+			this.lastModifiedDynamicActionMapping = dynamicActionMapping.lastModified();
+			
+		}
+		
+		private void getFileHandles(){
+			
+			this.mapping = new File(getJSONFilePath(DIR_INTENTS,JSON_MAPPING));
+			this.timeMapping = new File(getJSONFilePath(DIR_INTENTS,JSON_MAPPING));
+			this.dynamicActionMapping = new File(getJSONFilePath(DIR_DYNAMIC_ACTIONS,JSON_DYNAMIC_ACTIONS));
+			
+		}
+		
+		@Override
+		public void run() {
+			
+			while(true){
+				
+				getFileHandles();
+				long thisModifiedMapping = mapping.lastModified();
+				long thisModifiedTimeMapping = timeMapping.lastModified();
+				long thisModifiedDynamicActionMapping = dynamicActionMapping.lastModified();
+				
+				if(thisModifiedMapping > this.lastModifiedMapping){
+					this.lastModifiedMapping = thisModifiedMapping;
+					try {
+						loadMappingJSON();
+					} catch (Exception e) {
+						
+					}
+				}
+				if(thisModifiedTimeMapping > this.lastModifiedTimeMapping){
+					this.lastModifiedTimeMapping = thisModifiedTimeMapping;
+					try {
+						loadTimeMappingJSON();
+					} catch (Exception e) {
+						
+					}
+				}
+				if(thisModifiedDynamicActionMapping > this.lastModifiedDynamicActionMapping){
+					this.lastModifiedDynamicActionMapping = thisModifiedDynamicActionMapping;
+					try {
+						loadDynamicActionJSON();
+					} catch (Exception e) {
+						
+					}
+				}
+				
+				
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+					
+				}
+			}
+		}
+		
+		
+
+	}
+
+
 	private void setupSplunkService(Input input) {
-		String host = input.getServer_host();
+		//String host = input.getServer_host();
 		String uri = input.getServer_uri();
 		int port = 8089;
 		String token = input.getSession_key();
@@ -100,11 +195,20 @@ public class AlexaWebService extends ModularInput {
 		AlexaSessionManager.setService(service);
 
 	}
+	
+	private String getJSONFilePath(String dir,String file){
+		
+		return this.modinputHome + File.separator + dir + File.separator + file;
+		
+	}
+	private JSONObject loadJSON(String dir,String file) throws Exception{
+		String jsonMapping = getJSONFilePath(dir,file);
+		return new JSONObject(readFile(jsonMapping));
+	}
 
 	private void loadMappingJSON() throws Exception {
 
-		String jsonMapping = this.modinputHome + File.separator + "intents" + File.separator + "mapping.json";
-		JSONObject mappingJSON = new JSONObject(readFile(jsonMapping));
+		JSONObject mappingJSON = loadJSON(DIR_INTENTS,JSON_MAPPING);
 
 		JSONArray mappings = mappingJSON.getJSONArray("mappings");
 		Map<String, IntentMapping> intentMappings = new HashMap<String, IntentMapping>();
@@ -115,10 +219,52 @@ public class AlexaWebService extends ModularInput {
 			try{im.setIntent(item.getString("intent"));}catch(Exception e){}
 			try{im.setResponse(item.getString("response"));}catch(Exception e){}
 			try{im.setSearch(item.getString("search"));}catch(Exception e){}
-			try{im.setActionClass(item.getString("action_class"));}catch(Exception e){}
+			try{im.setSearch(item.getString("saved_search_name"));}catch(Exception e){}
+			try{im.setSearch(item.getString("saved_search_args"));}catch(Exception e){}
+			try{im.setSearch(item.getString("time_slot"));}catch(Exception e){}
+			try{im.setSearch(item.getString("dynamic_action"));}catch(Exception e){}
+			try{im.setSearch(item.getString("dynamic_action_args"));}catch(Exception e){}
+			
 			intentMappings.put(im.getIntent(), im);
 		}
 		AlexaSessionManager.setIntentMappings(intentMappings);
+
+	}
+	private void loadTimeMappingJSON() throws Exception {
+
+		JSONObject mappingJSON = loadJSON(DIR_INTENTS,JSON_TIMEMAPPING);
+
+		JSONArray mappings = mappingJSON.getJSONArray("times");
+		Map<String, TimeMapping> timeMappings = new HashMap<String, TimeMapping>();
+		for (int i = 0; i < mappings.length(); i++) {
+			JSONObject item = mappings.getJSONObject(i);
+			
+			TimeMapping tm = new TimeMapping();
+			try{tm.setUtterance(item.getString("utterance"));}catch(Exception e){}
+			try{tm.setEarliest(item.getString("earliest"));}catch(Exception e){}
+			try{tm.setLatest(item.getString("latest"));}catch(Exception e){}
+			
+			timeMappings.put(tm.getUtterance(), tm);
+		}
+		AlexaSessionManager.setTimeMappings(timeMappings);
+
+	}
+	private void loadDynamicActionJSON() throws Exception {
+
+		JSONObject mappingJSON = loadJSON(DIR_INTENTS,JSON_DYNAMIC_ACTIONS);
+
+		JSONArray mappings = mappingJSON.getJSONArray("actions");
+		Map<String, DynamicActionMapping> dynamicActionMappings = new HashMap<String, DynamicActionMapping>();
+		for (int i = 0; i < mappings.length(); i++) {
+			JSONObject item = mappings.getJSONObject(i);
+			
+			DynamicActionMapping dam = new DynamicActionMapping();
+			try{dam.setName(item.getString("name"));}catch(Exception e){}
+			try{dam.setClassName(item.getString("class"));}catch(Exception e){}
+			
+			dynamicActionMappings.put(dam.getName(), dam);
+		}
+		AlexaSessionManager.setDynamicActionMappings(dynamicActionMappings);
 
 	}
 
@@ -225,11 +371,28 @@ public class AlexaWebService extends ModularInput {
 				connectors[0] = serverConnector;
 				server.setConnectors(connectors);
 
-				ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-				context.setContextPath("/");
-				server.setHandler(context);
-				context.addServlet(new ServletHolder(createServlet(new SplunkSpeechlet())),
+				//alexa web service
+				ServletContextHandler alexaContext = new ServletContextHandler(ServletContextHandler.SESSIONS);
+				alexaContext.setContextPath("/");
+				//server.setHandler(context);
+				
+				alexaContext.addServlet(new ServletHolder(createServlet(new SplunkSpeechlet())),
 						endpoint.substring(endpoint.indexOf("/")));
+				
+				
+				//soundbites
+				ResourceHandler resourceHandler= new ResourceHandler();
+				resourceHandler.setResourceBase(this.modinputHome + File.separator + "soundbites");
+				resourceHandler.setDirectoriesListed(true);
+				ContextHandler soundbiteContext= new ContextHandler("/soundbites");
+				soundbiteContext.setHandler(resourceHandler);
+				//server.setHandler(contextHandler);
+				
+				HandlerCollection handlerCollection = new HandlerCollection();
+				handlerCollection.setHandlers(new Handler[] {alexaContext, soundbiteContext});
+                
+				server.setHandler(handlerCollection);
+				
 				server.start();
 				server.join();
 			}

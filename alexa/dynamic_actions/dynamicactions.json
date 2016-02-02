@@ -1,0 +1,15 @@
+{
+  "actions": [
+    {
+      "name": "docs_action",
+      "class": "com.splunk.modinput.alexa.dynamicaction.DocsLookupAction"
+      
+      
+    },
+    {
+      "name": "foo_action",
+      "class": "com.foo.FooAction"
+      
+    }
+  ]
+}

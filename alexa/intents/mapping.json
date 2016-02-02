@@ -2,19 +2,30 @@
   "mappings": [
     {
       "intent": "MaxCPUIntent",
-      "search": "index=_internal",
-      "response": "the max cpu usage of server $servername$ $timeperiod$ is 45 percent"
+      "search": "index=_internal server=$servername$ | table cpu",
+      "time_slot" : "timeperiod",
+      "response": "the max cpu usage of server $servername$ $timeperiod$ is $resultfield_cpu$ percent"
       
     },
     {
       "intent": "AvgCPUIntent",
-      "search": "index=_internal",
-      "response": "the average cpu usage of server $servername$ $timeperiod$ is 11 percent"
+      "search": "index=_internal server=$servername$ | table cpu",
+      "time_slot" : "timeperiod",
+      "response": "the average cpu usage of server $servername$ $timeperiod$ is $resultfield_cpu$ percent"
+      
+    },
+    {
+      "intent": "SomeSavedSearchIntent",
+      "saved_search_name": "mysearch",
+      "saved_search_args": "server=$servername$,foo=somestaticvalue",
+      "time_slot" : "timeperiod",
+      "response": "the max cpu usage of server $servername$ $timeperiod$ is $resultfield_cpu$ percent"
       
     },
     {
       "intent": "TestMultiValuesIntent",
       "search": "index=main | table a,b,c",
+      "time_slot" : "timeperiod",
       "response": "the values of fields a  b and c are $resultfield_a$ $resultfield_b$ $resultfield_c$"
 
     },
@@ -31,12 +42,14 @@
       "response": "The stats command enables you to calculate summary statistics on the results of a search or the events retrieved from an index"      
     },
     {
-      "intent": "BetterSearchCommandIntent",
-      "action_class": "com.foo.LookupSplunkDocsAction"  
+      "intent": "DocsCommandIntent",
+      "dynamic_action": "docs_action", 
+      "dynamic_action_args": "key=value,key2=value2",
+      "response": "The $searchcommand$ search command"
     },  
     {
       "intent": "PlayASound",
-      "response": "<speak><audio src=\"http://www.orangefreesounds.com/wp-content/uploads/2015/09/Horse-neighing.mp3\"/></speak>"      
+      "response": "<speak>Splunk sounds like <audio src=\"https://www.splunkcowboy.com/soundbites/horse.mp3\"/></speak>"      
     },  
     {
       "intent": "BuyDrinksIntent",

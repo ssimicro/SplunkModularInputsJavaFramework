@@ -5,7 +5,12 @@ public class IntentMapping {
 	String intent;
 	String search;
 	String response;
-	String actionClass;
+	String timeSlot;
+	String savedSearchName;
+	String savedSearchArgs;
+	String dynamicAction;
+	String dynamicActionArgs;
+	
 
 	public IntentMapping() {
 	}
@@ -34,13 +39,48 @@ public class IntentMapping {
 		this.response = response;
 	}
 
-	public String getActionClass() {
-		return actionClass;
+	public String getTimeSlot() {
+		return timeSlot;
 	}
 
-	public void setActionClass(String actionClass) {
-		this.actionClass = actionClass;
+	public void setTimeSlot(String timeSlot) {
+		this.timeSlot = timeSlot;
 	}
+
+	public String getSavedSearchName() {
+		return savedSearchName;
+	}
+
+	public void setSavedSearchName(String savedSearchName) {
+		this.savedSearchName = savedSearchName;
+	}
+
+	public String getSavedSearchArgs() {
+		return savedSearchArgs;
+	}
+
+	public void setSavedSearchArgs(String savedSearchArgs) {
+		this.savedSearchArgs = savedSearchArgs;
+	}
+
+	public String getDynamicAction() {
+		return dynamicAction;
+	}
+
+	public void setDynamicAction(String dynamicAction) {
+		this.dynamicAction = dynamicAction;
+	}
+
+	public String getDynamicActionArgs() {
+		return dynamicActionArgs;
+	}
+
+	public void setDynamicActionArgs(String dynamicActionArgs) {
+		this.dynamicActionArgs = dynamicActionArgs;
+	}
+	
+	
+
 
 	
 }
