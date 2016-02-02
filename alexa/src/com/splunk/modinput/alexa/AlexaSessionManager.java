@@ -4,6 +4,12 @@ import java.util.Map;
 
 import com.splunk.Service;
 
+/**
+ * Just a place to hold static shared objects
+ * 
+ * @author ddallimore
+ *
+ */
 public class AlexaSessionManager {
 
 	private static Service service;

@@ -43,7 +43,17 @@ import com.splunk.modinput.Validation;
 import com.splunk.modinput.ValidationError;
 import com.splunk.modinput.Scheme.StreamingMode;
 
-
+/**
+ * The Modular Input Implementation.
+ * 
+ * 1) loads json config files
+ * 2) runs monitor to dynamically reload json config files
+ * 3) starts the HTTPS web server for receiving Alexa requests and serving MP3 soundbites
+ * 4) obtains Service object connection to Splunk REST API for executing searches
+ * 
+ * @author ddallimore
+ *
+ */
 public class AlexaWebService extends ModularInput {
 	
 	private static final String JSON_MAPPING = "mapping.json";

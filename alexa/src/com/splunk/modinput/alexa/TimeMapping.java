@@ -1,5 +1,10 @@
 package com.splunk.modinput.alexa;
 
+/**
+ * Class for timemappings.json
+ * @author ddallimore
+ *
+ */
 public class TimeMapping {
 	
 	String utterance;

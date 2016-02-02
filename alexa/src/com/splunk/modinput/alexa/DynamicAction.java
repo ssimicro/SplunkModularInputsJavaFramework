@@ -6,6 +6,13 @@ import java.util.StringTokenizer;
 
 import com.amazon.speech.slu.Slot;
 
+/**
+ * Implement this abstract class to create a custom Dynamic Action.
+ * Then wire it up in dynamic_actions/dynamicactions.json
+ * 
+ * @author ddallimore
+ *
+ */
 public abstract class DynamicAction {
 
 	private Map<String, String> args = new HashMap<String, String>();

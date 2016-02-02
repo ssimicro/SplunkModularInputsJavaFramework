@@ -1,5 +1,11 @@
 package com.splunk.modinput.alexa;
 
+/**
+ * Class for dynamicactions.json
+ * 
+ * @author ddallimore
+ *
+ */
 public class DynamicActionMapping {
 	
 	String name;

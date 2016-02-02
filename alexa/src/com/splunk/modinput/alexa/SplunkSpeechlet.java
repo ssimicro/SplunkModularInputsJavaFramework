@@ -88,6 +88,7 @@ public class SplunkSpeechlet implements Speechlet {
 	}
 
 	/**
+	 * Determine the type of intent and execute relevant logic
 	 *
 	 * @return SpeechletResponse spoken and visual response for the given intent
 	 */
@@ -132,12 +133,21 @@ public class SplunkSpeechlet implements Speechlet {
 		return SpeechletResponse.newTellResponse(speech, card);
 	}
 
+	/**
+	 * Execute search
+	 * @param search
+	 * @param response
+	 * @param slots
+	 * @param timeSlot
+	 * @return
+	 */
 	private String executeSearch(String search, String response, Map<String, Slot> slots, String timeSlot) {
 
 		String earliest = "";
 		String latest = "";
 		Set<String> slotKeys = slots.keySet();
 
+		//search replace slots into search and response strings
 		for (String key : slotKeys) {
 
 			String value = slots.get(key).getValue();
@@ -147,11 +157,11 @@ public class SplunkSpeechlet implements Speechlet {
 				response = response.replaceAll("\\$" + key + "\\$", value);
 
 			} else {
+				//time requires some special handling
 				TimeMapping tm = AlexaSessionManager.getTimeMappings().get(value);
 				earliest = tm.getEarliest();
 				latest = tm.getLatest();
-				search = search.replaceAll("\\$" + timeSlot + "\\$",
-						"earliest=" + tm.getEarliest() + " latest=" + tm.getLatest());
+				search = search.replaceAll("\\$" + timeSlot + "\\$","");
 				response = response.replaceAll("\\$" + timeSlot + "\\$", value);
 
 			}
@@ -159,13 +169,15 @@ public class SplunkSpeechlet implements Speechlet {
 		}
 
 		// execute search
+		// head 1 to enforce only 1 row in the response
 		HashMap<String, String> outputKeyVal = performSearch("search " + search + " | head 1", earliest, latest);
 
+		//oops , no search results
 		if (outputKeyVal == null) {
 			response = "I'm sorry , I couldn't find any results";
 		} else {
 			for (String key : outputKeyVal.keySet()) {
-
+                //interpolate fields from response row into response textual output
 				response = response.replaceAll("\\$resultfield_" + key + "\\$", outputKeyVal.get(key));
 
 			}
@@ -173,6 +185,13 @@ public class SplunkSpeechlet implements Speechlet {
 		return response;
 	}
 
+	/**
+	 * Execute search in blocking mode
+	 * @param search
+	 * @param earliestTime
+	 * @param latestTime
+	 * @return
+	 */
 	private HashMap<String, String> performSearch(String search, String earliestTime, String latestTime) {
 
 		try {

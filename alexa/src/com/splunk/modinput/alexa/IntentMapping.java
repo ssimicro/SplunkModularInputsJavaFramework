@@ -1,5 +1,10 @@
 package com.splunk.modinput.alexa;
 
+/**
+ * Class for mapping.json
+ * @author ddallimore
+ *
+ */
 public class IntentMapping {
 
 	String intent;
