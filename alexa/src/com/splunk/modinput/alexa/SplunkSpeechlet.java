@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 
@@ -25,7 +26,10 @@ import com.amazon.speech.ui.SsmlOutputSpeech;
 import com.splunk.Job;
 import com.splunk.JobArgs;
 import com.splunk.ResultsReaderXml;
+import com.splunk.SavedSearch;
+import com.splunk.SavedSearchDispatchArgs;
 import com.splunk.Service;
+import com.splunk.JobResultsArgs.OutputMode;
 
 public class SplunkSpeechlet implements Speechlet {
 	protected static Logger logger = Logger.getLogger(SplunkSpeechlet.class);
@@ -98,15 +102,21 @@ public class SplunkSpeechlet implements Speechlet {
 		String response = mapping.getResponse();
 		String dynamicAction = mapping.getDynamicAction();
 		String dynamicActionArgs = mapping.getDynamicActionArgs();
+		String savedSearch = mapping.getSavedSearchName();
+		String savedSearchArgs = mapping.getSavedSearchArgs();
 
 		if (search != null && search.length() > 0) {
 			response = executeSearch(search, response, intent.getSlots(), mapping.getTimeSlot());
+		}
+		if (savedSearch != null && savedSearch.length() > 0) {
+			response = executeSavedSearch(savedSearch, response, intent.getSlots(), mapping.getTimeSlot(),
+					savedSearchArgs);
 		}
 		if (dynamicAction != null && dynamicAction.length() > 0) {
 			DynamicActionMapping dam = AlexaSessionManager.getDynamicActionMappings().get(dynamicAction);
 			try {
 				DynamicAction instance = (DynamicAction) (Class.forName(dam.getClassName()).newInstance());
-				instance.setArgs(dynamicActionArgs);
+				instance.setArgs(getParamMap(dynamicActionArgs));
 				instance.setSlots(intent.getSlots());
 				instance.setResponseTemplate(response);
 				response = instance.executeAction();
@@ -133,8 +143,74 @@ public class SplunkSpeechlet implements Speechlet {
 		return SpeechletResponse.newTellResponse(speech, card);
 	}
 
+	private String executeSavedSearch(String savedSearch, String response, Map<String, Slot> slots, String timeSlot,
+			String savedSearchArgs) {
+
+		String earliest = "";
+		String latest = "";
+		Set<String> slotKeys = slots.keySet();
+
+		// search replace slots into search and response strings
+		for (String key : slotKeys) {
+
+			String value = slots.get(key).getValue();
+
+			if (!key.equalsIgnoreCase(timeSlot)) {
+				savedSearchArgs = savedSearchArgs.replaceAll("\\$" + key + "\\$", value);
+				response = response.replaceAll("\\$" + key + "\\$", value);
+
+			} else {
+				// time requires some special handling
+				TimeMapping tm = AlexaSessionManager.getTimeMappings().get(value);
+				earliest = tm.getEarliest();
+				latest = tm.getLatest();
+				response = response.replaceAll("\\$" + timeSlot + "\\$", value);
+
+			}
+
+		}
+
+		// execute search
+		HashMap<String, String> outputKeyVal = performSavedSearch(savedSearch, earliest, latest,
+				getParamMap(savedSearchArgs));
+
+		// oops , no search results
+		if (outputKeyVal == null) {
+			response = "I'm sorry , I couldn't find any results";
+		} else {
+			for (String key : outputKeyVal.keySet()) {
+				// interpolate fields from response row into response textual
+				// output
+				response = response.replaceAll("\\$resultfield_" + key + "\\$", outputKeyVal.get(key));
+
+			}
+		}
+		return response;
+	}
+
+	private Map<String, String> getParamMap(String keyValString) {
+
+		Map<String, String> map = new HashMap<String, String>();
+
+		try {
+			StringTokenizer st = new StringTokenizer(keyValString, ",");
+			while (st.hasMoreTokens()) {
+				StringTokenizer st2 = new StringTokenizer(st.nextToken(), "=");
+				while (st2.hasMoreTokens()) {
+					map.put(st2.nextToken(), st2.nextToken());
+				}
+			}
+		} catch (Exception e) {
+
+		}
+
+		return map;
+
+	}
+
 	/**
 	 * Execute search
+	 * 
 	 * @param search
 	 * @param response
 	 * @param slots
@@ -147,7 +223,7 @@ public class SplunkSpeechlet implements Speechlet {
 		String latest = "";
 		Set<String> slotKeys = slots.keySet();
 
-		//search replace slots into search and response strings
+		// search replace slots into search and response strings
 		for (String key : slotKeys) {
 
 			String value = slots.get(key).getValue();
@@ -157,11 +233,11 @@ public class SplunkSpeechlet implements Speechlet {
 				response = response.replaceAll("\\$" + key + "\\$", value);
 
 			} else {
-				//time requires some special handling
+				// time requires some special handling
 				TimeMapping tm = AlexaSessionManager.getTimeMappings().get(value);
 				earliest = tm.getEarliest();
 				latest = tm.getLatest();
-				search = search.replaceAll("\\$" + timeSlot + "\\$","");
+				search = search.replaceAll("\\$" + timeSlot + "\\$", "");
 				response = response.replaceAll("\\$" + timeSlot + "\\$", value);
 
 			}
@@ -170,14 +246,15 @@ public class SplunkSpeechlet implements Speechlet {
 
 		// execute search
 		// head 1 to enforce only 1 row in the response
-		HashMap<String, String> outputKeyVal = performSearch("search " + search + " | head 1", earliest, latest);
+		HashMap<String, String> outputKeyVal = performSearch("search " + search , earliest, latest);
 
-		//oops , no search results
+		// oops , no search results
 		if (outputKeyVal == null) {
 			response = "I'm sorry , I couldn't find any results";
 		} else {
 			for (String key : outputKeyVal.keySet()) {
-                //interpolate fields from response row into response textual output
+				// interpolate fields from response row into response textual
+				// output
 				response = response.replaceAll("\\$resultfield_" + key + "\\$", outputKeyVal.get(key));
 
 			}
@@ -186,7 +263,65 @@ public class SplunkSpeechlet implements Speechlet {
 	}
 
 	/**
+	 * Execute saved search
+	 * 
+	 * @param search
+	 * @param earliestTime
+	 * @param latestTime
+	 * @param args
+	 * @return
+	 */
+	private HashMap<String, String> performSavedSearch(String searchName, String earliestTime, String latestTime,
+			Map<String, String> args) {
+
+		try {
+			Service splunkService = AlexaSessionManager.getService();
+
+			SavedSearch savedSearch = splunkService.getSavedSearches().get(searchName);
+
+			SavedSearchDispatchArgs dispatchArgs = new SavedSearchDispatchArgs();
+
+			dispatchArgs.setDispatchEarliestTime(earliestTime);
+			dispatchArgs.setDispatchLatestTime(latestTime);
+			
+			
+
+			Set<String> keys = args.keySet();
+			for (String key : keys) {
+				dispatchArgs.add("args."+key, args.get(key));
+			}
+
+			// dispatch the search job
+			Job jobSavedSearch = savedSearch.dispatch(dispatchArgs);
+
+			while (!jobSavedSearch.isDone()) {
+				try {
+					Thread.sleep(500);
+				} catch (Exception e) {
+				}
+			}
+
+			InputStream resultsNormalSearch = jobSavedSearch.getResults();
+
+			ResultsReaderXml resultsReaderNormalSearch;
+
+			resultsReaderNormalSearch = new ResultsReaderXml(resultsNormalSearch);
+			HashMap<String, String> event;
+
+			while ((event = resultsReaderNormalSearch.getNextEvent()) != null) {
+
+				return event;
+			}
+
+		} catch (Exception e) {
+			logger.error("Error performing saved search : " + searchName + " , because " + e.getMessage());
+		}
+		return null;
+	}
+
+	/**
 	 * Execute search in blocking mode
+	 * 
 	 * @param search
 	 * @param earliestTime
 	 * @param latestTime

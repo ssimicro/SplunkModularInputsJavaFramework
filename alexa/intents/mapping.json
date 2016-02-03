@@ -2,14 +2,14 @@
   "mappings": [
     {
       "intent": "MaxCPUIntent",
-      "search": "index=_internal server=$servername$ | table cpu",
+      "search": "index=_internal server=$servername$ | table cpu  | head 1",
       "time_slot" : "timeperiod",
       "response": "the max cpu usage of server $servername$ $timeperiod$ is $resultfield_cpu$ percent"
       
     },
     {
       "intent": "AvgCPUIntent",
-      "search": "index=_internal server=$servername$ | table cpu",
+      "search": "index=_internal server=$servername$ | table cpu | head 1",
       "time_slot" : "timeperiod",
       "response": "the average cpu usage of server $servername$ $timeperiod$ is $resultfield_cpu$ percent"
       
@@ -44,8 +44,8 @@
     {
       "intent": "DocsCommandIntent",
       "dynamic_action": "docs_action", 
-      "dynamic_action_args": "key=value,key2=value2",
-      "response": "The $searchcommand$ search command"
+      "dynamic_action_args": "base_url=http://docs.splunk.com/Documentation/Splunk/latest/SearchReference/,css_selector=div#mw-content-text p",
+      "response": "The $searchcommand$ search command $dynamic_response$"
     },  
     {
       "intent": "PlayASound",

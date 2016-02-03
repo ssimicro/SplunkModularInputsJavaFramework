@@ -30,9 +30,9 @@ public abstract class DynamicAction {
 		this.slots = slots;
 	}
 
-	public void setArgs(String keyValString) {
+	public void setArgs(Map<String, String> args) {
 
-		this.args = getParamMap(keyValString);
+		this.args = args;
 	}
 	
 	public void setResponseTemplate(String template){
@@ -40,25 +40,9 @@ public abstract class DynamicAction {
 		this.responseTemplate = template;
 	}
 
-	private Map<String, String> getParamMap(String keyValString) {
-
-		Map<String, String> map = new HashMap<String, String>();
-
-		try {
-			StringTokenizer st = new StringTokenizer(keyValString, ",");
-			while (st.hasMoreTokens()) {
-				StringTokenizer st2 = new StringTokenizer(st.nextToken(), "=");
-				while (st2.hasMoreTokens()) {
-					map.put(st2.nextToken(), st2.nextToken());
-				}
-			}
-		} catch (Exception e) {
-
-		}
-
-		return map;
-
-	}
+	protected String replaceResponse(String dynamicResponse){
+    	return getResponseTemplate().replace("\\$dynamic_response\\$", dynamicResponse);
+    }
 
 	protected String getSlot(String key) {
 

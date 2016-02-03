@@ -69,7 +69,7 @@ def run_java():
       
       SPLUNK_HOME = os.path.expandvars('$SPLUNK_HOME')
       MODINPUT_HOME = SPLUNK_HOME + "/etc/apps/"+MODINPUT_NAME+"/"
-      CLASSPATH = MODINPUT_HOME + "bin/lib/*"
+      CLASSPATH = MODINPUT_HOME + "bin/lib/*"+ ":" + MODINPUT_HOME + "dynamic_actions/lib"
     elif sys.platform == 'win32':
         
       if (not os.environ.has_key('JAVA_HOME')):
@@ -79,7 +79,7 @@ def run_java():
         
       SPLUNK_HOME = os.path.expandvars('%SPLUNK_HOME%')
       MODINPUT_HOME = SPLUNK_HOME  + "\\etc\\apps\\"+MODINPUT_NAME+"\\"
-      CLASSPATH = build_windows_classpath()
+      CLASSPATH = build_windows_classpath()+ ";" + MODINPUT_HOME + "dynamic_actions\\lib"
     else:
       sys.stderr.writelines("ERROR Unsupported platform\n")
       sys.exit(2)

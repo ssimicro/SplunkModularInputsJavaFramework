@@ -1,13 +1,31 @@
 package com.splunk.modinput.alexa.dynamicaction;
 
+import java.io.IOException;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
 import com.splunk.modinput.alexa.DynamicAction;
 
 public class DocsLookupAction extends DynamicAction {
 
 	@Override
 	public String executeAction() {
-		// TODO Auto-generated method stub
-		return getResponseTemplate();
+
+		String response = "";
+		try {
+
+			Document doc = Jsoup.connect(getArg("base_url") + getSlot("searchcommandname")).get();
+			Elements desc = doc.select(getArg("css_selector"));
+			// strip any other html tags
+			String dynamicResponse = desc.first().toString().replaceAll("<\\w+>|</\\w+>", "");
+			response = replaceResponse(dynamicResponse);
+
+		} catch (IOException e) {
+
+		}
+		return response;
 	}
 
 }
