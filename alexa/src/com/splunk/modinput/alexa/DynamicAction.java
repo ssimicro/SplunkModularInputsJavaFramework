@@ -2,13 +2,14 @@ package com.splunk.modinput.alexa;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import com.amazon.speech.slu.Slot;
 
 /**
- * Implement this abstract class to create a custom Dynamic Action.
- * Then wire it up in dynamic_actions/dynamicactions.json
+ * Implement this abstract class to create a custom Dynamic Action. Then wire it
+ * up in dynamic_actions/dynamicactions.json
  * 
  * @author ddallimore
  *
@@ -21,6 +22,7 @@ public abstract class DynamicAction {
 
 	/**
 	 * Implementation classes implement this method
+	 * 
 	 * @return A String representing the text output to be sent to Alexa
 	 */
 	public abstract String executeAction();
@@ -34,15 +36,27 @@ public abstract class DynamicAction {
 
 		this.args = args;
 	}
-	
-	public void setResponseTemplate(String template){
-		
+
+	public void setResponseTemplate(String template) {
+
 		this.responseTemplate = template;
 	}
 
-	protected String replaceResponse(String dynamicResponse){
-    	return getResponseTemplate().replace("\\$dynamic_response\\$", dynamicResponse);
-    }
+	protected String replaceResponse(String dynamicResponse) {
+		
+		String response = getResponseTemplate().replace("\\$dynamic_response\\$", dynamicResponse);
+
+		Set<String> slotKeys = slots.keySet();
+		// search replace slots into search and response strings
+		for (String key : slotKeys) {
+
+			String value = slots.get(key).getValue();
+
+			response = response.replaceAll("\\$" + key + "\\$", value);
+
+		}
+		return response;
+	}
 
 	protected String getSlot(String key) {
 
@@ -55,9 +69,9 @@ public abstract class DynamicAction {
 		return this.args.get(key);
 
 	}
-	
-    protected String getResponseTemplate(){
-		
+
+	protected String getResponseTemplate() {
+
 		return this.responseTemplate;
 	}
 

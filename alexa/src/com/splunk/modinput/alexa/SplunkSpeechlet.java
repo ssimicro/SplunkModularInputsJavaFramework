@@ -29,7 +29,7 @@ import com.splunk.ResultsReaderXml;
 import com.splunk.SavedSearch;
 import com.splunk.SavedSearchDispatchArgs;
 import com.splunk.Service;
-import com.splunk.JobResultsArgs.OutputMode;
+
 
 public class SplunkSpeechlet implements Speechlet {
 	protected static Logger logger = Logger.getLogger(SplunkSpeechlet.class);
