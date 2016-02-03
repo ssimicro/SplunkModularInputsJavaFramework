@@ -30,8 +30,14 @@ import com.splunk.SavedSearch;
 import com.splunk.SavedSearchDispatchArgs;
 import com.splunk.Service;
 
-
+/**
+ * Process Alexa Intent requests
+ * 
+ * @author ddallimore
+ *
+ */
 public class SplunkSpeechlet implements Speechlet {
+	
 	protected static Logger logger = Logger.getLogger(SplunkSpeechlet.class);
 
 	@Override
@@ -143,6 +149,16 @@ public class SplunkSpeechlet implements Speechlet {
 		return SpeechletResponse.newTellResponse(speech, card);
 	}
 
+	/**
+	 * Execute a saved search
+	 * 
+	 * @param savedSearch
+	 * @param response
+	 * @param slots
+	 * @param timeSlot
+	 * @param savedSearchArgs
+	 * @return
+	 */
 	private String executeSavedSearch(String savedSearch, String response, Map<String, Slot> slots, String timeSlot,
 			String savedSearchArgs) {
 
@@ -188,6 +204,12 @@ public class SplunkSpeechlet implements Speechlet {
 		return response;
 	}
 
+	/**
+	 * Helper function to roll out key=val strings to a Map
+	 * 
+	 * @param keyValString
+	 * @return
+	 */
 	private Map<String, String> getParamMap(String keyValString) {
 
 		Map<String, String> map = new HashMap<String, String>();

@@ -8,6 +8,12 @@ import org.jsoup.select.Elements;
 
 import com.splunk.modinput.alexa.DynamicAction;
 
+/**
+ * Looks up the description for a Splunk search command from the docs webpage
+ * 
+ * @author ddallimore
+ *
+ */
 public class DocsLookupAction extends DynamicAction {
 
 	@Override

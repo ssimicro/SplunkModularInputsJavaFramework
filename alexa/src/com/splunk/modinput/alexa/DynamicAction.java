@@ -3,7 +3,6 @@ package com.splunk.modinput.alexa;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import com.amazon.speech.slu.Slot;
 
