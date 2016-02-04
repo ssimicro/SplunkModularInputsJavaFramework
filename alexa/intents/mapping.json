@@ -2,14 +2,14 @@
   "mappings": [
     {
       "intent": "MaxCPUIntent",
-      "search": "index=_internal server=$servername$ | table cpu  | head 1",
+      "search": "index=_internal | eval cpu=45  | head 1",
       "time_slot" : "timeperiod",
       "response": "the max cpu usage of server $servername$ $timeperiod$ is $resultfield_cpu$ percent"
       
     },
     {
       "intent": "AvgCPUIntent",
-      "search": "index=_internal server=$servername$ | table cpu | head 1",
+      "search": "index=_internal | eval cpu=30 | head 1",
       "time_slot" : "timeperiod",
       "response": "the average cpu usage of server $servername$ $timeperiod$ is $resultfield_cpu$ percent"
       
@@ -24,9 +24,9 @@
     },
     {
       "intent": "TestMultiValuesIntent",
-      "search": "index=main | table a,b,c",
+      "search": "index=_internal | eval a=1 | eval b=2 | eval c=3 | table a,b,c",
       "time_slot" : "timeperiod",
-      "response": "the values of fields a  b and c are $resultfield_a$ $resultfield_b$ $resultfield_c$"
+      "response": "the values of fields a, b and c are $resultfield_a$ $resultfield_b$ $resultfield_c$"
 
     },
     {
