@@ -38,14 +38,10 @@
       "response": "Splunk rhymes with Drunk"      
     },
     {
-      "intent": "SearchCommandIntent",
-      "response": "The stats command enables you to calculate summary statistics on the results of a search or the events retrieved from an index"      
-    },
-    {
       "intent": "DocsCommandIntent",
       "dynamic_action": "docs_action", 
       "dynamic_action_args": "base_url=http://docs.splunk.com/Documentation/Splunk/latest/SearchReference/,css_selector=div#mw-content-text p",
-      "response": "The $searchcommandname$ search command $dynamic_response$"
+      "response": "$dynamic_response$"
     },  
     {
       "intent": "PlayASound",
