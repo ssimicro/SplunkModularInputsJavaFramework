@@ -27,7 +27,7 @@ public class DocsLookupAction extends DynamicAction {
 			Document doc = Jsoup.connect(getArg("base_url") + getSlot("searchcommandname")).get();
 			Elements desc = doc.select(getArg("css_selector"));
 			// strip any other html tags
-			String dynamicResponse = desc.first().toString().replaceAll("<\\w+>|</\\w+>", "");
+			String dynamicResponse = desc.first().toString().replaceAll("<\\w+>|</\\w+>", "").replaceAll("<a.+>", "");
 			response = replaceResponse(dynamicResponse);
 
 		} catch (Exception e) {
