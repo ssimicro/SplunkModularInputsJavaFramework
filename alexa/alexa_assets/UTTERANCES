@@ -1,5 +1,6 @@
 MaxCPUIntent what is the maximum cpu usage of server {servername} {timeperiod}
 AvgCPUIntent what is the average cpu usage of server {servername} {timeperiod}
+SomeSavedSearchIntent what is the minimum cpu usage of server {servername} {timeperiod}
 DocsCommandIntent what is the {searchcommandname}
 DocsCommandIntent what is the {searchcommandname} Splunk
 DocsCommandIntent what is the {searchcommandname} Splunk command

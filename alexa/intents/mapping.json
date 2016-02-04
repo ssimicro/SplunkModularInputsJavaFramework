@@ -16,10 +16,18 @@
     },
     {
       "intent": "SomeSavedSearchIntent",
-      "saved_search_name": "mysearch",
-      "saved_search_args": "server=$servername$,foo=somestaticvalue",
+      "saved_search_name": "alexa_test_search",
+      "saved_search_args": "cpu=56",
       "time_slot" : "timeperiod",
-      "response": "the max cpu usage of server $servername$ $timeperiod$ is $resultfield_cpu$ percent"
+      "response": "the minimum cpu usage of server $servername$ $timeperiod$ is $resultfield_cpu$ percent"
+      
+    },
+    {
+      "intent": "AnotherSavedSearchIntent",
+      "saved_search_name": "alexa_test_search_2",
+      "saved_search_args": "server=$servername$,cpu=56",
+      "time_slot" : "timeperiod",
+      "response": "the minimum cpu usage of server $servername$ $timeperiod$ is $resultfield_cpu$ percent"
       
     },
     {

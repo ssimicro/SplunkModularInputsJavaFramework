@@ -27,6 +27,19 @@
       ]
     },
     {
+      "intent": "SomeSavedSearchIntent",
+      "slots": [
+        {
+          "name": "servername",
+          "type": "SERVER_NAME"
+        },
+        {
+          "name": "timeperiod",
+          "type": "TIME_PERIOD"
+        }
+      ]
+    },
+    {
       "intent": "DocsCommandIntent",
       "slots": [
         {
