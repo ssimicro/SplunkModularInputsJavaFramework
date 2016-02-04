@@ -44,7 +44,7 @@ public abstract class DynamicAction {
 
 	protected String replaceResponse(String dynamicResponse) {
 		
-		String response = getResponseTemplate().replace("\\$dynamic_response\\$", dynamicResponse);
+		String response = getResponseTemplate().replaceAll("\\$dynamic_response\\$", dynamicResponse);
 
 		Set<String> slotKeys = slots.keySet();
 		// search replace slots into search and response strings

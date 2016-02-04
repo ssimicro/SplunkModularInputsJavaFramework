@@ -27,7 +27,7 @@
       ]
     },
     {
-      "intent": "SearchCommandIntent",
+      "intent": "DocsCommandIntent",
       "slots": [
         {
           "name": "searchcommandname",

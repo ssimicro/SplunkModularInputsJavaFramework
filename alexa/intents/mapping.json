@@ -45,7 +45,7 @@
       "intent": "DocsCommandIntent",
       "dynamic_action": "docs_action", 
       "dynamic_action_args": "base_url=http://docs.splunk.com/Documentation/Splunk/latest/SearchReference/,css_selector=div#mw-content-text p",
-      "response": "The $searchcommand$ search command $dynamic_response$"
+      "response": "The $searchcommandname$ search command $dynamic_response$"
     },  
     {
       "intent": "PlayASound",

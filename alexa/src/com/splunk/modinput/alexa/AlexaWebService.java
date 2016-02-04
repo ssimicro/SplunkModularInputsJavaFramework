@@ -254,23 +254,23 @@ public class AlexaWebService extends ModularInput {
 			} catch (Exception e) {
 			}
 			try {
-				im.setSearch(item.getString("saved_search_name"));
+				im.setSavedSearchName(item.getString("saved_search_name"));
 			} catch (Exception e) {
 			}
 			try {
-				im.setSearch(item.getString("saved_search_args"));
+				im.setSavedSearchArgs(item.getString("saved_search_args"));
 			} catch (Exception e) {
 			}
 			try {
-				im.setSearch(item.getString("time_slot"));
+				im.setTimeSlot(item.getString("time_slot"));
 			} catch (Exception e) {
 			}
 			try {
-				im.setSearch(item.getString("dynamic_action"));
+				im.setDynamicAction(item.getString("dynamic_action"));
 			} catch (Exception e) {
 			}
 			try {
-				im.setSearch(item.getString("dynamic_action_args"));
+				im.setDynamicActionArgs(item.getString("dynamic_action_args"));
 			} catch (Exception e) {
 			}
 
