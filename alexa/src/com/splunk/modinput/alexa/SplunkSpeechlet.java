@@ -31,7 +31,7 @@ import com.splunk.SavedSearchDispatchArgs;
 import com.splunk.Service;
 
 /**
- * Process Alexa Intent requests
+ * Process Alexa Intent requests and generate textual response
  * 
  * @author ddallimore
  *
@@ -39,6 +39,14 @@ import com.splunk.Service;
 public class SplunkSpeechlet implements Speechlet {
 	
 	protected static Logger logger = Logger.getLogger(SplunkSpeechlet.class);
+	
+	/**
+	 * Should probably move these defaults out into a config file
+	 */
+	private static final String HELP_RESPONSE="You can ask Splunk anything you want";
+	private static final String WELCOME_RESPONSE="Welcome to Splunk, ask me something";
+	private static final String NO_SEARCH_RESULT_RESPONSE="I'm sorry , I couldn't find any results";
+	private static final String CARD_TITLE="Splunk";
 
 	@Override
 	public void onSessionStarted(final SessionStartedRequest request, final Session session) throws SpeechletException {
@@ -57,10 +65,12 @@ public class SplunkSpeechlet implements Speechlet {
 		String intentName = (intent != null) ? intent.getName() : null;
 
 		IntentMapping mapping = AlexaSessionManager.getIntentMappings().get(intentName);
+		
 
 		if ("AMAZON.HelpIntent".equals(intentName)) {
 			return getHelpResponse();
 		} else if (mapping == null) {
+			logger.error("No mapping exists for "+intentName);
 			throw new SpeechletException("Invalid Intent");
 		} else {
 			return getIntentResponse(mapping, intent);
@@ -79,16 +89,15 @@ public class SplunkSpeechlet implements Speechlet {
 	 * @return SpeechletResponse spoken and visual response for the given intent
 	 */
 	private SpeechletResponse getWelcomeResponse() {
-		String speechText = "Welcome to Splunk, ask me something";
-
+		
 		// Create the Simple card content.
 		SimpleCard card = new SimpleCard();
-		card.setTitle("Splunk");
-		card.setContent(speechText);
+		card.setTitle(CARD_TITLE);
+		card.setContent(WELCOME_RESPONSE);
 
 		// Create the plain text output.
 		PlainTextOutputSpeech speech = new PlainTextOutputSpeech();
-		speech.setText(speechText);
+		speech.setText(WELCOME_RESPONSE);
 
 		// Create reprompt
 		Reprompt reprompt = new Reprompt();
@@ -120,6 +129,9 @@ public class SplunkSpeechlet implements Speechlet {
 		}
 		if (dynamicAction != null && dynamicAction.length() > 0) {
 			DynamicActionMapping dam = AlexaSessionManager.getDynamicActionMappings().get(dynamicAction);
+			if(dam == null){
+				logger.error("No dynamic action mapping exists for "+dynamicAction);
+			}
 			try {
 				DynamicAction instance = (DynamicAction) (Class.forName(dam.getClassName()).newInstance());
 				instance.setArgs(getParamMap(dynamicActionArgs));
@@ -127,12 +139,13 @@ public class SplunkSpeechlet implements Speechlet {
 				instance.setResponseTemplate(response);
 				response = instance.executeAction();
 			} catch (Exception e) {
+				logger.error("Error executing dynamic action "+dynamicAction+" : "+e.getMessage());
 			}
 		}
 
 		// Create the Simple card content.
 		SimpleCard card = new SimpleCard();
-		card.setTitle("Splunk");
+		card.setTitle(CARD_TITLE);
 		card.setContent(response);
 
 		OutputSpeech speech;
@@ -177,9 +190,15 @@ public class SplunkSpeechlet implements Speechlet {
 
 			} else {
 				// time requires some special handling
-				TimeMapping tm = AlexaSessionManager.getTimeMappings().get(value);
-				earliest = tm.getEarliest();
-				latest = tm.getLatest();
+				try {
+					TimeMapping tm = AlexaSessionManager.getTimeMappings().get(value);
+					if(tm == null){
+						logger.error("No time mapping exists for "+value);
+					}
+					earliest = tm.getEarliest();
+					latest = tm.getLatest();
+					
+				} catch (Exception e) {}
 				response = response.replaceAll("\\$" + timeSlot + "\\$", value);
 
 			}
@@ -192,7 +211,7 @@ public class SplunkSpeechlet implements Speechlet {
 
 		// oops , no search results
 		if (outputKeyVal == null) {
-			response = "I'm sorry , I couldn't find any results";
+			response = NO_SEARCH_RESULT_RESPONSE;
 		} else {
 			for (String key : outputKeyVal.keySet()) {
 				// interpolate fields from response row into response textual
@@ -223,7 +242,7 @@ public class SplunkSpeechlet implements Speechlet {
 				}
 			}
 		} catch (Exception e) {
-
+			logger.error("Error rolling out param string into a Map : "+e.getMessage());
 		}
 
 		return map;
@@ -255,10 +274,15 @@ public class SplunkSpeechlet implements Speechlet {
 				response = response.replaceAll("\\$" + key + "\\$", value);
 
 			} else {
-				// time requires some special handling
-				TimeMapping tm = AlexaSessionManager.getTimeMappings().get(value);
-				earliest = tm.getEarliest();
-				latest = tm.getLatest();
+				try {
+					// time requires some special handling
+					TimeMapping tm = AlexaSessionManager.getTimeMappings().get(value);
+					if(tm == null){
+						logger.error("No time mapping exists for "+value);
+					}
+					earliest = tm.getEarliest();
+					latest = tm.getLatest();
+				} catch (Exception e) {}
 				search = search.replaceAll("\\$" + timeSlot + "\\$", "");
 				response = response.replaceAll("\\$" + timeSlot + "\\$", value);
 
@@ -272,7 +296,7 @@ public class SplunkSpeechlet implements Speechlet {
 
 		// oops , no search results
 		if (outputKeyVal == null) {
-			response = "I'm sorry , I couldn't find any results";
+			response = NO_SEARCH_RESULT_RESPONSE;
 		} else {
 			for (String key : outputKeyVal.keySet()) {
 				// interpolate fields from response row into response textual
@@ -307,7 +331,6 @@ public class SplunkSpeechlet implements Speechlet {
 			dispatchArgs.setDispatchLatestTime(latestTime);
 			
 			
-
 			Set<String> keys = args.keySet();
 			for (String key : keys) {
 				dispatchArgs.add("args."+key, args.get(key));
@@ -319,8 +342,7 @@ public class SplunkSpeechlet implements Speechlet {
 			while (!jobSavedSearch.isDone()) {
 				try {
 					Thread.sleep(500);
-				} catch (Exception e) {
-				}
+				} catch (Exception e) {}
 			}
 
 			InputStream resultsNormalSearch = jobSavedSearch.getResults();
@@ -385,16 +407,15 @@ public class SplunkSpeechlet implements Speechlet {
 	 * @return SpeechletResponse spoken and visual response for the given intent
 	 */
 	private SpeechletResponse getHelpResponse() {
-		String speechText = "You can ask Splunk anything you want";
 
 		// Create the Simple card content.
 		SimpleCard card = new SimpleCard();
-		card.setTitle("Splunk");
-		card.setContent(speechText);
+		card.setTitle(CARD_TITLE);
+		card.setContent(HELP_RESPONSE);
 
 		// Create the plain text output.
 		PlainTextOutputSpeech speech = new PlainTextOutputSpeech();
-		speech.setText(speechText);
+		speech.setText(HELP_RESPONSE);
 
 		// Create reprompt
 		Reprompt reprompt = new Reprompt();

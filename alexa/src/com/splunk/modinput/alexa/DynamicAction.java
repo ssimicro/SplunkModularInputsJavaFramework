@@ -26,6 +26,7 @@ public abstract class DynamicAction {
 	 */
 	public abstract String executeAction();
 
+	
 	public void setSlots(Map<String, Slot> slots) {
 
 		this.slots = slots;

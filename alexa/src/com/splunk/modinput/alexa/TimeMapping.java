@@ -7,9 +7,9 @@ package com.splunk.modinput.alexa;
  */
 public class TimeMapping {
 	
-	String utterance;
-	String earliest;
-	String latest;
+	private String utterance;
+	private String earliest;
+	private String latest;
 	
 	public TimeMapping(){}
 

@@ -7,14 +7,14 @@ package com.splunk.modinput.alexa;
  */
 public class IntentMapping {
 
-	String intent;
-	String search;
-	String response;
-	String timeSlot;
-	String savedSearchName;
-	String savedSearchArgs;
-	String dynamicAction;
-	String dynamicActionArgs;
+	private String intent;
+	private String search;
+	private String response;
+	private String timeSlot;
+	private String savedSearchName;
+	private String savedSearchArgs;
+	private String dynamicAction;
+	private String dynamicActionArgs;
 	
 
 	public IntentMapping() {

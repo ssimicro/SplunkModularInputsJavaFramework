@@ -8,8 +8,8 @@ package com.splunk.modinput.alexa;
  */
 public class DynamicActionMapping {
 	
-	String name;
-	String className;
+	private String name;
+	private String className;
 	
 	public DynamicActionMapping(){}
 

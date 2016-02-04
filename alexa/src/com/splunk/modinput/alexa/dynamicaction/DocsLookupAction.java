@@ -1,12 +1,12 @@
 package com.splunk.modinput.alexa.dynamicaction;
 
-import java.io.IOException;
-
+import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import com.splunk.modinput.alexa.DynamicAction;
+import com.splunk.modinput.alexa.SplunkSpeechlet;
 
 /**
  * Looks up the description for a Splunk search command from the docs webpage
@@ -15,6 +15,8 @@ import com.splunk.modinput.alexa.DynamicAction;
  *
  */
 public class DocsLookupAction extends DynamicAction {
+
+	protected static Logger logger = Logger.getLogger(SplunkSpeechlet.class);
 
 	@Override
 	public String executeAction() {
@@ -28,8 +30,8 @@ public class DocsLookupAction extends DynamicAction {
 			String dynamicResponse = desc.first().toString().replaceAll("<\\w+>|</\\w+>", "");
 			response = replaceResponse(dynamicResponse);
 
-		} catch (IOException e) {
-
+		} catch (Exception e) {
+			logger.error("Error executing DocsLookupAction :" + e.getMessage());
 		}
 		return response;
 	}
