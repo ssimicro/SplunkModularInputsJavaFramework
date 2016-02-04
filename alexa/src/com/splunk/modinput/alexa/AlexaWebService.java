@@ -321,7 +321,7 @@ public class AlexaWebService extends ModularInput {
 	 */
 	private void loadDynamicActionJSON() throws Exception {
 
-		JSONObject mappingJSON = loadJSON(DIR_INTENTS, JSON_DYNAMIC_ACTIONS);
+		JSONObject mappingJSON = loadJSON(DIR_DYNAMIC_ACTIONS, JSON_DYNAMIC_ACTIONS);
 
 		JSONArray mappings = mappingJSON.getJSONArray("actions");
 		Map<String, DynamicActionMapping> dynamicActionMappings = new HashMap<String, DynamicActionMapping>();

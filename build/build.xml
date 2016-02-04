@@ -439,6 +439,16 @@
 
 	            <fileset dir="${alexa_dir}/metadata" />
 	        </copy>
+		
+		<copy todir="${temp_build}/soundbites" >
+
+			            <fileset dir="${alexa_dir}/soundbites" />
+			        </copy>
+	        	
+	        	<copy todir="${temp_build}/dynamic_actions" >
+
+	        		            <fileset dir="${alexa_dir}/dynamic_actions" />
+	        		        </copy>
 
 	        <copy todir="${temp_build}/bin" >
 
