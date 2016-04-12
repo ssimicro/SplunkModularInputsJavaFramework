@@ -22,7 +22,7 @@ public abstract class AbstractMessageHandler {
 			this.transport.transport(message, time, host);
 	}
 
-	public abstract void handleMessage(String record, String seqNumber,
+	public abstract void handleMessage(String record,byte [] rawBytes, String seqNumber,
 			String partitionKey, MessageReceiver context) throws Exception;
 
 	public abstract void setParams(Map<String, String> params);

@@ -11,7 +11,7 @@ import com.splunk.modinput.kinesis.KinesisModularInput.MessageReceiver;
 public class DefaultMessageHandler extends AbstractMessageHandler {
 
 	@Override
-	public void handleMessage(String record, String seqNumber,
+	public void handleMessage(String record, byte [] rawBytes,String seqNumber,
 			String partitionKey, MessageReceiver context) throws Exception {
 
 		SplunkLogEvent splunkEvent = buildCommonEventMessagePart(context);

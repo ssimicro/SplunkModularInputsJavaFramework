@@ -12,7 +12,7 @@ public class JSONBodyWithFieldExtraction extends AbstractMessageHandler {
 	String hostfield = "";
 
 	@Override
-	public void handleMessage(String record, String seqNumber,
+	public void handleMessage(String record, byte [] rawBytes,String seqNumber,
 			String partitionKey, MessageReceiver context) throws Exception {
 
 		String text = stripNewlines(record);

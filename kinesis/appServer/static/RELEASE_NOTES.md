@@ -1,3 +1,8 @@
+1.0
+---
+Can now pass the raw payload bytes to your custom message handler ie: if you want to decode binary data
+Added a custom GZIP decoder , com.splunk.modinput.kinesis.GZIPDataRecordDecoderHandler
+
 0.9
 ---
 Tweaked the HEC transport.

@@ -270,10 +270,10 @@ public class KinesisModularInput extends ModularInput {
 
 		}
 
-		public void streamMessageEvent(String record, String seqNumber,
+		public void streamMessageEvent(String record,byte [] rawBytes, String seqNumber,
 				String partitionKey) {
 			try {
-				messageHandler.handleMessage(record, seqNumber, partitionKey,
+				messageHandler.handleMessage(record,rawBytes, seqNumber, partitionKey,
 						this);
 
 			} catch (Exception e) {
@@ -656,8 +656,9 @@ public class KinesisModularInput extends ModularInput {
 				for (int i = 0; i < numRetries; i++) {
 					try {
 
+						byte [] rawBytes = record.getData().array();						
 						data = decoder.decode(record.getData()).toString();
-						context.streamMessageEvent(data,
+						context.streamMessageEvent(data,rawBytes,
 								record.getSequenceNumber(),
 								record.getPartitionKey());
 						processedSuccessfully = true;
