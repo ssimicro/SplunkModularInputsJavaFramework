@@ -23,18 +23,14 @@ public class GZIPDataRecordDecoderHandler extends AbstractMessageHandler {
 	}
 
 	public String decompress(byte[] data) throws Exception {
-		Inflater inflater = new Inflater();
-		inflater.setInput(data);
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
-		byte[] buffer = new byte[1024];
-		while (!inflater.finished()) {
-			int count = inflater.inflate(buffer);
-			outputStream.write(buffer, 0, count);
-		}
-		outputStream.close();
-		byte[] output = outputStream.toByteArray();
-
-		return new String(output);
+	        GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(bytes));
+	        BufferedReader bf = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
+	        String outStr = "";
+	        String line;
+	        while ((line=bf.readLine())!=null) {
+	          outStr += line;
+	        }
+	        return outStr;
 	}
 
 	public static List<String> chunkData(String text, int size) {
