@@ -1,3 +1,8 @@
+1.0.2
+-----
+tweaks to gzip handler
+
+
 1.0.1
 -----
 pushed default charset decoding out of the main message processing flow and into custom handling
