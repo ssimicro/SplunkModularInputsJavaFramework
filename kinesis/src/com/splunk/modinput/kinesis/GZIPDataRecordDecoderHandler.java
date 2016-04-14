@@ -1,11 +1,13 @@
 package com.splunk.modinput.kinesis;
 
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.Inflater;
+import java.util.zip.GZIPInputStream;
 
 import com.splunk.modinput.kinesis.KinesisModularInput.MessageReceiver;
 
@@ -24,7 +26,7 @@ public class GZIPDataRecordDecoderHandler extends AbstractMessageHandler {
 	}
 
 	public String decompress(byte[] data) throws Exception {
-	        GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(bytes));
+	        GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(data));
 	        BufferedReader bf = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
 	        String outStr = "";
 	        String line;
