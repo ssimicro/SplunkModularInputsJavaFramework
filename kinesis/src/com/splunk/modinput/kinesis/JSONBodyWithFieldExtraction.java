@@ -1,6 +1,8 @@
 package com.splunk.modinput.kinesis;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
 import java.util.Map;
 import org.json.JSONObject;
 import com.splunk.modinput.kinesis.KinesisModularInput.MessageReceiver;
@@ -10,11 +12,15 @@ public class JSONBodyWithFieldExtraction extends AbstractMessageHandler {
 	String charset = Charset.defaultCharset().name();
 	String timefield = "";
 	String hostfield = "";
+	
+	private final CharsetDecoder decoder = Charset.forName("UTF-8")
+			.newDecoder();
 
 	@Override
-	public void handleMessage(String record, byte [] rawBytes,String seqNumber,
+	public void handleMessage(ByteBuffer rawBytes,String seqNumber,
 			String partitionKey, MessageReceiver context) throws Exception {
 
+		String record = decoder.decode(rawBytes).toString();
 		String text = stripNewlines(record);
 
 		JSONObject json = new JSONObject(text);

@@ -1,3 +1,7 @@
+1.0.1
+-----
+pushed default charset decoding out of the main message processing flow and into custom handling
+
 1.0
 ---
 Can now pass the raw payload bytes to your custom message handler ie: if you want to decode binary data

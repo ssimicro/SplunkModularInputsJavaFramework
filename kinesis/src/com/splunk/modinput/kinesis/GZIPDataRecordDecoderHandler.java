@@ -1,6 +1,7 @@
 package com.splunk.modinput.kinesis;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,10 +12,10 @@ import com.splunk.modinput.kinesis.KinesisModularInput.MessageReceiver;
 public class GZIPDataRecordDecoderHandler extends AbstractMessageHandler {
 
 	@Override
-	public void handleMessage(String record, byte[] rawBytes, String seqNumber, String partitionKey,
+	public void handleMessage(ByteBuffer rawBytes, String seqNumber, String partitionKey,
 			MessageReceiver context) throws Exception {
 
-		String decodedData = decompress(rawBytes);
+		String decodedData = decompress(rawBytes.array());
 
 		String text = stripNewlines(decodedData);
 

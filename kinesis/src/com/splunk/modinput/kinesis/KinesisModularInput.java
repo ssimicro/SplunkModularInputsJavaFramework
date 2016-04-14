@@ -1,7 +1,7 @@
 package com.splunk.modinput.kinesis;
 
 import java.net.InetAddress;
-
+import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
@@ -270,10 +270,10 @@ public class KinesisModularInput extends ModularInput {
 
 		}
 
-		public void streamMessageEvent(String record,byte [] rawBytes, String seqNumber,
+		public void streamMessageEvent(ByteBuffer rawBytes, String seqNumber,
 				String partitionKey) {
 			try {
-				messageHandler.handleMessage(record,rawBytes, seqNumber, partitionKey,
+				messageHandler.handleMessage(rawBytes, seqNumber, partitionKey,
 						this);
 
 			} catch (Exception e) {
@@ -597,8 +597,7 @@ public class KinesisModularInput extends ModularInput {
 		private long checkpointInterval;
 		private long nextCheckpointTimeInMillis;
 
-		private final CharsetDecoder decoder = Charset.forName("UTF-8")
-				.newDecoder();
+		
 
 		MessageReceiver context;
 
@@ -655,15 +654,13 @@ public class KinesisModularInput extends ModularInput {
 				String data = null;
 				for (int i = 0; i < numRetries; i++) {
 					try {
-
-						byte [] rawBytes = record.getData().array();						
-						data = decoder.decode(record.getData()).toString();
-						context.streamMessageEvent(data,rawBytes,
+						
+						context.streamMessageEvent(record.getData(),
 								record.getSequenceNumber(),
 								record.getPartitionKey());
 						processedSuccessfully = true;
 						break;
-					} catch (CharacterCodingException e) {
+					} catch (Exception e) {
 						logger.error("Malformed data: " + data, e);
 						break;
 					} catch (Throwable t) {

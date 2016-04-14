@@ -1,5 +1,6 @@
 package com.splunk.modinput.kinesis;
 
+import java.nio.ByteBuffer;
 import java.util.Map;
 
 import com.splunk.modinput.SplunkLogEvent;
@@ -22,7 +23,7 @@ public abstract class AbstractMessageHandler {
 			this.transport.transport(message, time, host);
 	}
 
-	public abstract void handleMessage(String record,byte [] rawBytes, String seqNumber,
+	public abstract void handleMessage(ByteBuffer  rawBytes, String seqNumber,
 			String partitionKey, MessageReceiver context) throws Exception;
 
 	public abstract void setParams(Map<String, String> params);
