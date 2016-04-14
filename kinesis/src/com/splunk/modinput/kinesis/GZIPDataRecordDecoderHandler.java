@@ -14,8 +14,8 @@ import com.splunk.modinput.kinesis.KinesisModularInput.MessageReceiver;
 public class GZIPDataRecordDecoderHandler extends AbstractMessageHandler {
 
 	@Override
-	public void handleMessage(ByteBuffer rawBytes, String seqNumber, String partitionKey,
-			MessageReceiver context) throws Exception {
+	public void handleMessage(ByteBuffer rawBytes, String seqNumber, String partitionKey, MessageReceiver context)
+			throws Exception {
 
 		String decodedData = decompress(rawBytes.array());
 
@@ -26,14 +26,15 @@ public class GZIPDataRecordDecoderHandler extends AbstractMessageHandler {
 	}
 
 	public String decompress(byte[] data) throws Exception {
-	        GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(data));
-	        BufferedReader bf = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
-	        String outStr = "";
-	        String line;
-	        while ((line=bf.readLine())!=null) {
-	          outStr += line;
-	        }
-	        return outStr;
+		GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(data));
+		BufferedReader bf = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
+		StringBuffer outStr =new StringBuffer();
+		String line;
+		while ((line = bf.readLine()) != null) {
+			outStr.append(line);
+		}
+		bf.close();
+		return outStr.toString();
 	}
 
 	public static List<String> chunkData(String text, int size) {
