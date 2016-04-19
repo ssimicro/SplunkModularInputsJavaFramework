@@ -16,6 +16,7 @@ public class CSVWithHeaderDecoderHandler extends AbstractMessageHandler {
 	String[] headers = {};
 	String charset = Charset.defaultCharset().name();
 	String outputFormat = KV;
+	boolean hasHeaderRow = false;
 
 	private final static String KV = "kv";
 	private final static String JSON = "json";
@@ -31,8 +32,9 @@ public class CSVWithHeaderDecoderHandler extends AbstractMessageHandler {
 		BufferedReader bufReader = new BufferedReader(new StringReader(text));
 		String line = null;
 		while ((line = bufReader.readLine()) != null) {
-			// skip header row
-			if (currentLine == 0) {
+
+			//skip any header rows
+			if (hasHeaderRow && currentLine == 0) {
 				currentLine++;
 				continue;
 			}
@@ -44,7 +46,8 @@ public class CSVWithHeaderDecoderHandler extends AbstractMessageHandler {
 					jsonOutput.put(headers[index], st.nextToken());
 				}
 				if (outputFormat == KV) {
-					kvOutput.append(headers[index]).append("=").append("\"").append(st.nextToken()).append("\"").append(" ");
+					kvOutput.append(headers[index]).append("=").append("\"").append(st.nextToken()).append("\"")
+							.append(" ");
 				}
 				index++;
 			}
@@ -80,6 +83,12 @@ public class CSVWithHeaderDecoderHandler extends AbstractMessageHandler {
 			this.charset = params.get("charset");
 		else if (params.containsKey("outputFormat"))
 			this.outputFormat = params.get("outputFormat");
+		else if (params.containsKey("hasHeaderRow"))
+			try {
+				this.hasHeaderRow = Boolean.parseBoolean(params.get("hasHeaderRow"));
+			} catch (Exception e) {
+				
+			}
 
 	}
 
