@@ -14,6 +14,11 @@ import org.json.JSONObject;
 
 import com.splunk.modinput.kinesis.KinesisModularInput.MessageReceiver;
 
+/**
+ * Decode gzipped JSON records from Cloudwatch / Kinesis
+ * @author ddallimore
+ *
+ */
 public class GZIPDataRecordDecoderHandler extends AbstractMessageHandler {
 
 	@Override
