@@ -25,19 +25,20 @@ public class CSVWithHeaderDecoderHandler extends AbstractMessageHandler {
 	public void handleMessage(byte[] messageContents, MessageReceiver context) throws Exception {
 
 		String text = getMessageBody(messageContents, charset);
-
-		StringBuffer kvOutput = new StringBuffer();
-		JSONObject jsonOutput = new JSONObject();
 		int currentLine = 0;
 		BufferedReader bufReader = new BufferedReader(new StringReader(text));
 		String line = null;
 		while ((line = bufReader.readLine()) != null) {
 
-			//skip any header rows
+			// skip any header rows
 			if (hasHeaderRow && currentLine == 0) {
 				currentLine++;
 				continue;
 			}
+
+			StringBuffer kvOutput = new StringBuffer();
+			JSONObject jsonOutput = new JSONObject();
+
 			StringTokenizer st = new StringTokenizer(line, ",");
 			int index = 0;
 			while (st.hasMoreTokens()) {
@@ -52,17 +53,17 @@ public class CSVWithHeaderDecoderHandler extends AbstractMessageHandler {
 				index++;
 			}
 			currentLine++;
+			String output = "";
+			if (outputFormat == JSON) {
+				output = jsonOutput.toString();
+			}
+			if (outputFormat == KV) {
+				output = kvOutput.toString();
+			}
+
+			transportMessage(output, "", "");
 
 		}
-		String output = "";
-		if (outputFormat == JSON) {
-			output = jsonOutput.toString();
-		}
-		if (outputFormat == KV) {
-			output = kvOutput.toString();
-		}
-
-		transportMessage(output, "", "");
 
 	}
 
@@ -79,15 +80,16 @@ public class CSVWithHeaderDecoderHandler extends AbstractMessageHandler {
 				i++;
 			}
 
-		} else if (params.containsKey("charset"))
+		}
+		if (params.containsKey("charset"))
 			this.charset = params.get("charset");
-		else if (params.containsKey("outputFormat"))
+		if (params.containsKey("outputFormat"))
 			this.outputFormat = params.get("outputFormat");
-		else if (params.containsKey("hasHeaderRow"))
+		if (params.containsKey("hasHeaderRow"))
 			try {
 				this.hasHeaderRow = Boolean.parseBoolean(params.get("hasHeaderRow"));
 			} catch (Exception e) {
-				
+
 			}
 
 	}
