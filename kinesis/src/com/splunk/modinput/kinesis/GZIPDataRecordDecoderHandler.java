@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import com.splunk.modinput.kinesis.KinesisModularInput.MessageReceiver;
 
 public class GZIPDataRecordDecoderHandler extends AbstractMessageHandler {
@@ -20,8 +23,20 @@ public class GZIPDataRecordDecoderHandler extends AbstractMessageHandler {
 		String decodedData = decompress(rawBytes.array());
 
 		String text = stripNewlines(decodedData);
+		
+		try {
+			JSONObject jsonMessage = new JSONObject(text);
+			JSONArray logEvents = jsonMessage.getJSONArray("logEvents");
+			for(int i=0; i <logEvents.length(); i++)
+			{
+				String message = logEvents.getJSONObject(i).getString("message");
+				transportMessage(message, String.valueOf(System.currentTimeMillis()), "");
+			}
+		} catch (Exception e) {
+			transportMessage(text, String.valueOf(System.currentTimeMillis()), "");
+		}
 
-		transportMessage(text, String.valueOf(System.currentTimeMillis()), "");
+		
 
 	}
 
