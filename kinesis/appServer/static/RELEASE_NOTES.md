@@ -1,3 +1,8 @@
+1.0.3
+-----
+
+Added JSON Object parsing for Cloudwatch to the GZIP handler
+
 1.0.2
 -----
 tweaks to gzip handler
