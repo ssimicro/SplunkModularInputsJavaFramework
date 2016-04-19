@@ -1,3 +1,12 @@
+1.0
+---
+Added a new custom handler : com.splunk.modinput.kafka.CSVWithHeaderDecoderHandler
+This allows you to roll out CSV files (with or without header) into KV or JSON before indexing.
+
+Example config you could pass to the custom message handler when you declare it
+
+headers=header1:header2:header3,outputFormat=json,hasHeaderRow=false
+
 0.9.2
 -----
 Better JSON handling for HEC output (hat tip to Tivo)
