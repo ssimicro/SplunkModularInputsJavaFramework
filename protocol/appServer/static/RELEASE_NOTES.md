@@ -1,3 +1,8 @@
+1.2
+---
+Added an example handler for decompressing gzip content
+com.splunk.modinput.protocol.handlerverticle.GZipHandler
+
 1.1
 ---
 Minor HEC tweaks
