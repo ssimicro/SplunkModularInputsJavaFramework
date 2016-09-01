@@ -1,3 +1,8 @@
+1.5.1
+-----
+Added a new message handler that just dumps the message body : 
+com.splunk.modinput.jms.custom.handler.BodyOnlyMessageHandler
+
 1.5
 ---
 Minor HEC tweaks

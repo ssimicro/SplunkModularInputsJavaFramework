@@ -12,7 +12,7 @@ endpoint = <value>
 #/foo/splunk/etc/apps/alexa/crypto/java-keystore.jks
 keystore = <value>
 
-#appsummit
+#talktosplunk
 keystore_pass = <value>
 
 #false
