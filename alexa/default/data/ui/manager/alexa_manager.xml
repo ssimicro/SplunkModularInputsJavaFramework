@@ -34,7 +34,7 @@
              <view name="list"/>
              <view name="create"/>
              <view name="edit"/>
-             <key name="exampleText">Defaults to www.splunkcowboy.com/alexa</key>
+             <key name="exampleText">ie : www.mysplunkhost.com/alexa</key>
            </element>
            <element name="keystore" type="textfield" label="Keystore">
              <view name="list"/>
@@ -60,7 +60,7 @@
              <view name="list"/>
              <view name="create"/>
              <view name="edit"/>
-            
+            <key name="exampleText">Defaults to blank which turns off application ID verification</key>
            </element>
            <element name="timestamp_tolerance" type="textfield" label="Timestamp Tolerance">
              <view name="list"/>
