@@ -43,7 +43,6 @@
              <key name="exampleText">Defaults to SPLUNK_HOME/etc/apps/alexa/crypto/java-keystore.jks</key>
            </element>
            <element name="keystore_pass" type="password" label="Keystore Pass">
-             <view name="list"/>
              <view name="create"/>
              <view name="edit"/>
              

@@ -2,15 +2,27 @@
 
 ## Overview
 
-This is a Splunk App that enables your Splunk instance for interfacing with Amazon Alexa, thereby 
-provisioning a Natural Language interface for Splunk.
-You can then use an Alexa device such as Echo,Tap or Dot to tell or ask Splunk anything you want. 
+This is a Splunk App that enables your Splunk instance for interfacing with Amazon Alexa by way of a
+custom Alexa skill, thereby provisioning a Natural Language interface for Splunk.
+
+You can then use an Alexa device such as Echo,Tap or Dot to tell or ask Splunk anything you want.
+
+* Get answers to questions based off Splunk Searches
+* Ask for information , such as search command descriptions
+* Return static responses and audio file snippets
+* Developer extension hooks to plug in any custom voice driven actions you want
+
+The App allows you to train your Splunk instance to the conversational vocabulary for your specific use case.
+
+The ultimate vision I foresee here is a future where you can do away with your keyboard, mouse , monitor , login prompt , and simply talk to your data like how you would talk to another person.
+
+* https://www.youtube.com/watch?v=VonQytgcoms
 
 ## Dependencies
 
-* Internet accessible Splunk 5 + instance
+* Internet accessible Splunk version 5+ instance
 * Ability to open your firewall to incoming HTTPs requests , default port 443 , but configurable to any port. If you are opening a port < 1024 , you'll need to be running Splunk as a privileged user.
-* Java Runtime Version 8 + installed on your Splunk server
+* Java Runtime version 8+ installed on your Splunk server
 * Supported on Windows, Linux, MacOS, Solaris, FreeBSD, HP-UX, AIX
 * An Alexa device(Echo/Tap/Dot) and free Amazon Developer account(http://developer.amazon.com)
 
@@ -19,7 +31,7 @@ You can then use an Alexa device such as Echo,Tap or Dot to tell or ask Splunk a
 * Untar the release to your $SPLUNK_HOME/etc/apps directory
 * Restart Splunk
 
-## Crypto Assets
+## Generate Your Crypto Assets
 
 Place your crypto assets and Java Keystore file (java-keystore.jks) in the SPLUNK_HOME/etc/apps/alexa/crypto directory.
 
@@ -27,16 +39,21 @@ Follow the docs here for creating a certificate and private key :
 
 * https://developer.amazon.com/appsandservices/solutions/alexa/alexa-skills-kit/docs/testing-an-alexa-skill#create-a-private-key-and-self-signed-certificate-for-testing
 
-Follow the docs here for using the certificate and private key to set up a Java KeyStore :
+Follow the docs here for using the certificate and private key to set up a Java KeyStore (ignore step 4) :
 
-* https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/deploying-a-sample-skill-as-a-web-service#setting-up-an-ssl.2ftls-java-keystore
+* https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/deploying-a-sample-skill-as-a-web-service#h3_keystore
+
+Note , make sure the keystore and the key have the SAME password. 
 
 ## Configuration
 
 In SplunkWeb , browse to Settings -> Data Inputs -> Alexa and create an input stanza.
+The fields are described in the web interface or you can read SPLUNK_HOME/etc/apps/alexa/README/inputs.conf.spec
 
 Upon saving this stanza , an HTTPs web server will be spawned to start listening for incoming 
 requests from the Amazon Alexa Cloud Service.
+
+****Insert Screenshot here of a sample config****
 
 ## Firewall
 
@@ -46,33 +63,108 @@ requests for the HTTPs port you are using.
 
 ## Setting up your Splunk Alexa Skill
 
-Please refer to ****this blog**** for comprehensive documentation on setting up your Splunk Alexa Skill.
+The means by which you interface your Alexa device(Echo/Tap/Dot) to Splunk is by registering a custom Alexa Skill with the AWS Alexa Cloud Service.
+
+This App is a web service based implementation of a custom Alexa Skill you can register.
+
+As we want this custom skill to be private and secure to your own usage , you are going to be 
+registering the skill under your own free Developer account.This is in essence 100% functionally equivalent to
+hosting a private Alexa skill(not currently an Alexa feature offering) rather than a publicly published Alexa skill.
+
+****arch diagram****
+
+1. Sign up for your free Developer Account : http://developer.amazon.com
+
+2. Register the Splunk skill : https://developer.amazon.com/edw/home.html#/skills/list
+
+### Skill Information Tab
+
+**Application Id** :  this is generated for you , but can be then provided when you setup your Splunk App for more security
+ 
+**Name** : anything you want ie: My Splunk Server
+ 
+**Invocation name** : splunk   , this is then used when you talk to your Echo (" Alexa .... ask splunk .....") .Doesn't have to be "splunk" , you can use any name you want.
+ 
+**Endpoint** : https://YOURHOST/alexa
+ 
+
+****image****
+
+### Interaction model Tab
+ 
+Samples are in the SPLUNK_HOME/etc/apps/alexa/crypto/alexa_assets directory from the Splunk App you installed.
+Just copy paste them into the appropriate boxes below.
+Whenever you add more slots/utterances/intents as you train up your Splunk instance , you will also have to 
+update this interaction model tab.
+ 
+****image****
+
+
+### SSL Certificate Tab
+ 
+Select "I will upload a self-signed certificate in X.509 format” 
+Copy paste your certificate.pem file contents(just open in a text editor) that you created in the Crypto instructions above.
+ 
+****image****
+
+ 
+### Test Tab
+ 
+Enable the skill : You should see "This skill is enabled for testing on this account."
+ 
+ 
+****image****
+ 
+ 
+Test that it is all working using the service simulator.
+ 
+A few things you can ask :
+ 
+1. What is splunk
+2. What is the XXXX  search command   (any command on docs)
+3. What is the max cpu usage of server foo today
+4. What is the average cpu usage of server foo yesterday
+ 
+****image**** 
 
 
 ## Training your Splunk instance
 
 This App is designed around the concept of a training model.
 Every user of this App will want to voice interact with their Splunk instance differently , usually 
-based on the type/domain of data they have indexed and the questions they want to ask that data by way of 
+based on the domain of data they have indexed and the questions they want to ask that data by way of 
 underlying Splunk searches.
 So over time you will train up your Splunk instance to develop a conversational vocabulary.
 
-Please refer to ****this blog**** for comprehensive documentation on training your Splunk instance.
+TODO
 
 ## Logging
 
 Any errors can be searched for in SplunkWeb : index=_internal error ExecProcessor alexa.py
+You can ignore any SLF4J errors 
 
 ## Troubleshooting
 
-* Correct Java Runtime version ?
-* HTTPs port was successfully opened ?
+* Correct Splunk Version 5+ ?
+* Correct Java Runtime version 8+ ?
+* Supported OS ?
+* HTTPs port was successfully opened ? "netstat -plnt" is a useful command to check with.
 * Running Splunk as a privileged user if using a HTTPs port < 1024 ?
 * Firewall is open for incoming traffic for the HTTPs port ?
 * Correct path to Java keystore ?
 * Correct name of Java keystore
 * Correct Java keystore password ?
+* Keystore and Key password's are the same ?
+* Have you looked in the logs for errors ? 
+* Can you successfully test the skill from the Amazon developer console ?
 
-## Contact
+## Support
 
-Damien Dallimore , ddallimore@splunk.com
+This is a community supported App
+For any issues please post your question to answers.splunk.com. The author will be notified with an email alert.
+
+## Source Code
+
+If you want the source code or are interested in collaborating , then browse to Github : 
+
+https://github.com/damiendallimore/SplunkModularInputsJavaFramework/tree/master/alexa

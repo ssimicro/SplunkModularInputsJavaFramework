@@ -4,6 +4,8 @@ Follow the docs here for creating a certificate and private key :
 
 https://developer.amazon.com/appsandservices/solutions/alexa/alexa-skills-kit/docs/testing-an-alexa-skill#create-a-private-key-and-self-signed-certificate-for-testing
 
-Follow the docs here for using the certificate and private key to set up a Java KeyStore :
+Follow the docs here for using the certificate and private key to set up a Java KeyStore (ignore step 4) :
 
-https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/deploying-a-sample-skill-as-a-web-service#setting-up-an-ssl.2ftls-java-keystore
+https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/deploying-a-sample-skill-as-a-web-service#h3_keystore
+
+Note , make sure the keystore and the key have the SAME password.
