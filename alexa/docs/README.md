@@ -29,31 +29,27 @@ and then simply converse with your data like how you would talk to another perso
 * Ability to open your firewall to incoming HTTPs requests , default port 443 , but configurable to any port. If you are opening a port < 1024 , you'll need to be running Splunk as a privileged user.
 * Java Runtime version 8+ installed on your Splunk server
 * Supported on Windows, Linux, MacOS, Solaris, FreeBSD, HP-UX, AIX
-* An Alexa device(Echo/Tap/Dot) and free Amazon Developer account(http://developer.amazon.com)
+* An Alexa device(Echo/Tap/Dot) and [free Amazon Developer account](http://developer.amazon.com)
 
 ## Setup
 
-* Untar the release to your $SPLUNK_HOME/etc/apps directory
+* Untar the release to your `$SPLUNK_HOME/etc/apps` directory
 * Restart Splunk
 
 ## Generate Your Crypto Assets
 
-Place your crypto assets and Java Keystore file (java-keystore.jks) in the SPLUNK_HOME/etc/apps/alexa/crypto directory.
+Place your crypto assets and Java Keystore file (`java-keystore.jks`) in the `SPLUNK_HOME/etc/apps/alexa/crypto` directory.
 
-Follow the docs here for creating a certificate and private key : 
+[Follow the docs here for creating a certificate and private key](https://developer.amazon.com/appsandservices/solutions/alexa/alexa-skills-kit/docs/testing-an-alexa-skill#create-a-private-key-and-self-signed-certificate-for-testing)
 
-* https://developer.amazon.com/appsandservices/solutions/alexa/alexa-skills-kit/docs/testing-an-alexa-skill#create-a-private-key-and-self-signed-certificate-for-testing
+[Follow the docs here for using the certificate and private key to set up a Java KeyStore,ignore step 4](https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/deploying-a-sample-skill-as-a-web-service#h3_keystore)
 
-Follow the docs here for using the certificate and private key to set up a Java KeyStore (ignore step 4) :
-
-* https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/deploying-a-sample-skill-as-a-web-service#h3_keystore
-
-Note , make sure the keystore and the key have the SAME password. 
+Note , make sure the keystore and the key have the **SAME** password. 
 
 ## Configuration
 
-In SplunkWeb , browse to Settings -> Data Inputs -> Alexa and create an input stanza.
-The fields are described in the web interface or you can read SPLUNK_HOME/etc/apps/alexa/README/inputs.conf.spec
+In SplunkWeb , browse to `Settings -> Data Inputs -> Alexa` and create an input stanza.
+The fields are described in the web interface or you can read `SPLUNK_HOME/etc/apps/alexa/README/inputs.conf.spec`
 
 Upon saving this stanza , an HTTPs web server will be spawned to start listening for incoming 
 requests from the Amazon Alexa Cloud Service.
@@ -79,9 +75,9 @@ hosting a private Alexa skill(not currently an Alexa feature offering) rather th
 
 ![alt text](https://github.com/damiendallimore/SplunkModularInputsJavaFramework/blob/master/alexa/docs/arch.png)
 
-1. Sign up for your free Developer Account : http://developer.amazon.com
+1. [Sign up for your free Developer Account](http://developer.amazon.com)
 
-2. Register the Splunk skill : https://developer.amazon.com/edw/home.html#/skills/list
+2. [Register the Splunk skill](https://developer.amazon.com/edw/home.html#/skills/list)
 
 ### Skill Information Tab
 
@@ -94,16 +90,16 @@ hosting a private Alexa skill(not currently an Alexa feature offering) rather th
 **Endpoint** : https://YOURHOST/alexa
  
 
-****image****
+![alt text](https://github.com/damiendallimore/SplunkModularInputsJavaFramework/blob/master/alexa/docs/skill_1.png)
 
 ### Interaction model Tab
  
-Samples are in the SPLUNK_HOME/etc/apps/alexa/crypto/alexa_assets directory from the Splunk App you installed.
+Samples are in the `SPLUNK_HOME/etc/apps/alexa/crypto/alexa_assets` directory from the Splunk App you installed.
 Just copy paste them into the appropriate boxes below.
 Whenever you add more slots/utterances/intents as you train up your Splunk instance , you will also have to 
 update this interaction model tab.
  
-****image****
+![alt text](https://github.com/damiendallimore/SplunkModularInputsJavaFramework/blob/master/alexa/docs/skill_2.png)
 
 
 ### SSL Certificate Tab
@@ -111,7 +107,7 @@ update this interaction model tab.
 Select "I will upload a self-signed certificate in X.509 format” 
 Copy paste your certificate.pem file contents(just open in a text editor) that you created in the Crypto instructions above.
  
-****image****
+![alt text](https://github.com/damiendallimore/SplunkModularInputsJavaFramework/blob/master/alexa/docs/skill_3.png)
 
  
 ### Test Tab
@@ -119,7 +115,7 @@ Copy paste your certificate.pem file contents(just open in a text editor) that y
 Enable the skill : You should see "This skill is enabled for testing on this account."
  
  
-****image****
+![alt text](https://github.com/damiendallimore/SplunkModularInputsJavaFramework/blob/master/alexa/docs/skill_4.png)
  
  
 Test that it is all working using the service simulator.
@@ -131,7 +127,7 @@ A few things you can ask :
 3. What is the max cpu usage of server foo today
 4. What is the average cpu usage of server foo yesterday
  
-****image**** 
+![alt text](https://github.com/damiendallimore/SplunkModularInputsJavaFramework/blob/master/alexa/docs/skill_5.png) 
 
 
 ## Training your Splunk instance
@@ -154,7 +150,7 @@ TODO
 
 ## Logging
 
-Any errors can be searched for in SplunkWeb : index=_internal error ExecProcessor alexa.py
+Any errors can be searched for in SplunkWeb : `index=_internal error ExecProcessor alexa.py`
 You can ignore any SLF4J errors 
 
 ## Troubleshooting
@@ -162,7 +158,7 @@ You can ignore any SLF4J errors
 * Correct Splunk Version 5+ ?
 * Correct Java Runtime version 8+ ?
 * Supported OS ?
-* HTTPs port was successfully opened ? "netstat -plnt" is a useful command to check with.
+* HTTPs port was successfully opened ? `netstat -plnt` is a useful command to check with.
 * Running Splunk as a privileged user if using a HTTPs port < 1024 ?
 * Firewall is open for incoming traffic for the HTTPs port ?
 * Correct path to Java keystore ?
@@ -175,10 +171,8 @@ You can ignore any SLF4J errors
 ## Support
 
 This is a community supported App
-For any issues please post your question to answers.splunk.com. The author will be notified with an email alert.
+For any issues please post your question to [answers.splunk.com](http://answers.splunk.com) The author will be notified with an email alert.
 
 ## Source Code
 
-If you want the source code or are interested in collaborating , then browse to Github : 
-
-https://github.com/damiendallimore/SplunkModularInputsJavaFramework/tree/master/alexa
+If you want the source code or are interested in collaborating , [then browse here to Github](https://github.com/damiendallimore/SplunkModularInputsJavaFramework/tree/master/alexa) 
