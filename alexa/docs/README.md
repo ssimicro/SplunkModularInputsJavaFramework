@@ -17,7 +17,9 @@ The App also allows you to train your Splunk instance to the conversational voca
 ## Vision
 
 The ultimate vision I foresee here is a future where you can completely do away with your keyboard, mouse , monitor & login prompt.
+
 Even right now there are use cases where having to look at a monitor or operate an input device are simply counter productive, infeasible or unsafe , such as industrial operating environments.
+
 You should be able to be transparently & dynamically authenticated based on your voice signature 
 and then simply converse with your data like how you would talk to another person... asking questions or requesting to perform some action.This app is a step in the direction of this vision.
 
@@ -75,6 +77,8 @@ hosting a private Alexa skill(not currently an Alexa feature offering) rather th
 
 ![alt text](https://github.com/damiendallimore/SplunkModularInputsJavaFramework/blob/master/alexa/docs/arch.png)
 
+### Let's get started
+
 1. [Sign up for your free Developer Account](http://developer.amazon.com)
 
 2. [Register the Splunk skill](https://developer.amazon.com/edw/home.html#/skills/list)
@@ -105,14 +109,14 @@ update this interaction model tab.
 ### SSL Certificate Tab
  
 Select "I will upload a self-signed certificate in X.509 format” 
-Copy paste your certificate.pem file contents(just open in a text editor) that you created in the Crypto instructions above.
+Copy paste your `certificate.pem` file contents(just open in a text editor) that you created in the Crypto instructions above.
  
 ![alt text](https://github.com/damiendallimore/SplunkModularInputsJavaFramework/blob/master/alexa/docs/skill_3.png)
 
  
 ### Test Tab
  
-Enable the skill : You should see "This skill is enabled for testing on this account."
+Enable the skill. You should see "This skill is enabled for testing on this account."
  
  
 ![alt text](https://github.com/damiendallimore/SplunkModularInputsJavaFramework/blob/master/alexa/docs/skill_4.png)
@@ -140,8 +144,8 @@ So over time you will train up your Splunk instance to develop a conversational 
 
 There are 2 parts to training up your vocabulary :
 
-1. Editing JSON files in the SPLUNK_HOME/etc/apps/alexa/intents directory
-2. Updating your Alexa Skill definition in your developer account with utterances, slots and the intent schema.
+1. Editing JSON files in the `SPLUNK_HOME/etc/apps/alexa/intents` directory
+2. Updating your Alexa Skill definition in your developer account under the Interaction Model tab with utterances, slots and the intent schema.
 
 
 ## Example walkthrough for setting up a new Intent
@@ -151,6 +155,7 @@ TODO
 ## Logging
 
 Any errors can be searched for in SplunkWeb : `index=_internal error ExecProcessor alexa.py`
+
 You can ignore any SLF4J errors 
 
 ## Troubleshooting
@@ -164,15 +169,16 @@ You can ignore any SLF4J errors
 * Correct path to Java keystore ?
 * Correct name of Java keystore
 * Correct Java keystore password ?
-* Keystore and Key password's are the same ?
+* Keystore and Key passwords are the same ?
 * Have you looked in the logs for errors ? 
 * Can you successfully test the skill from the Amazon developer console ?
 
 ## Support
 
-This is a community supported App
-For any issues please post your question to [answers.splunk.com](http://answers.splunk.com) The author will be notified with an email alert.
+This is a community supported App.
+For any issues please post your question to [answers.splunk.com](http://answers.splunk.com).
+The author will be notified with an email alert.
 
 ## Source Code
 
-If you want the source code or are interested in collaborating , [then browse here to Github](https://github.com/damiendallimore/SplunkModularInputsJavaFramework/tree/master/alexa) 
+If you want the source code or are interested in collaborating , [then browse here to Github.](https://github.com/damiendallimore/SplunkModularInputsJavaFramework/tree/master/alexa) 
