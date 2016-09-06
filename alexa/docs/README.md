@@ -147,10 +147,11 @@ There are 2 parts to training up your vocabulary :
 1. Editing JSON files in the `SPLUNK_HOME/etc/apps/alexa/intents` directory
 2. Updating your Alexa Skill definition in your developer account under the Interaction Model tab with utterances, slots and the intent schema.
 
+**TODO - In Progress**
 
 ## Example walkthrough for setting up a new Intent
 
-TODO
+**TODO - In Progress**
 
 ## Logging
 
@@ -175,9 +176,7 @@ You can ignore any SLF4J errors
 
 ## Support
 
-This is a community supported App.
-For any issues please post your question to [answers.splunk.com](http://answers.splunk.com).
-The author will be notified with an email alert.
+This is a community supported App.For any issues please post your question to [answers.splunk.com](http://answers.splunk.com).The author will be notified with an email alert.
 
 ## Source Code
 
