@@ -10,13 +10,18 @@ You can then use an Alexa device such as Echo,Tap or Dot to tell or ask Splunk a
 * Get answers to questions based off Splunk Searches
 * Ask for information , such as search command descriptions
 * Return static responses and audio file snippets
-* Developer extension hooks to plug in any custom voice driven actions you want
+* Developer extension hooks to plug in ANY custom voice driven requests and actions you want
 
-The App allows you to train your Splunk instance to the conversational vocabulary for your specific use case.
+The App also allows you to train your Splunk instance to the conversational vocabulary for your specific use case.
 
-The ultimate vision I foresee here is a future where you can do away with your keyboard, mouse , monitor , login prompt , and simply talk to your data like how you would talk to another person.
+## Vision
 
-* https://www.youtube.com/watch?v=VonQytgcoms
+The ultimate vision I foresee here is a future where you can completely do away with your keyboard, mouse , monitor & login prompt.
+Even right now there are use cases where having to look at a monitor or operate an input device are simply counter productive, infeasible or unsafe , such as industrial operating environments.
+You should be able to be transparently & dynamically authenticated based on your voice signature 
+and then simply converse with your data like how you would talk to another person... asking questions or requesting to perform some action.This app is a step in the direction of this vision.
+
+[Video of this app in action with an Echo device](https://www.youtube.com/watch?v=VonQytgcoms)
 
 ## Dependencies
 
@@ -53,7 +58,8 @@ The fields are described in the web interface or you can read SPLUNK_HOME/etc/ap
 Upon saving this stanza , an HTTPs web server will be spawned to start listening for incoming 
 requests from the Amazon Alexa Cloud Service.
 
-****Insert Screenshot here of a sample config****
+![alt text](https://github.com/damiendallimore/SplunkModularInputsJavaFramework/blob/master/alexa/docs/setup.png)
+
 
 ## Firewall
 
@@ -71,7 +77,7 @@ As we want this custom skill to be private and secure to your own usage , you ar
 registering the skill under your own free Developer account.This is in essence 100% functionally equivalent to
 hosting a private Alexa skill(not currently an Alexa feature offering) rather than a publicly published Alexa skill.
 
-****arch diagram****
+![alt text](https://github.com/damiendallimore/SplunkModularInputsJavaFramework/blob/master/alexa/docs/arch.png)
 
 1. Sign up for your free Developer Account : http://developer.amazon.com
 
@@ -135,6 +141,14 @@ Every user of this App will want to voice interact with their Splunk instance di
 based on the domain of data they have indexed and the questions they want to ask that data by way of 
 underlying Splunk searches.
 So over time you will train up your Splunk instance to develop a conversational vocabulary.
+
+There are 2 parts to training up your vocabulary :
+
+1. Editing JSON files in the SPLUNK_HOME/etc/apps/alexa/intents directory
+2. Updating your Alexa Skill definition in your developer account with utterances, slots and the intent schema.
+
+
+## Example walkthrough for setting up a new Intent
 
 TODO
 
