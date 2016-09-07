@@ -280,7 +280,40 @@ This App is able to serve up these MP3 files over HTTPs for you also. All you ne
 
 ## Example walkthrough for setting up a new Intent
 
-**TODO**
+Let's walkthrough setting up a mock scenario where you want to ask Splunk how many error events there were for a particular host today.
+
+1. Login to your Amazon developer account and browse to the **Interaction Model** tab for your Splunk skill.
+2. Add a new intent to your intent schema, I'll call it `ErrorsIntent` and specify 2 slots that it can accept for the name of the host and the time period.
+  ```{
+      "intent": "ErrorsIntent",
+      "slots": [
+        {
+          "name": "servername",
+          "type": "SERVER_NAME"
+        },
+        {
+          "name": "timeperiod",
+          "type": "TIME_PERIOD"
+        }
+      ]
+    }
+  ```
+3. Add 1 or more Utterances for this intent
+  *  ErrorsIntent how many errors have there been for host {servername} {timeperiod}
+  *  ErrorsIntent what is the count of errors for host {servername} {timeperiod}
+4. Update the SERVER_NAME slot type with the name(s) of some hosts. 
+5. Save everything. That's all there is to setup in the Alexa cloud.Now let's move over to your Splunk App.
+6. Open `mapping.json` in a text editor and add an action mapping for the `ErrorsIntent` intent.This is just mocked up , but you can get the idea if you had some events with a host and some errors.
+  ```{
+      "intent": "ErrorsIntent",
+      "search": "index=_internal host=$servername$ error| stats count as errorcount",
+      "time_slot" : "timeperiod",
+      "response": "host $servername$ has had $resultfield_errorcount$ errors $timeperiod$"     
+    }
+  ```
+7. Save the file and it will be dynamically reloaded.
+8. Browse back to you Amazon developer account and test your new intent with the Service Simulator on the **Test** tab by typing in `how many errors have there been for host foo today`
+9. If that worked , then fire up your Alexa device and speak away ... `Alexa , ask splunk how many errors have there been for host foo today`
 
 ## Logging
 
