@@ -141,9 +141,11 @@ A few things you can ask :
 
 This App ships with a simple example vocabulary to get you started , but you are soon going to want to extend this by training up your own Splunk instance.
 So this App is designed around the concept of a training model.
+
 Every user of this App will want to voice interact with their Splunk instance differently , usually 
 based on the domain of data they have indexed and the questions they want to ask that data by way of 
 underlying Splunk searches.
+
 So over time you will train up your Splunk instance to develop a rich conversational vocabulary.
 
 There are 2 parts to training up your vocabulary :
@@ -152,9 +154,9 @@ There are 2 parts to training up your vocabulary :
 
 2. Updating your Splunk Alexa Skill definition in your developer account under the **Interaction Model** tab with [utterances, slots and your intent schema](https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/alexa-skills-kit-interaction-model-reference).
 
-  * Utterances : the permutations of various things you will say to your Alexa device
-  * Slots : Utterances can be tokenised with dynamic values called slots. Alexa has many built in slot types or you can provide your own custom slot types.
-  * Intents : these are essentially identifier codes representing a set of potential utterances and will get sent to the Splunk skill(this App) along with any slot values that were used with the utterance when it was spoken to your Alexa device.The Splunk skill is then able to use this intent  to map to some underlying action to perform , such as executing a Splunk search, and then create a response to send back to Alexa to be spoken back to you.Pretty simple really.
+  * **Utterances** : the permutations of various things you will say to your Alexa device
+  * **Slots** : Utterances can be tokenised with dynamic values called slots. Alexa has many built in slot types or you can provide your own custom slot types.
+  * **Intents** : these are essentially identifier codes representing a set of potential utterances and will get sent to the Splunk skill(this App) along with any slot values that were used with the utterance when it was spoken to your Alexa device.The Splunk skill is then able to use this intent  to map to some underlying action to perform , such as executing a Splunk search, and then create a response to send back to Alexa to be spoken back to you.Pretty simple really.
   
 For convenience you can keep a copy of your utterances,slots and intent schema in the `SPLUNK_HOME/etc/apps/alexa/alexa_assets` directory.
 
@@ -173,29 +175,29 @@ The actions that you can perform are :
 
 ###Search actions
 
-**intent** : the name of the incoming request intent to map this action to
-**search** : the SPL search string to execute. This can also be tokenised with the name of a slot key passed in with the intent
+*  **intent** : the name of the incoming request intent to map this action to
+*  **search** : the SPL search string to execute. This can also be tokenised with the name of a slot key passed in with the intent
   * `index=_internal | eval cpu=45  | head 1`
   * `index=_internal host=$servername$| eval cpu=45  | head 1`
   *  the fields in the search result can then be interpolated into the response. See more below on response formatting
-**time_slot** : the name of the time slot key passed in with the intent. See more below on mapping of human speakable times to Splunk times.
-**response** : the response to return back to Alexa. See more below on response formatting
+*  **time_slot** : the name of the time slot key passed in with the intent. See more below on mapping of human speakable times to Splunk times.
+*  **response** : the response to return back to Alexa. See more below on response formatting
 
 ###Saved Search actions
 
-**intent** : the name of the incoming request intent to map this action to
-**saved_search_name** : the name of the saved search
-**saved_search_args** : any arguments you want to pass to the saved search.This can also be tokenised with the name of a slot key passed in with the intent
+*  **intent** : the name of the incoming request intent to map this action to
+*  **saved_search_name** : the name of the saved search
+*  **saved_search_args** : any arguments you want to pass to the saved search.This can also be tokenised with the name of a slot key passed in with the intent
   *  `cpu=56`
   *  `server=$servername$,cpu=56`
   *  the fields in the search result can then be interpolated into the response. See more below on response formatting
-**time_slot** : the name of the time slot key passed in with the intent. See more below on mapping of human speakable times to Splunk times.
-**response** : the response to return back to Alexa. See more below on response formatting
+*  **time_slot** : the name of the time slot key passed in with the intent. See more below on mapping of human speakable times to Splunk times.
+*  **response** : the response to return back to Alexa. See more below on response formatting
 
 ###Static response actions
 
-**intent** : the name of the incoming request intent to map this action to
-**response** : the response to return back to Alexa. See more below on response formatting
+*  **intent** : the name of the incoming request intent to map this action to
+*  **response** : the response to return back to Alexa. See more below on response formatting
 
 ###Create your own dynamic actions
 
@@ -210,24 +212,25 @@ These are the steps for creating a new Dynamic Action :
 2. Implement the `executeAction()` method , use the [DocsLookupAction](https://github.com/damiendallimore/SplunkModularInputsJavaFramework/blob/master/alexa/src/com/splunk/modinput/alexa/dynamicaction/DocsLookupAction.java) example as a guide.You can access slot values and custom arguments 
 from within your code also.
 3. Compile the class , add it to a jar file and place in the  `SPLUNK_HOME/etc/apps/alexa/dynamic_actions/lib` directory.Also place any other dependent jars for your action in this directory.
-4. Update the `SPLUNK_HOME/etc/apps/alexa/dynamic_actions/dynamicactions.json` file to map the class name to some action name that you can refer to from `mappings.json`
+4. Update the `SPLUNK_HOME/etc/apps/alexa/dynamic_actions/dynamicactions.json` file to map the class name to some action name that you can refer to from `mapping.json`
+
 ```
 {
 "name": "foo_action",
 "class": "com.foo.FooAction"
 }
 ```
-5. Add a mapping from an incoming intent request nto this dynamic action in `mappings.json`
 
-**intent** : the name of the incoming request intent to map this action to
-**dynamic_action** : the action name in `dynamicactions.json` ie: `foo_action`
-**dynamic_action_args** : a key=value,key2=value2 ..... list of arguments that can be passed into the action and accessed by your code
-**response** : the response to return back to Alexa. See more below on response formatting
+5. Add a mapping from an incoming intent request to this dynamic action in `mapping.json`
+  *  **intent** : the name of the incoming request intent to map this action to
+  *  **dynamic_action** : the action name in `dynamicactions.json` ie: `foo_action`
+  *  **dynamic_action_args** : a key=value,key2=value2 ..... list of arguments that can be passed into the action and accessed by your code
+  *  **response** : the response to return back to Alexa. See more below on response formatting
 
 
 ###Response formatting
 
-The JSON `response` field can be in plain text or [SSML](https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/speech-synthesis-markup-language-ssml-reference).
+The JSON `response` field in `mapping.json` can be in plain text or [SSML](https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/speech-synthesis-markup-language-ssml-reference).
 
 The response text or SSML can contain tokens to replace from the values of any slots that were passed in the request intent by wrapping the slot key in $ signs ie: `$timeperiod$` or `$servername$`  (except for static responses)
 
@@ -260,7 +263,7 @@ To map these noun phrases you update the `timemappings.json` file in the Splunk 
 To use this time period slot , just refer to it in your Utterance definition for your Splunk Alexa skill
 *  `MaxCPUIntent what is the maximum cpu usage of server {servername} {timeperiod}`   
 
-Then in your search and saved search actions you can simply refer to the name of the time slot key in the `time_slot` field and it will be applied to your search
+Then in your search and saved search actions in `mapping.json` you can simply refer to the name of the time slot key in the `time_slot` field and it will be applied to your search
 *  `"time_slot" : "timeperiod"`
 
 ###Soundbites
