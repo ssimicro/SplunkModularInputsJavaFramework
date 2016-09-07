@@ -94,7 +94,7 @@ as this skill will be private to your own Alexa device.
  
 **Invocation name** : splunk   , this is then used when you talk to your Echo (" Alexa .... ask splunk .....") .Doesn't have to be "splunk" , you can use any name you want.
  
-**Endpoint** : https://YOURHOST/alexa
+**Endpoint** : https://YOURHOST/alexa. The value of YOURHOST should match what you have in the certificate you created.
  
 
 ![alt text](https://github.com/damiendallimore/SplunkModularInputsJavaFramework/blob/master/alexa/docs/skill_1.png)
@@ -346,7 +346,7 @@ You can ignore any SLF4J errors
 
 ## Support
 
-This is a community supported App.For any issues please post your question to [answers.splunk.com](http://answers.splunk.com).The author will be notified with an email alert.
+This is a community supported App.For any issues please post your question to [answers.splunk.com](http://answers.splunk.com) and tag the question with the App name.The author will be notified with an email alert.
 
 ## Source Code
 
