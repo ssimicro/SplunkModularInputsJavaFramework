@@ -27,7 +27,7 @@ and then simply converse with your data like how you would talk to another perso
 
 ## Dependencies
 
-* Internet accessible Splunk version 5+ instance
+* Internet accessible Splunk version 5+ instance with a resolvable domain name.
 * Ability to open your firewall to incoming HTTPs requests , default port 443 , but configurable to any port. If you are opening a port < 1024 , you'll need to be running Splunk as a privileged user.
 * Java Runtime version 8+ installed on your Splunk server
 * Supported on Windows, Linux, MacOS, Solaris, FreeBSD, HP-UX, AIX
@@ -94,7 +94,7 @@ as this skill will be private to your own Alexa device.
  
 **Invocation name** : splunk   , this is then used when you talk to your Echo (" Alexa .... ask splunk .....") .Doesn't have to be "splunk" , you can use any name you want.
  
-**Endpoint** : https://YOURHOST/alexa. The value of YOURHOST should match what you have in the certificate you created.
+**Endpoint** : https://YOURHOST/alexa. The value of YOURHOST should match what you have in the certificate you created and be a resolvable domain name, not an IP Address.
  
 
 ![alt text](https://github.com/damiendallimore/SplunkModularInputsJavaFramework/blob/master/alexa/docs/skill_1.png)
