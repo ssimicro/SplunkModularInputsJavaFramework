@@ -341,6 +341,8 @@ You can ignore any SLF4J errors
 * Keystore and Key passwords are the same ?
 * Have you looked in the logs for errors ? 
 * Can you successfully test the skill from the Amazon developer console ?
+* Did you generate your certificate with the correct hostname/domain for your running Splunk instance ?
+* Are there DNS configuration errors in the logs ? You may need to put an entry in your local /etc/hosts to resolve this hostname correctly to 127.0.0.1 (localhost)
 
 ## Support
 
