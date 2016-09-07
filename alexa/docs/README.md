@@ -101,7 +101,7 @@ as this skill will be private to your own Alexa device.
 
 ### Interaction model Tab
  
-Samples are in the `SPLUNK_HOME/etc/apps/alexa/crypto/alexa_assets` directory from the Splunk App you installed.
+Samples are in the `SPLUNK_HOME/etc/apps/alexa/alexa_assets` directory from the Splunk App you installed.
 Just copy paste them into the appropriate boxes below.
 Whenever you add more slots/utterances/intents as you train up your Splunk instance , you will also have to 
 update this interaction model tab.
@@ -187,7 +187,7 @@ The actions that you can perform are :
 
 *  **intent** : the name of the incoming request intent to map this action to
 *  **saved_search_name** : the name of the saved search
-*  **saved_search_args** : any arguments you want to pass to the saved search.This can also be tokenised with the name of a slot key passed in with the intent
+*  **saved_search_args** : any arguments you want to pass to the saved search in the format key=value,key2=value2 etc....This can also be tokenised with the name of a slot key passed in with the intent
   *  `cpu=56`
   *  `server=$servername$,cpu=56`
   *  the fields in the search result can then be interpolated into the response. See more below on response formatting
@@ -237,6 +237,8 @@ The response text or SSML can contain tokens to replace from the values of any s
 For searches and saved searches the response text or SSML can contain tokens to replace from the results of the searches. These are declared in the format `$resultfield_xxx$` , where `xxx` is the name of the field in the search result.
 
 Dynamic action responses also have a special token `$dynamic_response` which is some dynamic text that the action returns ie: from the result of an HTTP lookup in the case of the example `DocsLookupAction`.This token can be used standalone or mixed in with plain text, SSML and slot tokens.
+
+Response Examples :
 
 *  Static response : `Hello this is a lovely day`
 *  Response with slot values : `Hello , I see you asked about server $servername$ $timeperiod$`
