@@ -216,8 +216,8 @@ from within your code also.
 
   ```
   {
-  "name": "foo_action",
-  "class": "com.foo.FooAction"
+    "name": "foo_action",
+    "class": "com.foo.FooAction"
   }
   ```
 
@@ -257,9 +257,9 @@ To add more time noun phrases , you just update the TIME_PERIOD slots list for y
 To map these noun phrases you update the `timemappings.json` file in the Splunk App to map the time noun phrase to an earliest and latest Splunk time pattern.
 ```
 {
-"utterance": "yesterday",
-"earliest": "-1d@d",
-"latest": "@d"
+  "utterance": "yesterday",
+  "earliest": "-1d@d",
+  "latest": "@d"
 }
 ```  
 To use this time period slot , just refer to it in your Utterance definition for your Splunk Alexa skill
@@ -284,7 +284,8 @@ Let's walkthrough setting up a mock scenario where you want to ask Splunk how ma
 
 1. Login to your Amazon developer account and browse to the **Interaction Model** tab for your Splunk skill.
 2. Add a new intent to your intent schema, I'll call it `ErrorsIntent` and specify 2 slots that it can accept for the name of the host and the time period.
-  ```{
+  ```
+  {
       "intent": "ErrorsIntent",
       "slots": [
         {
@@ -296,7 +297,7 @@ Let's walkthrough setting up a mock scenario where you want to ask Splunk how ma
           "type": "TIME_PERIOD"
         }
       ]
-    }
+  }
   ```
 3. Add 1 or more Utterances for this intent
   *  ErrorsIntent how many errors have there been for host {servername} {timeperiod}
@@ -304,15 +305,16 @@ Let's walkthrough setting up a mock scenario where you want to ask Splunk how ma
 4. Update the SERVER_NAME slot type with the name(s) of some hosts. 
 5. Save everything. That's all there is to setup in the Alexa cloud.Now let's move over to your Splunk App.
 6. Open `mapping.json` in a text editor and add an action mapping for the `ErrorsIntent` intent.This is just mocked up , but you can get the idea if you had some events with a host and some errors.
-  ```{
+  ```
+  {
       "intent": "ErrorsIntent",
       "search": "index=_internal host=$servername$ error| stats count as errorcount",
       "time_slot" : "timeperiod",
       "response": "host $servername$ has had $resultfield_errorcount$ errors $timeperiod$"     
-    }
+  }
   ```
 7. Save the file and it will be dynamically reloaded.
-8. Browse back to you Amazon developer account and test your new intent with the Service Simulator on the **Test** tab by typing in `how many errors have there been for host foo today`
+8. Browse back to your Amazon developer account and test your new intent with the Service Simulator on the **Test** tab by typing in `how many errors have there been for host foo today`
 9. If that worked , then fire up your Alexa device and speak away ... `Alexa , ask splunk how many errors have there been for host foo today`
 
 ## Logging
