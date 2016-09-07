@@ -214,12 +214,12 @@ from within your code also.
 3. Compile the class , add it to a jar file and place in the  `SPLUNK_HOME/etc/apps/alexa/dynamic_actions/lib` directory.Also place any other dependent jars for your action in this directory.
 4. Update the `SPLUNK_HOME/etc/apps/alexa/dynamic_actions/dynamicactions.json` file to map the class name to some action name that you can refer to from `mapping.json`
 
-```
-{
-"name": "foo_action",
-"class": "com.foo.FooAction"
-}
-```
+  ```
+  {
+  "name": "foo_action",
+  "class": "com.foo.FooAction"
+  }
+  ```
 
 5. Add a mapping from an incoming intent request to this dynamic action in `mapping.json`
   *  **intent** : the name of the incoming request intent to map this action to
