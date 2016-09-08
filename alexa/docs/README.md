@@ -199,7 +199,7 @@ The actions that you can perform are :
 It is a good idea to try and optimize your searches for the Alexa voice environment.
 
 *  Make sure your searches return 1 result row , multiple result rows are not currently iterated through
-*  Use aliases and tags to allow for more user friendly words to be spoken and returned ie: you might have a hostname of "123-iot-xyz" in your event data , so alias this to some thing more user friendly like "office host" 
+*  Use aliases and tags to allow for more user friendly words to be spoken and returned ie: you might have a hostname of "123-iot-xyz" in your event data , so alias this to something more user friendly like "office host" 
 
 
 
