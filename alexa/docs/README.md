@@ -194,6 +194,15 @@ The actions that you can perform are :
 *  **time_slot** : the name of the time slot key passed in with the intent. See more below on mapping of human speakable times to Splunk times.
 *  **response** : the response to return back to Alexa. See more below on response formatting
 
+###Search tips
+
+It is a good idea to try and optimize your searches for the Alexa voice environment.
+
+*  Make sure your searches return 1 result row , multiple result rows are not currently iterated through
+*  Use aliases and tags to allow for more user friendly words to be spoken and returned ie: you might have a hostname of "123-iot-xyz" in your event data , so alias this to some thing more user friendly like "office host" 
+
+
+
 ###Static response actions
 
 *  **intent** : the name of the incoming request intent to map this action to
@@ -280,7 +289,7 @@ This App is able to serve up these MP3 files over HTTPs for you also. All you ne
 
 ## Example walkthrough for setting up a new Intent
 
-Let's walkthrough setting up a mock scenario where you want to ask Splunk how many error events there were for a particular host today.
+Let's walkthrough setting up a mock scenario where you want to ask Splunk how many error events for a particular error code there were for a particular host today.
 
 1. Login to your Amazon developer account and browse to the **Interaction Model** tab for your Splunk skill.
 2. Add a new intent to your intent schema, I'll call it `ErrorsIntent` and specify 2 slots that it can accept for the name of the host and the time period.
@@ -294,6 +303,10 @@ Let's walkthrough setting up a mock scenario where you want to ask Splunk how ma
         "type": "SERVER_NAME"
       },
       {
+        "name": "errorcode",
+        "type": "AMAZON.NUMBER"
+      },
+      {
         "name": "timeperiod",
         "type": "TIME_PERIOD"
       }
@@ -301,9 +314,9 @@ Let's walkthrough setting up a mock scenario where you want to ask Splunk how ma
   }
   ```
   
-3. Add 1 or more Utterances for this intent
-  *  ErrorsIntent how many errors have there been for host {servername} {timeperiod}
-  *  ErrorsIntent what is the count of errors for host {servername} {timeperiod}
+3. Add 1 or more Utterances for this intent. In this example I have used a combination of custom slots and built in AMAZON slots.
+  *  ErrorsIntent how many errors have there been for error code {errorcode} for host {servername} {timeperiod}
+  *  ErrorsIntent what is the count of errors for error code {errorcode} for host {servername} {timeperiod}
 4. Update the SERVER_NAME slot type with the name(s) of some hosts. 
 5. Save everything. That's all there is to setup in the Alexa cloud.Now let's move over to your Splunk App.
 6. Open `mapping.json` in a text editor and add an action mapping for the `ErrorsIntent` intent.This is just mocked up , but you can get the idea if you had some events with a host and some errors.
@@ -311,15 +324,15 @@ Let's walkthrough setting up a mock scenario where you want to ask Splunk how ma
   ```
   {
     "intent": "ErrorsIntent",
-    "search": "index=_internal host=$servername$ error| stats count as errorcount",
+    "search": "index=_internal host=$servername$ code=$errorcode$ error| stats count as errorcount",
     "time_slot" : "timeperiod",
-    "response": "host $servername$ has had $resultfield_errorcount$ errors $timeperiod$"     
+    "response": "host $servername$ has had $resultfield_errorcount$ errors for error code $errorcode$ $timeperiod$"     
   }
   ```
   
 7. Save the file and it will be dynamically reloaded.
-8. Browse back to your Amazon developer account and test your new intent with the Service Simulator on the **Test** tab by typing in `how many errors have there been for host foo today`
-9. If that worked , then fire up your Alexa device and speak away ... `Alexa , ask splunk how many errors have there been for host foo today`
+8. Browse back to your Amazon developer account and test your new intent with the Service Simulator on the **Test** tab by typing in `how many errors have there been for error code five oh three for host foo today`
+9. If that worked , then fire up your Alexa device and speak away ... `Alexa , ask splunk how many errors have there been for error code 503 for host foo today`
 
 ## Logging
 
