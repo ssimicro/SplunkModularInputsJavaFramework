@@ -22,7 +22,7 @@
              <view name="list"/>
              <view name="create"/>
              <view name="edit"/>
-             <key name="exampleText">Defaults to 443</key>
+             <key name="exampleText">Defaults to 443, only 443 is supported at present, so changing this has no effect</key>
            </element>
            <element name="https_scheme" type="textfield" label="HTTPS Scheme">
              <view name="list"/>

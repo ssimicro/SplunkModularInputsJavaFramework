@@ -28,7 +28,7 @@ and then simply converse with your data like how you would talk to another perso
 ## Dependencies
 
 * Internet accessible Splunk version 5+ instance with a resolvable domain name.
-* Ability to open your firewall to incoming HTTPs requests , default port 443 , but configurable to any port. If you are opening a port < 1024 , you'll need to be running Splunk as a privileged user.
+* Ability to open your firewall to incoming HTTPs requests , default port 443. For opening a port < 1024 , you'll need to be running Splunk as a privileged user.
 * Java Runtime version 8+ installed on your Splunk server
 * Supported on Windows, Linux, MacOS, Solaris, FreeBSD, HP-UX, AIX
 * An Alexa device(Echo/Tap/Dot) and [free Amazon Developer account](http://developer.amazon.com)
@@ -62,7 +62,7 @@ requests from the Amazon Alexa Cloud Service.
 ## Firewall
 
 You will need to open your firewall to your internet accessible Splunk instance to accept incoming 
-requests for the HTTPs port you are using.
+requests for the HTTPs port 443.
 
 
 ## Setting up your Splunk Alexa Skill
@@ -346,7 +346,7 @@ You can ignore any SLF4J errors
 * Correct Java Runtime version 8+ ?
 * Supported OS ?
 * HTTPs port was successfully opened ? `netstat -plnt` is a useful command to check with.
-* Running Splunk as a privileged user if using a HTTPs port < 1024 ?
+* Running Splunk as a privileged user for using a HTTPs port < 1024 ?
 * Firewall is open for incoming traffic for the HTTPs port ?
 * Correct path to Java keystore ?
 * Correct name of Java keystore

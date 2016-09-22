@@ -398,7 +398,8 @@ public class AlexaWebService extends ModularInput {
 
 			} else if (param.getName().equals("https_port")) {
 				try {
-					httpsPort = Integer.parseInt(param.getValue());
+					//commenting this out for now as only 443 is supported
+					//httpsPort = Integer.parseInt(param.getValue());
 				} catch (Exception e) {
 					logger.error("Can't determine https port value, will revert to default value.");
 				}

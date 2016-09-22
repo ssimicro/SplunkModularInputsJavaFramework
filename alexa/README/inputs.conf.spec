@@ -1,6 +1,6 @@
 [alexa://name]
 
-#defaults to 443
+#defaults to 443, only 443 is supported at present, so changing this has no effect.
 https_port = <value>
 
 #defaults to  https
