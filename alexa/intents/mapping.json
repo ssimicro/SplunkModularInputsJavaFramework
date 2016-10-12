@@ -15,6 +15,13 @@
       
     },
     {
+      "intent": "TotalHostsIntent",
+      "search": "| metadata type=hosts  | head 1",
+      "time_slot" : "timeperiod",
+      "response": "there are $resultfield_totalCount$ hosts"
+      
+    },
+    {
       "intent": "SomeSavedSearchIntent",
       "saved_search_name": "alexa_test_search",
       "saved_search_args": "cpu=56",

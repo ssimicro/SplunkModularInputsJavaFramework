@@ -27,6 +27,15 @@
       ]
     },
     {
+      "intent": "TotalHostsIntent",
+      "slots": [
+        {
+          "name": "timeperiod",
+          "type": "TIME_PERIOD"
+        }
+      ]
+    },
+    {
       "intent": "SomeSavedSearchIntent",
       "slots": [
         {

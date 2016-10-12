@@ -292,7 +292,7 @@ public class SplunkSpeechlet implements Speechlet {
 
 		// execute search
 		// head 1 to enforce only 1 row in the response
-		HashMap<String, String> outputKeyVal = performSearch("search " + search , earliest, latest);
+		HashMap<String, String> outputKeyVal = performSearch(search , earliest, latest);
 
 		// oops , no search results
 		if (outputKeyVal == null) {
@@ -374,6 +374,9 @@ public class SplunkSpeechlet implements Speechlet {
 	private HashMap<String, String> performSearch(String search, String earliestTime, String latestTime) {
 
 		try {
+			if(!search.trim().startsWith("|")){
+				search = "search "+search;
+			}
 			Service splunkService = AlexaSessionManager.getService();
 			JobArgs jobargs = new JobArgs();
 

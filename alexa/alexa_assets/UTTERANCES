@@ -45,3 +45,4 @@ WhatIsSplunkIntent please tell me about Splunk
 WhatIsSplunkIntent tell me about Splunk
 AppsInfoIntent Where can I find information about developing Splunk apps
 PlayASound What does Splunk sound like
+TotalHostsIntent How many hosts have indexed data {timeperiod}
