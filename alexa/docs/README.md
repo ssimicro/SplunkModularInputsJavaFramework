@@ -33,6 +33,10 @@ and then simply converse with your data like how you would talk to another perso
 * Supported on Windows, Linux, MacOS, Solaris, FreeBSD, HP-UX, AIX
 * An Alexa device(Echo/Tap/Dot) and [free Amazon Developer account](http://developer.amazon.com)
 
+## Note on Splunk Cloud
+
+Your internet accessible Splunk instance needs to be your own hosted Splunk instance on premise or perhaps in the cloud using a Splunk AMI. This App will not currently work in Splunk Cloud, but should in the next version when a Configuration UI is completed so you don't need to edit config files on the filesystem.
+
 ## Setup
 
 * Untar the release to your `$SPLUNK_HOME/etc/apps` directory
