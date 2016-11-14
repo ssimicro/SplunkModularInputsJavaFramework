@@ -12,20 +12,32 @@ import com.splunk.Service;
  */
 public class AlexaSessionManager {
 
-	private static Service service;
+	//user splunk-system-user
+	private static Service defaultService;
+	//a user defined auth to override the default
+	private static Service currentService;
 	
 	private static Map<String, IntentMapping> intentMappings;
 	private static Map<String, TimeMapping> timeMappings;
 	private static Map<String, DynamicActionMapping> dynamicActionMappings;
 
-	
 	public static Service getService() {
-		return service;
+		return currentService;
 	}
 
-	public static void setService(Service service) {
-		AlexaSessionManager.service = service;
+	public static void setCurrentService(Service service) {
+		AlexaSessionManager.currentService = service;
 	}
+	
+	public static Service getDefaultService() {
+		return defaultService;
+	}
+
+	public static void setDefaultService(Service service) {
+		AlexaSessionManager.defaultService = service;
+	}
+	
+	
 
 	public static Map<String, IntentMapping> getIntentMappings() {
 		return AlexaSessionManager.intentMappings;

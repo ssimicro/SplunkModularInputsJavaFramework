@@ -1,0 +1,17 @@
+<setup>
+<block title="Add new credentials for your REST Connection" endpoint="storage/passwords" entity="_new">
+
+<text>If you are specifying a "global_auth_user" for your REST connection in mapping.json , you can store the encrypted password here </text>
+
+  <input field="name">
+    <label>Username</label>
+    <type>text</type>
+  </input>
+
+  <input field="password">
+    <label>Password</label>
+    <type>password</type>
+  </input>
+
+</block>
+</setup>

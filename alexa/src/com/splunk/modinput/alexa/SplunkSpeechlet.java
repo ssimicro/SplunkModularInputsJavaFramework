@@ -1,7 +1,10 @@
 package com.splunk.modinput.alexa;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -37,16 +40,16 @@ import com.splunk.Service;
  *
  */
 public class SplunkSpeechlet implements Speechlet {
-	
+
 	protected static Logger logger = Logger.getLogger(SplunkSpeechlet.class);
-	
+
 	/**
 	 * Should probably move these defaults out into a config file
 	 */
-	private static final String HELP_RESPONSE="You can ask Splunk anything you want";
-	private static final String WELCOME_RESPONSE="Welcome to Splunk, ask me something";
-	private static final String NO_SEARCH_RESULT_RESPONSE="I'm sorry , I couldn't find any results";
-	private static final String CARD_TITLE="Splunk";
+	private static final String HELP_RESPONSE = "You can ask Splunk anything you want";
+	private static final String WELCOME_RESPONSE = "Welcome to Splunk, ask me something";
+	private static final String NO_SEARCH_RESULT_RESPONSE = "I'm sorry , I couldn't find any results";
+	private static final String CARD_TITLE = "Splunk";
 
 	@Override
 	public void onSessionStarted(final SessionStartedRequest request, final Session session) throws SpeechletException {
@@ -65,12 +68,11 @@ public class SplunkSpeechlet implements Speechlet {
 		String intentName = (intent != null) ? intent.getName() : null;
 
 		IntentMapping mapping = AlexaSessionManager.getIntentMappings().get(intentName);
-		
 
 		if ("AMAZON.HelpIntent".equals(intentName)) {
 			return getHelpResponse();
 		} else if (mapping == null) {
-			logger.error("No mapping exists for "+intentName);
+			logger.error("No mapping exists for " + intentName);
 			throw new SpeechletException("Invalid Intent");
 		} else {
 			return getIntentResponse(mapping, intent);
@@ -89,7 +91,7 @@ public class SplunkSpeechlet implements Speechlet {
 	 * @return SpeechletResponse spoken and visual response for the given intent
 	 */
 	private SpeechletResponse getWelcomeResponse() {
-		
+
 		// Create the Simple card content.
 		SimpleCard card = new SimpleCard();
 		card.setTitle(CARD_TITLE);
@@ -121,16 +123,15 @@ public class SplunkSpeechlet implements Speechlet {
 		String savedSearchArgs = mapping.getSavedSearchArgs();
 
 		if (search != null && search.length() > 0) {
-			response = executeSearch(search, response, intent.getSlots(), mapping.getTimeSlot());
+			response = executeSearch(search, response, intent.getSlots(), mapping);
 		}
 		if (savedSearch != null && savedSearch.length() > 0) {
-			response = executeSavedSearch(savedSearch, response, intent.getSlots(), mapping.getTimeSlot(),
-					savedSearchArgs);
+			response = executeSavedSearch(savedSearch, response, intent.getSlots(), mapping, savedSearchArgs);
 		}
 		if (dynamicAction != null && dynamicAction.length() > 0) {
 			DynamicActionMapping dam = AlexaSessionManager.getDynamicActionMappings().get(dynamicAction);
-			if(dam == null){
-				logger.error("No dynamic action mapping exists for "+dynamicAction);
+			if (dam == null) {
+				logger.error("No dynamic action mapping exists for " + dynamicAction);
 			}
 			try {
 				DynamicAction instance = (DynamicAction) (Class.forName(dam.getClassName()).newInstance());
@@ -139,7 +140,7 @@ public class SplunkSpeechlet implements Speechlet {
 				instance.setResponseTemplate(response);
 				response = instance.executeAction();
 			} catch (Exception e) {
-				logger.error("Error executing dynamic action "+dynamicAction+" : "+e.getMessage());
+				logger.error("Error executing dynamic action " + dynamicAction + " : " + e.getMessage());
 			}
 		}
 
@@ -172,19 +173,20 @@ public class SplunkSpeechlet implements Speechlet {
 	 * @param savedSearchArgs
 	 * @return
 	 */
-	private String executeSavedSearch(String savedSearch, String response, Map<String, Slot> slots, String timeSlot,
-			String savedSearchArgs) {
+	private String executeSavedSearch(String savedSearch, String response, Map<String, Slot> slots,
+			IntentMapping mapping, String savedSearchArgs) {
 
-		String earliest = "";
-		String latest = "";
+		String earliest = mapping.getEarliest();
+		String latest = mapping.getLatest();
 		Set<String> slotKeys = slots.keySet();
+		StringBuffer totalResponse = new StringBuffer();
 
 		// search replace slots into search and response strings
 		for (String key : slotKeys) {
 
 			String value = slots.get(key).getValue();
 
-			if (!key.equalsIgnoreCase(timeSlot)) {
+			if (!key.equalsIgnoreCase(mapping.getTimeSlot())) {
 				savedSearchArgs = savedSearchArgs.replaceAll("\\$" + key + "\\$", value);
 				response = response.replaceAll("\\$" + key + "\\$", value);
 
@@ -192,35 +194,60 @@ public class SplunkSpeechlet implements Speechlet {
 				// time requires some special handling
 				try {
 					TimeMapping tm = AlexaSessionManager.getTimeMappings().get(value);
-					if(tm == null){
-						logger.error("No time mapping exists for "+value);
+					if (tm == null) {
+						logger.error("No time mapping exists for " + value);
+						// fallback to config
+						tm = new TimeMapping();
+						tm.setEarliest(earliest);
+						tm.setLatest(latest);
 					}
 					earliest = tm.getEarliest();
 					latest = tm.getLatest();
-					
-				} catch (Exception e) {}
-				response = response.replaceAll("\\$" + timeSlot + "\\$", value);
+
+				} catch (Exception e) {
+				}
+				if (value == null)
+					value = "";
+				response = response.replaceAll("\\$" + mapping.getTimeSlot() + "\\$", value);
 
 			}
 
 		}
 
 		// execute search
-		HashMap<String, String> outputKeyVal = performSavedSearch(savedSearch, earliest, latest,
+		List<HashMap<String, String>> events = performSavedSearch(savedSearch, earliest, latest,
 				getParamMap(savedSearchArgs));
-
+		boolean multirow = false;
+		if (events.size() > 1) {
+			multirow = true;
+			totalResponse.append("<speak>");
+			response = response.replaceAll("<speak>", "");
+			response = response.replaceAll("</speak>", "");
+		}
 		// oops , no search results
-		if (outputKeyVal == null) {
+		if (events.isEmpty()) {
 			response = NO_SEARCH_RESULT_RESPONSE;
+			totalResponse.append(response);
 		} else {
-			for (String key : outputKeyVal.keySet()) {
-				// interpolate fields from response row into response textual
-				// output
-				response = response.replaceAll("\\$resultfield_" + key + "\\$", outputKeyVal.get(key));
 
+			for (HashMap<String, String> outputKeyVal : events) {
+				String copyResponse = response;
+				for (String key : outputKeyVal.keySet()) {
+					// interpolate fields from response row into response
+					// textual output
+					copyResponse = copyResponse.replaceAll("\\$resultfield_" + key + "\\$", outputKeyVal.get(key));
+
+				}
+				if (multirow)
+					totalResponse.append("<s>");
+				totalResponse.append(copyResponse).append("  ");
+				if (multirow)
+					totalResponse.append("</s>");
 			}
 		}
-		return response;
+		if (multirow)
+			totalResponse.append("</speak>");
+		return totalResponse.toString();
 	}
 
 	/**
@@ -242,7 +269,7 @@ public class SplunkSpeechlet implements Speechlet {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Error rolling out param string into a Map : "+e.getMessage());
+			logger.error("Error rolling out param string into a Map : " + e.getMessage());
 		}
 
 		return map;
@@ -258,18 +285,18 @@ public class SplunkSpeechlet implements Speechlet {
 	 * @param timeSlot
 	 * @return
 	 */
-	private String executeSearch(String search, String response, Map<String, Slot> slots, String timeSlot) {
+	private String executeSearch(String search, String response, Map<String, Slot> slots, IntentMapping mapping) {
 
-		String earliest = "";
-		String latest = "";
+		String earliest = mapping.getEarliest();
+		String latest = mapping.getLatest();
 		Set<String> slotKeys = slots.keySet();
-
+		StringBuffer totalResponse = new StringBuffer();
 		// search replace slots into search and response strings
 		for (String key : slotKeys) {
 
 			String value = slots.get(key).getValue();
 
-			if (!key.equalsIgnoreCase(timeSlot)) {
+			if (!key.equalsIgnoreCase(mapping.getTimeSlot())) {
 				search = search.replaceAll("\\$" + key + "\\$", value);
 				response = response.replaceAll("\\$" + key + "\\$", value);
 
@@ -277,35 +304,59 @@ public class SplunkSpeechlet implements Speechlet {
 				try {
 					// time requires some special handling
 					TimeMapping tm = AlexaSessionManager.getTimeMappings().get(value);
-					if(tm == null){
-						logger.error("No time mapping exists for "+value);
+					if (tm == null) {
+						logger.error("No time mapping exists for " + value);
+						// fallback to config
+						tm = new TimeMapping();
+						tm.setEarliest(earliest);
+						tm.setLatest(latest);
 					}
 					earliest = tm.getEarliest();
 					latest = tm.getLatest();
-				} catch (Exception e) {}
-				search = search.replaceAll("\\$" + timeSlot + "\\$", "");
-				response = response.replaceAll("\\$" + timeSlot + "\\$", value);
+				} catch (Exception e) {
+				}
+				search = search.replaceAll("\\$" + mapping.getTimeSlot() + "\\$", "");
+				if (value == null)
+					value = "";
+				response = response.replaceAll("\\$" + mapping.getTimeSlot() + "\\$", value);
 
 			}
 
 		}
 
 		// execute search
-		// head 1 to enforce only 1 row in the response
-		HashMap<String, String> outputKeyVal = performSearch(search , earliest, latest);
-
+		List<HashMap<String, String>> events = performSearch(search, earliest, latest, mapping.getAppNamespace());
+		boolean multirow = false;
+		if (events.size() > 1) {
+			multirow = true;
+			totalResponse.append("<speak>");
+			response = response.replaceAll("<speak>", "");
+			response = response.replaceAll("</speak>", "");
+		}
 		// oops , no search results
-		if (outputKeyVal == null) {
+		if (events.isEmpty()) {
 			response = NO_SEARCH_RESULT_RESPONSE;
+			totalResponse.append(response);
 		} else {
-			for (String key : outputKeyVal.keySet()) {
-				// interpolate fields from response row into response textual
-				// output
-				response = response.replaceAll("\\$resultfield_" + key + "\\$", outputKeyVal.get(key));
 
+			for (HashMap<String, String> outputKeyVal : events) {
+				String copyResponse = response;
+				for (String key : outputKeyVal.keySet()) {
+					// interpolate fields from response row into response
+					// textual output
+					copyResponse = copyResponse.replaceAll("\\$resultfield_" + key + "\\$", outputKeyVal.get(key));
+
+				}
+				if (multirow)
+					totalResponse.append("<s>");
+				totalResponse.append(copyResponse).append("  ");
+				if (multirow)
+					totalResponse.append("</s>");
 			}
 		}
-		return response;
+		if (multirow)
+			totalResponse.append("</speak>");
+		return totalResponse.toString();
 	}
 
 	/**
@@ -317,7 +368,7 @@ public class SplunkSpeechlet implements Speechlet {
 	 * @param args
 	 * @return
 	 */
-	private HashMap<String, String> performSavedSearch(String searchName, String earliestTime, String latestTime,
+	private List<HashMap<String, String>> performSavedSearch(String searchName, String earliestTime, String latestTime,
 			Map<String, String> args) {
 
 		try {
@@ -329,11 +380,10 @@ public class SplunkSpeechlet implements Speechlet {
 
 			dispatchArgs.setDispatchEarliestTime(earliestTime);
 			dispatchArgs.setDispatchLatestTime(latestTime);
-			
-			
+
 			Set<String> keys = args.keySet();
 			for (String key : keys) {
-				dispatchArgs.add("args."+key, args.get(key));
+				dispatchArgs.add("args." + key, args.get(key));
 			}
 
 			// dispatch the search job
@@ -342,7 +392,8 @@ public class SplunkSpeechlet implements Speechlet {
 			while (!jobSavedSearch.isDone()) {
 				try {
 					Thread.sleep(500);
-				} catch (Exception e) {}
+				} catch (Exception e) {
+				}
 			}
 
 			InputStream resultsNormalSearch = jobSavedSearch.getResults();
@@ -351,11 +402,13 @@ public class SplunkSpeechlet implements Speechlet {
 
 			resultsReaderNormalSearch = new ResultsReaderXml(resultsNormalSearch);
 			HashMap<String, String> event;
+			List<HashMap<String, String>> events = new ArrayList<HashMap<String, String>>();
 
 			while ((event = resultsReaderNormalSearch.getNextEvent()) != null) {
 
-				return event;
+				events.add(event);
 			}
+			return events;
 
 		} catch (Exception e) {
 			logger.error("Error performing saved search : " + searchName + " , because " + e.getMessage());
@@ -371,11 +424,12 @@ public class SplunkSpeechlet implements Speechlet {
 	 * @param latestTime
 	 * @return
 	 */
-	private HashMap<String, String> performSearch(String search, String earliestTime, String latestTime) {
+	private List<HashMap<String, String>> performSearch(String search, String earliestTime, String latestTime,
+			String namespace) {
 
 		try {
-			if(!search.trim().startsWith("|")){
-				search = "search "+search;
+			if (!search.trim().startsWith("|")) {
+				search = "search " + search;
 			}
 			Service splunkService = AlexaSessionManager.getService();
 			JobArgs jobargs = new JobArgs();
@@ -383,6 +437,7 @@ public class SplunkSpeechlet implements Speechlet {
 			jobargs.setExecutionMode(JobArgs.ExecutionMode.BLOCKING);
 			jobargs.setEarliestTime(earliestTime);
 			jobargs.setLatestTime(latestTime);
+			jobargs.setNamespace(namespace);
 
 			Job job = splunkService.getJobs().create(search, jobargs);
 
@@ -392,11 +447,13 @@ public class SplunkSpeechlet implements Speechlet {
 
 			resultsReaderNormalSearch = new ResultsReaderXml(resultsNormalSearch);
 			HashMap<String, String> event;
+			List<HashMap<String, String>> events = new ArrayList<HashMap<String, String>>();
 
 			while ((event = resultsReaderNormalSearch.getNextEvent()) != null) {
 
-				return event;
+				events.add(event);
 			}
+			return events;
 
 		} catch (Exception e) {
 			logger.error("Error performing search : " + search + " , because " + e.getMessage());

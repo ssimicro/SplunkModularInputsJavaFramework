@@ -10,15 +10,57 @@ public class IntentMapping {
 	private String intent;
 	private String search;
 	private String response;
-	private String timeSlot;
+	private String timeSlot = "timeperiod"; //default
 	private String savedSearchName;
 	private String savedSearchArgs;
 	private String dynamicAction;
 	private String dynamicActionArgs;
+	private String earliest ="";
+	private String latest = "";
+	private String appNamespace = "";
 	
 
+	
 	public IntentMapping() {
 	}
+
+	
+	
+
+
+	public String getAppNamespace() {
+		return appNamespace;
+	}
+
+
+
+
+	public void setAppNamespace(String appNamespace) {
+		this.appNamespace = appNamespace;
+	}
+
+
+
+
+	public String getEarliest() {
+		return earliest;
+	}
+
+
+	public void setEarliest(String earliest) {
+		this.earliest = earliest;
+	}
+
+
+	public String getLatest() {
+		return latest;
+	}
+
+
+	public void setLatest(String latest) {
+		this.latest = latest;
+	}
+
 
 	public String getIntent() {
 		return intent;

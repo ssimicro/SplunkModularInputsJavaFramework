@@ -1,9 +1,15 @@
 {
+  "global_search_earliest":"-60m@m",
+  "global_search_latest":"now",
+  "global_search_appnamespace":"search",
   "mappings": [
     {
       "intent": "MaxCPUIntent",
       "search": "index=_internal | eval cpu=45  | head 1",
       "time_slot" : "timeperiod",
+      "time_earliest":"-60m@m",
+      "time_latest":"now",
+      "appnamespace":"launcher",
       "response": "the max cpu usage of server $servername$ $timeperiod$ is $resultfield_cpu$ percent"
       
     },

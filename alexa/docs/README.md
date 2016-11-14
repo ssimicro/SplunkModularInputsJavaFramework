@@ -1,4 +1,4 @@
-## Talk to Splunk with Amazon Alexa v0.5
+## Talk to Splunk with Amazon Alexa v0.7
 
 ## Overview
 
@@ -24,6 +24,8 @@ You should be able to be transparently & dynamically authenticated based on your
 and then simply converse with your data like how you would talk to another person... asking questions or requesting to perform some action.This app is a step in the direction of this vision.
 
 [Video of this app in action with an Echo device](https://www.youtube.com/watch?v=VonQytgcoms)
+
+[Video of this app in action with a Dot device](https://www.youtube.com/watch?v=pld8YWGR3Ak)
 
 ## Dependencies
 
@@ -177,14 +179,31 @@ The actions that you can perform are :
 *  Return an MP3 soundbite
 *  Execute a dynamic action that you have coded and plugged in and return a response (text or SSML)
 
+###Global Search Variables
+
+*  **global_search_earliest** : a default Splunk time modifier for all searches
+*  **global_search_latest** : a default Splunk time modifier for all searches
+*  **global_search_appnamespace** : a default app context for all searches to be run in
+
+###Global Authentication Variables
+
+By default , the Alexa App will connect to Splunk using the "splunk-system-user".
+However you can override this if you want to authenticate with another user.
+
+*  **global_auth_user** : username
+*  **global_auth_pass** : cleartext password. If you omit this , then the Alexa App will attempt to find an encrypted password that you can setup by navigating to Manage Apps -> Talk to Splunk with Amazon Alexa -> Set up
+
 ###Search actions
 
 *  **intent** : the name of the incoming request intent to map this action to
 *  **search** : the SPL search string to execute. This can also be tokenised with the name of a slot key passed in with the intent
   * `index=_internal | eval cpu=45  | head 1`
   * `index=_internal host=$servername$| eval cpu=45  | head 1`
-  *  the fields in the search result can then be interpolated into the response. See more below on response formatting
+  *  the fields in the search result can then be interpolated into the response. See more below on response formatting  
 *  **time_slot** : the name of the time slot key passed in with the intent. See more below on mapping of human speakable times to Splunk times.
+*  **time_earliest** : a default Splunk time modifier that would override any global setting and be applied if no timeslot is passed in the intent
+*  **time_latest** : a default Splunk time modifier that would override any global setting and be applied if no timeslot is passed in the intent
+*  **appnamespace** : an app context to run the search in that would override any global setting
 *  **response** : the response to return back to Alexa. See more below on response formatting
 
 ###Saved Search actions
@@ -195,14 +214,17 @@ The actions that you can perform are :
   *  `cpu=56`
   *  `server=$servername$,cpu=56`
   *  the fields in the search result can then be interpolated into the response. See more below on response formatting
-*  **time_slot** : the name of the time slot key passed in with the intent. See more below on mapping of human speakable times to Splunk times.
+*  **time_slot** : the name of the time slot key passed in with the intent. See more below on mapping of human speakable times to Splunk times
+*  **time_earliest** : a default Splunk time modifier that would override any global setting and be applied if no timeslot is passed in the intent
+*  **time_latest** : a default Splunk time modifier that would override any global setting and be applied if no timeslot is passed in the intent
+*  **appnamespace** : an app context to run the search in that would override any global setting
 *  **response** : the response to return back to Alexa. See more below on response formatting
 
 ###Search tips
 
 It is a good idea to try and optimize your searches for the Alexa voice environment.
 
-*  Make sure your searches return 1 result row , multiple result rows are not currently iterated through
+*  Searches can return 1 or many rows , this is automagically handled for you
 *  Use aliases and tags to allow for more user friendly words to be spoken and returned ie: you might have a hostname of "123-iot-xyz" in your event data , so alias this to something more user friendly like "office host" 
 
 
@@ -280,6 +302,8 @@ To use this time period slot , just refer to it in your Utterance definition for
 
 Then in your search and saved search actions in `mapping.json` you can simply refer to the name of the time slot key in the `time_slot` field and it will be applied to your search
 *  `"time_slot" : "timeperiod"`
+
+You can also completely omit any TIME_PERIOD slot in you utterances if you want , and the default time range values will then be determined from what you have configured in your mapping.json file.
 
 ###Soundbites
 

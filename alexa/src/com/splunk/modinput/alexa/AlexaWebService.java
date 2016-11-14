@@ -28,6 +28,7 @@ import org.json.JSONObject;
 import com.amazon.speech.Sdk;
 import com.amazon.speech.speechlet.Speechlet;
 import com.amazon.speech.speechlet.servlet.SpeechletServlet;
+import com.splunk.PasswordCollection;
 import com.splunk.Service;
 import com.splunk.modinput.Arg;
 import com.splunk.modinput.Endpoint;
@@ -86,10 +87,11 @@ public class AlexaWebService extends ModularInput {
 				if (name != null && name.startsWith("alexa://")) {
 
 					this.modinputHome = System.getProperty("modinputhome");
+					setupDefaultSplunkService(input);
+
 					loadMappingJSON();
 					loadTimeMappingJSON();
 					loadDynamicActionJSON();
-					setupSplunkService(input);
 					startJSONFileChangeMonitor();
 					startWebServer(name, stanza.getParams(), validateMode);
 
@@ -151,6 +153,22 @@ public class AlexaWebService extends ModularInput {
 
 			while (true) {
 
+				// a bit hacky , but just shoehorning in a check that the
+				// service has not died/timed out etc..
+				Service currentService = AlexaSessionManager.getService();
+				if (currentService != null) {
+					try {
+						// simple test call
+						currentService.getInfo().getVersion();
+					} catch (Exception e) {
+						try {
+							loadMappingJSON();
+						} catch (Exception e2) {
+							logger.error("Error reloading mapping json for service checker :" + e.getMessage());
+						}
+					}
+				}
+
 				getFileHandles();
 				long thisModifiedMapping = mapping.lastModified();
 				long thisModifiedTimeMapping = timeMapping.lastModified();
@@ -197,7 +215,7 @@ public class AlexaWebService extends ModularInput {
 	 * 
 	 * @param input
 	 */
-	private void setupSplunkService(Input input) {
+	private void setupDefaultSplunkService(Input input) {
 		// String host = input.getServer_host();
 		String uri = input.getServer_uri();
 		int port = 8089;
@@ -211,7 +229,7 @@ public class AlexaWebService extends ModularInput {
 		Service service = new Service("localhost", port);
 		service.setToken("Splunk " + token);
 		service.version = service.getInfo().getVersion();
-		AlexaSessionManager.setService(service);
+		AlexaSessionManager.setDefaultService(service);
 
 	}
 
@@ -235,12 +253,74 @@ public class AlexaWebService extends ModularInput {
 
 		JSONObject mappingJSON = loadJSON(DIR_INTENTS, JSON_MAPPING);
 
+		String globalUser = "";
+		String globalPass = "";
+		String globalEarliest = "-60m@m";// default
+		String globalLatest = "now";// default
+		String globalAppNamespace = "search";// default app context
+
+		if (mappingJSON.has("global_search_earliest"))
+			globalEarliest = mappingJSON.getString("global_search_earliest");
+		if (mappingJSON.has("global_search_latest"))
+			globalLatest = mappingJSON.getString("global_search_latest");
+		if (mappingJSON.has("global_search_appnamespace"))
+			globalAppNamespace = mappingJSON.getString("global_search_appnamespace");
+		if (mappingJSON.has("global_auth_user"))
+			globalUser = mappingJSON.getString("global_auth_user");
+		if (mappingJSON.has("global_auth_pass"))
+			globalPass = mappingJSON.getString("global_auth_pass");
+		else
+			globalPass = getPlainPasswordFromEncryptedStore(globalUser);
+
+		Service defaultService = AlexaSessionManager.getDefaultService();
+
+		if (globalUser.length() > 0 && globalPass.length() > 0) {
+
+			try {
+				Map<String, Object> params = new HashMap<String, Object>();
+				params.put("username", globalUser);
+				params.put("password", globalPass);
+				params.put("app", globalAppNamespace);
+				params.put("host", defaultService.getHost());
+				params.put("port", defaultService.getPort());
+				Service newService = Service.connect(params);
+				newService.version = newService.getInfo().getVersion();
+				AlexaSessionManager.setCurrentService(newService);
+			} catch (Exception e) {
+				AlexaSessionManager.setCurrentService(defaultService);
+			}
+
+		} else
+			AlexaSessionManager.setCurrentService(defaultService);
+
 		JSONArray mappings = mappingJSON.getJSONArray("mappings");
 		Map<String, IntentMapping> intentMappings = new HashMap<String, IntentMapping>();
 		for (int i = 0; i < mappings.length(); i++) {
 			JSONObject item = mappings.getJSONObject(i);
 
 			IntentMapping im = new IntentMapping();
+
+			try {
+				if (item.has("appnamespace"))
+					im.setAppNamespace(item.getString("appnamespace"));
+				else
+					im.setAppNamespace(globalAppNamespace);
+			} catch (Exception e) {
+			}
+			try {
+				if (item.has("time_earliest"))
+					im.setEarliest(item.getString("time_earliest"));
+				else
+					im.setEarliest(globalEarliest);
+			} catch (Exception e) {
+			}
+			try {
+				if (item.has("time_latest"))
+					im.setLatest(item.getString("time_latest"));
+				else
+					im.setLatest(globalLatest);
+			} catch (Exception e) {
+			}
 			try {
 				im.setIntent(item.getString("intent"));
 			} catch (Exception e) {
@@ -278,6 +358,19 @@ public class AlexaWebService extends ModularInput {
 		}
 		AlexaSessionManager.setIntentMappings(intentMappings);
 
+	}
+
+	private String getPlainPasswordFromEncryptedStore(String globalUser) {
+		
+		String clearPass = "";
+		try {
+			Service defaultService = AlexaSessionManager.getDefaultService();
+			PasswordCollection pc = defaultService.getPasswords();
+			clearPass = pc.get(globalUser).getClearPassword();
+		} catch (Exception e) {
+			logger.error("Error getting password from encrypted store :" + e.getMessage());
+		}
+		return clearPass;
 	}
 
 	/**
@@ -398,8 +491,8 @@ public class AlexaWebService extends ModularInput {
 
 			} else if (param.getName().equals("https_port")) {
 				try {
-					//commenting this out for now as only 443 is supported
-					//httpsPort = Integer.parseInt(param.getValue());
+					// commenting this out for now as only 443 is supported
+					// httpsPort = Integer.parseInt(param.getValue());
 				} catch (Exception e) {
 					logger.error("Can't determine https port value, will revert to default value.");
 				}
