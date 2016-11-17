@@ -1,3 +1,9 @@
+1.3
+---
+Added the latest jython jar to the main classpath because the jython language module that
+is dynamically installed is missing some useful jython modules ie:json
+
+
 1.2
 ---
 Added an example handler for decompressing gzip content

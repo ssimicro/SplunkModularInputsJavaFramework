@@ -159,7 +159,7 @@ public class AlexaWebService extends ModularInput {
 				if (currentService != null) {
 					try {
 						// simple test call
-						currentService.getInfo().getVersion();
+						currentService.getSettings().getName();
 					} catch (Exception e) {
 						try {
 							loadMappingJSON();
