@@ -15,14 +15,14 @@ public class AlexaSessionManager {
 	//user splunk-system-user
 	private static Service defaultService;
 	//a user defined auth to override the default
-	private static Service currentService;
+	private static  Service currentService;
 	
 	private static Map<String, IntentMapping> intentMappings;
 	private static Map<String, TimeMapping> timeMappings;
 	private static Map<String, DynamicActionMapping> dynamicActionMappings;
 
 	public static Service getService() {
-		return currentService;
+		return AlexaSessionManager.currentService;
 	}
 
 	public static void setCurrentService(Service service) {
@@ -30,7 +30,7 @@ public class AlexaSessionManager {
 	}
 	
 	public static Service getDefaultService() {
-		return defaultService;
+		return AlexaSessionManager.defaultService;
 	}
 
 	public static void setDefaultService(Service service) {

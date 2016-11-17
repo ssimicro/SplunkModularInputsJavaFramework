@@ -1,3 +1,7 @@
+0.8
+----
+* Trivial bug fix that was messing with my OCD
+
 0.7
 ----
 * Can have time range defaults now if no time slot is passed in with the intent. These can be global  or per search intent.
@@ -13,4 +17,4 @@
 
 0.5
 -----
-Initial beta release
+* Initial beta release

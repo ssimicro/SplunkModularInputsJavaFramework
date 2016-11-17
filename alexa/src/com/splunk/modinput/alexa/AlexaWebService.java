@@ -159,9 +159,10 @@ public class AlexaWebService extends ModularInput {
 				if (currentService != null) {
 					try {
 						// simple test call
-						currentService.getSettings().getName();
+						currentService.getCapabilities();
 					} catch (Exception e) {
 						try {
+							logger.error("Attempting to re-establish user REST session : "+e.getMessage());
 							loadMappingJSON();
 						} catch (Exception e2) {
 							logger.error("Error reloading mapping json for service checker :" + e.getMessage());
@@ -284,9 +285,10 @@ public class AlexaWebService extends ModularInput {
 				params.put("host", defaultService.getHost());
 				params.put("port", defaultService.getPort());
 				Service newService = Service.connect(params);
-				newService.version = newService.getInfo().getVersion();
+				newService.getInfo().getVersion();
 				AlexaSessionManager.setCurrentService(newService);
 			} catch (Exception e) {
+				logger.error("Error establishing session for user "+ globalUser + " " + e.getMessage());
 				AlexaSessionManager.setCurrentService(defaultService);
 			}
 

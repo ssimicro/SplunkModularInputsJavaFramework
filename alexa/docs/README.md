@@ -1,4 +1,4 @@
-## Talk to Splunk with Amazon Alexa v0.7
+## Talk to Splunk with Amazon Alexa v0.8
 
 ## Overview
 
